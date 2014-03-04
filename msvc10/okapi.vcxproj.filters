@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\okapi.cpp" />
+    <ClCompile Include="..\sdk\amxxmodule.cpp" />
+    <ClCompile Include="..\work.cpp" />
+    <ClCompile Include="..\my_util.cpp" />
+    <ClCompile Include="..\s_library.cpp" />
+    <ClCompile Include="..\trie.cpp" />
+    <ClCompile Include="..\trie_string.cpp" />
+    <ClCompile Include="..\globals.cpp" />
+    <ClCompile Include="..\address_score.cpp" />
+    <ClCompile Include="..\address_line.cpp" />
+    <ClCompile Include="..\s_steps_address.cpp" />
+    <ClCompile Include="..\commands\command_help.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\command.cpp" />
+    <ClCompile Include="..\game_library.cpp" />
+    <ClCompile Include="..\offset_handler.cpp" />
+    <ClCompile Include="..\hl_type_conversion.cpp" />
+    <ClCompile Include="..\function.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\sdk\amxxmodule.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdk\moduleconfig.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svn_version.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\okapi.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\dump.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\work.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\my_util.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\CVector.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\s_steps_address.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\s_address_line.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\s_library.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\game_library.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\game_libraries\game_library_engine.h">
+      <Filter>include\game_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\heap.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\trie.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\game_libraries\game_library_mod.h">
+      <Filter>include\game_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\address_score.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\string_.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\trie_string.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\command.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\commands\command_describe.h">
+      <Filter>include\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\commands\command_help.h">
+      <Filter>include\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\globals.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\templates.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\commands\command_search.h">
+      <Filter>include\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\commands\command_rank.h">
+      <Filter>include\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\commands\command_neigh.h">
+      <Filter>include\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\commands\command_relation.h">
+      <Filter>include\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\func_relation.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\memory_.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\offset_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\hl_type_conversion.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\fakemeta_const_to_address.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\fakemeta_const.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\function.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\type_handler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\assembly_create.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\type_handlers\type_handler_extra.h">
+      <Filter>include\type_handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\allocator.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{eb37090f-4c71-498d-9822-51116484fec9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\game_libraries">
+      <UniqueIdentifier>{5753caf4-3b8c-4486-aa8c-a508db7a8414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\commands">
+      <UniqueIdentifier>{95dbac9d-012d-48a6-b7f0-ca3663abd1ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands">
+      <UniqueIdentifier>{66f421d5-c5d8-4653-936d-850f771543d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\type_handlers">
+      <UniqueIdentifier>{faf33221-0a0f-4843-a616-4a27094b49d5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
