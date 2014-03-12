@@ -278,6 +278,24 @@ static cell AMX_NATIVE_CALL okapi_del_hook(AMX *amx, cell *params)
 	return 1;
 }
 
+static cell AMX_NATIVE_CALL okapi_del_current_hook(AMX *amx, cell *params)
+{
+    AMX_Hook* hook = Function::get_current_hook();
+
+    if (!hook)
+    {
+        MF_LogError(amx, AMX_ERR_NATIVE, "No hook provided, or already deleted");
+
+        return 0;
+    }
+
+    Function* function = hook->function;
+
+    function->del_hook(hook);
+
+    return 1;
+}
+
 static cell AMX_NATIVE_CALL okapi_add_hook(AMX *amx, cell *params)
 {
 	Function* function = (Function*) params[1];
@@ -1441,6 +1459,7 @@ AMX_NATIVE_INFO exports[] = {
 	{"okapi_current_hook",				 okapi_current_hook},
 
 	{"okapi_del_hook",					 okapi_del_hook},
+	{"okapi_del_current_hook",			 okapi_del_current_hook} ,
 	{"okapi_add_hook",					 okapi_add_hook},
 
 	{"okapi_build_function",			 okapi_build_function},
