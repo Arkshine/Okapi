@@ -178,6 +178,12 @@ native okapi_hook:okapi_add_hook(okapi_func:func,callback[],post=0)
 native okapi_del_hook(&okapi_hook:hook)
 
 /**
+ *  Removes current hook from the function
+ *  This is meant to be used inside a hook (when you want to remove it there)
+ */
+native okapi_del_current_hook()
+
+/**
  *  Modifies a parameter that will be passed in the call to the original function
  *  
  * @param param_id			the index of the parameter. First is 1
