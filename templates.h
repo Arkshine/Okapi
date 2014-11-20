@@ -10,7 +10,6 @@
 // Okapi Module
 //
 
-#include <s_address_line.h>
 #include <function.h>
 
 template <typename T>
@@ -20,12 +19,6 @@ template <>
 int max_val<int>()
 {
 	return 0;
-}
-
-template <>
-s_address_line max_val<s_address_line>()
-{
-	return s_address_line(0, 0);
 }
 
 template <typename T>

@@ -3,8 +3,6 @@
 #ifndef __MODULECONFIG_H__
 #define __MODULECONFIG_H__
 
-#include "svn_version.h"
-
 // Module info
 #define MODULE_NAME "okapi"
 #define MODULE_VERSION "1.0"

@@ -155,7 +155,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\address_line.cpp" />
     <ClCompile Include="..\command.cpp" />
     <ClCompile Include="..\commands\command_help.cpp" />
     <ClCompile Include="..\function.cpp" />
@@ -192,7 +191,6 @@
     <ClInclude Include="..\include\offset_handler.h" />
     <ClInclude Include="..\include\okapi.h" />
     <ClInclude Include="..\include\string_.h" />
-    <ClInclude Include="..\include\s_address_line.h" />
     <ClInclude Include="..\include\s_library.h" />
     <ClInclude Include="..\include\trie.h" />
     <ClInclude Include="..\include\trie_string.h" />
