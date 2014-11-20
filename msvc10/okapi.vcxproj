@@ -207,6 +207,11 @@
     <ClInclude Include="..\sdk\moduleconfig.h" />
     <ClInclude Include="..\sdk\amxxmodule.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\plugins\okapi.inc" />
+    <None Include="..\plugins\okapi_const.inc" />
+    <None Include="..\plugins\okapi_extra.inc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

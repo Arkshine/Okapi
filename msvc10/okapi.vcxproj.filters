@@ -158,5 +158,19 @@
     <Filter Include="Source Files\commands">
       <UniqueIdentifier>{66f421d5-c5d8-4653-936d-850f771543d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pawn Includes">
+      <UniqueIdentifier>{8e41d30e-8208-48fa-a3e1-47dd96179e7d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\plugins\okapi.inc">
+      <Filter>Pawn Includes</Filter>
+    </None>
+    <None Include="..\plugins\okapi_const.inc">
+      <Filter>Pawn Includes</Filter>
+    </None>
+    <None Include="..\plugins\okapi_extra.inc">
+      <Filter>Pawn Includes</Filter>
+    </None>
   </ItemGroup>
 </Project>
