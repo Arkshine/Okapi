@@ -2448,7 +2448,7 @@ PFN_GET_AMXSCRIPT			g_fn_GetAmxScript;
 PFN_FIND_AMXSCRIPT_BYAMX	g_fn_FindAmxScriptByAmx;
 PFN_FIND_AMXSCRIPT_BYNAME	g_fn_FindAmxScriptByName;
 PFN_SET_AMXSTRING			g_fn_SetAmxString;
-PFN_GET_AMXSTRING			g_fn_GetAmxString;
+PFN_GET_AMXSTRING			MF_GetAmxString;
 PFN_GET_AMXSTRINGLEN		g_fn_GetAmxStringLen;
 PFN_FORMAT_AMXSTRING		g_fn_FormatAmxString;
 PFN_COPY_AMXMEMORY			g_fn_CopyAmxMemory;
@@ -2587,7 +2587,7 @@ C_DLLEXPORT int AMXX_Attach(PFN_REQ_FNPTR reqFnptrFunc)
 
 	// String / mem in amx scripts support
 	REQFUNC("SetAmxString", g_fn_SetAmxString, PFN_SET_AMXSTRING);
-	REQFUNC("GetAmxString", g_fn_GetAmxString, PFN_GET_AMXSTRING);
+	REQFUNC("GetAmxString", MF_GetAmxString, PFN_GET_AMXSTRING);
 	REQFUNC("GetAmxStringLen", g_fn_GetAmxStringLen, PFN_GET_AMXSTRINGLEN);
 	REQFUNC("FormatAmxString", g_fn_FormatAmxString, PFN_FORMAT_AMXSTRING);
 	REQFUNC("CopyAmxMemory", g_fn_CopyAmxMemory, PFN_COPY_AMXMEMORY);

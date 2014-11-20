@@ -19,7 +19,6 @@
 #include <heap.h>
 #include <trie.h>
 #include <s_library.h>
-#include <string_.h>
 #include <trie_string.h>
 #include <globals.h>
 #include <game_libraries/game_library_engine.h>
@@ -73,11 +72,7 @@ static cell AMX_NATIVE_CALL okapi_call(AMX *amx, cell *params)
 
 	if (params_n != expected_params_n)
 	{
-		String s;
-
-		s.sprintf("Invalid parameter count. Expecting %d parameters", expected_params_n);
-
-		MF_LogError(amx, AMX_ERR_NATIVE, s.get_ptr());
+		MF_LogError(amx, AMX_ERR_NATIVE, "Invalid parameter count. Expecting %d parameters", expected_params_n);
 
 		return 0;
 	}
@@ -95,11 +90,7 @@ static cell AMX_NATIVE_CALL okapi_call_ex(AMX *amx, cell *params)
 
 	if (params_n != expected_params_n)
 	{
-		String s;
-
-		s.sprintf("Invalid parameter count. Expecting %d parameters", expected_params_n);
-
-		MF_LogError(amx, AMX_ERR_NATIVE, s.get_ptr());
+		MF_LogError(amx, AMX_ERR_NATIVE, "Invalid parameter count. Expecting %d parameters", expected_params_n);
 
 		return 0;
 	}
@@ -169,11 +160,7 @@ static cell AMX_NATIVE_CALL okapi_get_orig_return(AMX *amx, cell *params)
 
 	if (params_n != expected_params_n)
 	{
-		String s;
-
-		s.sprintf("Invalid parameter count. Expecting %d parameters", expected_params_n);
-
-		MF_LogError(amx, AMX_ERR_NATIVE, s.get_ptr());
+		MF_LogError(amx, AMX_ERR_NATIVE, "Invalid parameter count. Expecting %d parameters", expected_params_n);
 
 		return 0;
 	}
@@ -271,7 +258,7 @@ static cell AMX_NATIVE_CALL okapi_add_hook(AMX *amx, cell *params)
 {
 	Function* function = (Function*)params[1];
 
-	char* callback = g_fn_GetAmxString(amx, params[2], 0, NULL);
+	const char* callback = MF_GetAmxString(amx, params[2], 0, NULL);
 
 	cell hook = (cell)function->add_hook(amx, callback, !!params[3]);
 
@@ -408,7 +395,7 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_class(AMX *amx, cell *params)
 {
 	int params_n = params[0] / sizeof(cell);
 
-	char* classname = g_fn_GetAmxString(amx, params[1], 0, NULL);
+	const char* classname = MF_GetAmxString(amx, params[1], 0, NULL);
 	int offset = params[2];
 
 	/* Code from hamsandwich */
@@ -657,7 +644,7 @@ static cell AMX_NATIVE_CALL okapi_cbase_get_vfunc_ptr(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL okapi_class_get_vfunc_ptr(AMX *amx, cell *params)
 {
-	char* classname = g_fn_GetAmxString(amx, params[1], 0, NULL);
+	const char* classname = MF_GetAmxString(amx, params[1], 0, NULL);
 
 	/* Code from hamsandwich */
 	{
@@ -790,7 +777,7 @@ static cell AMX_NATIVE_CALL okapi_mod_ptr_find_int_at(AMX *amx, cell *params)
 	return library_find<int>(GameLibraries.Mod, address, params[2]);
 }
 
-long library_find_string(GameLibrary* library, long address, char* search, int len)
+long library_find_string(GameLibrary* library, long address, const char* search, int len)
 {
 	long end = (long)library->address + (long)library->length + 1 - (len + 1);
 
@@ -812,11 +799,9 @@ static cell AMX_NATIVE_CALL okapi_mod_ptr_find_string_at(AMX *amx, cell *params)
 	long address = params[1];
 
 	int len;
-	char* string = g_fn_GetAmxString(amx, params[2], 0, &len);
+	const char* string = MF_GetAmxString(amx, params[2], 0, &len);
 
-	String string_s(string);
-
-	return library_find_string(GameLibraries.Mod, address, string_s.get_ptr(), len);
+	return library_find_string(GameLibraries.Mod, address, string, len);
 }
 
 static cell AMX_NATIVE_CALL okapi_engine_ptr_find_string_at(AMX *amx, cell *params)
@@ -824,11 +809,9 @@ static cell AMX_NATIVE_CALL okapi_engine_ptr_find_string_at(AMX *amx, cell *para
 	long address = params[1];
 
 	int len;
-	char* string = g_fn_GetAmxString(amx, params[2], 0, &len);
+	const char* string = MF_GetAmxString(amx, params[2], 0, &len);
 
-	String string_s(string);
-
-	return library_find_string(GameLibraries.Engine, address, string_s.get_ptr(), len);
+	return library_find_string(GameLibraries.Engine, address, string, len);
 }
 
 static cell AMX_NATIVE_CALL okapi_engine_get_size(AMX *amx, cell *params)
@@ -953,7 +936,7 @@ static cell AMX_NATIVE_CALL okapi_engine_replace_array(AMX *amx, cell *params)
 	return count;
 }
 
-int library_replace_string(GameLibrary* library, char* str_or, char* str_repl)
+int library_replace_string(GameLibrary* library, const char* str_or, const char* str_repl)
 {
 	int len_or = strlen(str_or);
 
@@ -983,15 +966,10 @@ int library_replace_string(GameLibrary* library, char* str_or, char* str_repl)
 
 static cell AMX_NATIVE_CALL okapi_mod_replace_string(AMX *amx, cell *params)
 {
-	int len1;
-	char* string1 = g_fn_GetAmxString(amx, params[1], 0, &len1);
+	int len1, len2;
+	const char* string1 = MF_GetAmxString(amx, params[1], 0, &len1);
+	const char* string2 = MF_GetAmxString(amx, params[2], 1, &len2);
 
-	String string1_s(string1);
-
-	int len2;
-	char* string2 = g_fn_GetAmxString(amx, params[2], 0, &len2);
-
-	String string2_s(string2);
 
 	if (!params[3])
 	{
@@ -1002,20 +980,14 @@ static cell AMX_NATIVE_CALL okapi_mod_replace_string(AMX *amx, cell *params)
 		}
 	}
 
-	return library_replace_string(GameLibraries.Mod, string1_s.get_ptr(), string2_s.get_ptr());
+	return library_replace_string(GameLibraries.Mod, string1, string2);
 }
 
 static cell AMX_NATIVE_CALL okapi_engine_replace_string(AMX *amx, cell *params)
 {
-	int len1;
-	char* string1 = g_fn_GetAmxString(amx, params[1], 0, &len1);
-
-	String string1_s(string1);
-
-	int len2;
-	char* string2 = g_fn_GetAmxString(amx, params[2], 0, &len2);
-
-	String string2_s(string2);
+	int len1, len2;
+	const char* string1 = MF_GetAmxString(amx, params[1], 0, &len1);
+	const char* string2 = MF_GetAmxString(amx, params[2], 1, &len2);
 
 	if (!params[3])
 	{
@@ -1026,7 +998,7 @@ static cell AMX_NATIVE_CALL okapi_engine_replace_string(AMX *amx, cell *params)
 		}
 	}
 
-	return library_replace_string(GameLibraries.Engine, string1_s.get_ptr(), string2_s.get_ptr());
+	return library_replace_string(GameLibraries.Engine, string1, string2);
 }
 
 static cell AMX_NATIVE_CALL okapi_get_ptr_string(AMX *amx, cell *params)
@@ -1058,7 +1030,7 @@ static cell AMX_NATIVE_CALL okapi_set_ptr_string(AMX *amx, cell *params)
 	char* address = (char*)params[1];
 
 	int len;
-	char* string = g_fn_GetAmxString(amx, params[2], 0, &len);
+	const char* string = MF_GetAmxString(amx, params[2], 0, &len);
 
 	int prot = G_Memory.get_memory_protection((long)address);
 
@@ -1264,7 +1236,7 @@ static cell AMX_NATIVE_CALL okapi_get_ptr_int(AMX *amx, cell *params)
 static cell AMX_NATIVE_CALL okapi_mod_get_symbol_ptr(AMX *amx, cell *params)
 {
 	int len;
-	char* symbol = g_fn_GetAmxString(amx, params[1], 0, &len);
+	const char* symbol = MF_GetAmxString(amx, params[1], 0, &len);
 
 	GameLibrary* library = GameLibraries.Mod;
 
@@ -1279,7 +1251,7 @@ static cell AMX_NATIVE_CALL okapi_mod_get_symbol_ptr(AMX *amx, cell *params)
 static cell AMX_NATIVE_CALL okapi_engine_get_symbol_ptr(AMX *amx, cell *params)
 {
 	int len;
-	char* symbol = g_fn_GetAmxString(amx, params[1], 0, &len);
+	const char* symbol = MF_GetAmxString(amx, params[1], 0, &len);
 
 	GameLibrary* library = GameLibraries.Engine;
 

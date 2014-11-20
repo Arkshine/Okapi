@@ -161,6 +161,7 @@
     <ClCompile Include="..\globals.cpp" />
     <ClCompile Include="..\hl_type_conversion.cpp" />
     <ClCompile Include="..\offset_handler.cpp" />
+    <ClCompile Include="..\okapi.cpp" />
     <ClCompile Include="..\s_library.cpp" />
     <ClCompile Include="..\trie.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -197,7 +198,6 @@
     <ClInclude Include="..\include\type_handler.h" />
     <ClInclude Include="..\include\type_handlers\type_handler_extra.h" />
     <ClInclude Include="..\include\work.h" />
-    <ClCompile Include="..\okapi.cpp" />
     <ClCompile Include="..\sdk\amxxmodule.cpp" />
     <ClInclude Include="..\templates.h" />
   </ItemGroup>

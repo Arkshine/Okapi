@@ -220,7 +220,7 @@ protected:
 
 public:
 
-	AMX_Hook* add_hook(AMX* amx, char* callback, int phase);
+	AMX_Hook* add_hook(AMX* amx, const char* callback, int phase);
 	void del_hook(AMX_Hook* hook);
 
 	static void clean()

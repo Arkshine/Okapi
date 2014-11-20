@@ -44,7 +44,7 @@ class GameLibrary : public s_library
 			return get_address_symbol((void*)((int)this->address + (int)address));
 		}
 
-		int find_func(char* function_name)
+		int find_func(const char* function_name)
 		{
 			int address = (int)find_function(this, function_name);
 

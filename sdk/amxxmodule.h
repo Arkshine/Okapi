@@ -2217,7 +2217,7 @@ extern PFN_GET_AMXSCRIPT			g_fn_GetAmxScript;
 extern PFN_FIND_AMXSCRIPT_BYAMX		g_fn_FindAmxScriptByAmx;
 extern PFN_FIND_AMXSCRIPT_BYNAME	g_fn_FindAmxScriptByName;
 extern PFN_SET_AMXSTRING			g_fn_SetAmxString;
-extern PFN_GET_AMXSTRING			g_fn_GetAmxString;
+extern PFN_GET_AMXSTRING			MF_GetAmxString;
 extern PFN_GET_AMXSTRINGLEN			g_fn_GetAmxStringLen;
 extern PFN_FORMAT_AMXSTRING			g_fn_FormatAmxString;
 extern PFN_COPY_AMXMEMORY			g_fn_CopyAmxMemory;
@@ -2368,7 +2368,7 @@ void *			MF_MessageBlock(int mode, int msg, int *opt) { }
 #define MF_FindScriptByAmx g_fn_FindAmxScriptByAmx
 #define MF_FindScriptByName g_fn_FindAmxScriptByName
 #define MF_SetAmxString g_fn_SetAmxString
-#define MF_GetAmxString g_fn_GetAmxString
+#define MF_GetAmxString MF_GetAmxString
 #define MF_GetAmxStringLen g_fn_GetAmxStringLen
 #define MF_CopyAmxMemory g_fn_CopyAmxMemory
 void MF_Log(const char *fmt, ...);

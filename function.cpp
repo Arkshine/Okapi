@@ -144,7 +144,7 @@ unsigned char* Function::create_trampoline_generic(int stack_fix,bool pass_ecx, 
 	return block;
 }
 
-AMX_Hook* Function::add_hook(AMX *amx,char* callback, int phase)
+AMX_Hook* Function::add_hook(AMX *amx, const char* callback, int phase)
 {
 	AssemblyCreate assembly;
 

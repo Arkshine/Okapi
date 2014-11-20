@@ -314,7 +314,7 @@ class StrHandler : public TypeHandler
 	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param)
 	{
 		int len;
-		char *str = g_fn_GetAmxString(amx, param, 0, &len);
+		char *str = MF_GetAmxString(amx, param, 0, &len);
 		char *allocString = allocator.alloc<char>(len + 1);
 		strcpy(allocString, str);
 
@@ -324,7 +324,7 @@ class StrHandler : public TypeHandler
 	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params)
 	{
 		int len;
-		char *str = g_fn_GetAmxString(amx, *params, 0, &len);
+		char *str = MF_GetAmxString(amx, *params, 0, &len);
 		char *allocString = allocator.alloc<char>(len + 1);
 		strcpy(allocString, str);
 

@@ -182,7 +182,7 @@
 
 #endif
 	
-void* find_function(s_library* library,char* functionName)
+void* find_function(s_library* library, const char* functionName)
 {
 	#if defined __linux__
 		return dlsym(library->handle,functionName);
