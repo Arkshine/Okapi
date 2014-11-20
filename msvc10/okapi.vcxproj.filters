@@ -4,9 +4,6 @@
     <ClCompile Include="..\commands\command_help.cpp">
       <Filter>Source Files\commands</Filter>
     </ClCompile>
-    <ClCompile Include="..\sdk\amxxmodule.cpp">
-      <Filter>Module SDK\SDK Base</Filter>
-    </ClCompile>
     <ClCompile Include="..\function.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,6 +33,9 @@
     </ClCompile>
     <ClCompile Include="..\trie_string.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\sdk\amxxmodule.cpp">
+      <Filter>Module SDK\SDK Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -117,11 +117,11 @@
     <ClInclude Include="..\include\game_libraries\game_library_mod.h">
       <Filter>Header Files\game_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="..\sdk\amxxmodule.h">
-      <Filter>Module SDK\SDK Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sdk\moduleconfig.h">
+    <ClInclude Include="..\include\moduleconfig.h">
       <Filter>Module SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\sdk\amxxmodule.h">
+      <Filter>Module SDK\SDK Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

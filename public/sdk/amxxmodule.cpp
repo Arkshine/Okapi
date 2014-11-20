@@ -2565,7 +2565,7 @@ C_DLLEXPORT int AMXX_Attach(PFN_REQ_FNPTR reqFnptrFunc)
 	REQFUNC("FindAmxScriptByName", g_fn_FindAmxScriptByName, PFN_FIND_AMXSCRIPT_BYNAME);
 	REQFUNC("LoadAmxScript", g_fn_LoadAmxScript, PFN_LOAD_AMXSCRIPT);
 	REQFUNC("UnloadAmxScript", g_fn_UnloadAmxScript, PFN_UNLOAD_AMXSCRIPT);
-    REQFUNC("GetAmxScriptName", g_fn_GetAmxScriptName, PFN_GET_AMXSCRIPTNAME);
+	REQFUNC("GetAmxScriptName", g_fn_GetAmxScriptName, PFN_GET_AMXSCRIPTNAME);
 
 	// String / mem in amx scripts support
 	REQFUNC("SetAmxString", g_fn_SetAmxString, PFN_SET_AMXSTRING);
@@ -2852,7 +2852,7 @@ void Mem_ResetGlobals()
 
 // raw (re/de)allocators
 void *	Mem_Allocator(const char *sourceFile, const unsigned int sourceLine, const char *sourceFunc,
-			     const unsigned int allocationType, const size_t reportedSize)
+				 const unsigned int allocationType, const size_t reportedSize)
 {
 	if (g_fn_Allocator)
 		return g_fn_Allocator(Mem_MakeSourceFile(sourceFile), sourceLine, sourceFunc, allocationType, reportedSize);
@@ -2861,7 +2861,7 @@ void *	Mem_Allocator(const char *sourceFile, const unsigned int sourceLine, cons
 }
 
 void *	Mem_Reallocator(const char *sourceFile, const unsigned int sourceLine, const char *sourceFunc,
-			       const unsigned int reallocationType, const size_t reportedSize, void *reportedAddress)
+				   const unsigned int reallocationType, const size_t reportedSize, void *reportedAddress)
 {
 	if (g_fn_Reallocator)
 		return g_fn_Reallocator(Mem_MakeSourceFile(sourceFile), sourceLine, sourceFunc, reallocationType, reportedSize, reportedAddress);
@@ -2870,7 +2870,7 @@ void *	Mem_Reallocator(const char *sourceFile, const unsigned int sourceLine, co
 }
 
 void	Mem_Deallocator(const char *sourceFile, const unsigned int sourceLine, const char *sourceFunc,
-			      const unsigned int deallocationType, void *reportedAddress)
+				  const unsigned int deallocationType, void *reportedAddress)
 {
 	// If you you get user breakpoint here, something failed :)
 	//  - invalid pointer

@@ -81,47 +81,47 @@ struct amxx_module_info_s
   #include <stdint.h>
 #else
   #if defined __LCC__ || defined __DMC__ || defined LINUX || defined __APPLE__
-    #if defined HAVE_INTTYPES_H
-      #include <inttypes.h>
-    #else
-      #include <stdint.h>
-    #endif
+	#if defined HAVE_INTTYPES_H
+	  #include <inttypes.h>
+	#else
+	  #include <stdint.h>
+	#endif
   #elif !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L
-    /* The ISO C99 defines the int16_t and int_32t types. If the compiler got
-     * here, these types are probably undefined.
-     */
-    #if defined __MACH__
-      #include <ppc/types.h>
-      typedef unsigned short int  uint16_t;
-      typedef unsigned long int   uint32_t;
-    #elif defined __FreeBSD__
-      #include <inttypes.h>
-    #else
-      typedef short int           int16_t;
-      typedef unsigned short int  uint16_t;
-      #if defined SN_TARGET_PS2
-        typedef int               int32_t;
-        typedef unsigned int      uint32_t;
-      #else
-        typedef long int          int32_t;
-        typedef unsigned long int uint32_t;
-      #endif
-      #if defined __WIN32__ || defined _WIN32 || defined WIN32
-        typedef __int64	          int64_t;
-        typedef unsigned __int64  uint64_t;
-        #define HAVE_I64
-      #elif defined __GNUC__
-        typedef long long         int64_t;
-        typedef unsigned long long uint64_t;
-        #define HAVE_I64
-      #endif
-    #endif
+	/* The ISO C99 defines the int16_t and int_32t types. If the compiler got
+	 * here, these types are probably undefined.
+	 */
+	#if defined __MACH__
+	  #include <ppc/types.h>
+	  typedef unsigned short int  uint16_t;
+	  typedef unsigned long int   uint32_t;
+	#elif defined __FreeBSD__
+	  #include <inttypes.h>
+	#else
+	  typedef short int           int16_t;
+	  typedef unsigned short int  uint16_t;
+	  #if defined SN_TARGET_PS2
+		typedef int               int32_t;
+		typedef unsigned int      uint32_t;
+	  #else
+		typedef long int          int32_t;
+		typedef unsigned long int uint32_t;
+	  #endif
+	  #if defined __WIN32__ || defined _WIN32 || defined WIN32
+		typedef __int64	          int64_t;
+		typedef unsigned __int64  uint64_t;
+		#define HAVE_I64
+	  #elif defined __GNUC__
+		typedef long long         int64_t;
+		typedef unsigned long long uint64_t;
+		#define HAVE_I64
+	  #endif
+	#endif
   #endif
   #define HAVE_STDINT_H
 #endif
 #if defined _LP64 || defined WIN64 || defined _WIN64
   #if !defined __64BIT__
-    #define __64BIT__
+	#define __64BIT__
   #endif
 #endif
 
@@ -132,11 +132,11 @@ struct amxx_module_info_s
 /* calling convention for all interface functions and callback functions */
 #if !defined AMXAPI
   #if defined STDECL
-    #define AMXAPI      __stdcall
+	#define AMXAPI      __stdcall
   #elif defined CDECL
-    #define AMXAPI      __cdecl
+	#define AMXAPI      __cdecl
   #else
-    #define AMXAPI
+	#define AMXAPI
   #endif
 #endif
 #if !defined AMXEXPORT
@@ -167,7 +167,7 @@ struct amxx_module_info_s
 struct tagAMX;
 typedef cell (AMX_NATIVE_CALL *AMX_NATIVE)(struct tagAMX *amx, cell *params);
 typedef int (AMXAPI *AMX_CALLBACK)(struct tagAMX *amx, cell index,
-                                   cell *result, cell *params);
+								   cell *result, cell *params);
 typedef int (AMXAPI *AMX_DEBUG)(struct tagAMX *amx);
 #if !defined _FAR
   #define _FAR
@@ -175,7 +175,7 @@ typedef int (AMXAPI *AMX_DEBUG)(struct tagAMX *amx);
 
 #if defined _MSC_VER
 	#pragma warning(disable:4103)  /* disable warning message 4103 that complains
-	                                * about pragma pack in a header file */
+									* about pragma pack in a header file */
 	#pragma warning(disable:4100)  /* "'%$S' : unreferenced formal parameter" */
 
 	#if _MSC_VER >= 1400
@@ -323,15 +323,15 @@ typedef int (AMXAPI *AMX_DEBUG)(struct tagAMX *amx);
 
 #if !defined AMX_NO_ALIGN
   #if defined LINUX || defined __FreeBSD__ || defined __APPLE__
-    #pragma pack(1)         /* structures must be packed (byte-aligned) */
+	#pragma pack(1)         /* structures must be packed (byte-aligned) */
   #elif defined MACOS && defined __MWERKS__
 	#pragma options align=mac68k
   #else
-    #pragma pack(push)
-    #pragma pack(1)         /* structures must be packed (byte-aligned) */
-    #if defined __TURBOC__
-      #pragma option -a-    /* "pack" pragma for older Borland compilers */
-    #endif
+	#pragma pack(push)
+	#pragma pack(1)         /* structures must be packed (byte-aligned) */
+	#if defined __TURBOC__
+	  #pragma option -a-    /* "pack" pragma for older Borland compilers */
+	#endif
   #endif
 #endif
 
@@ -410,9 +410,9 @@ enum {
 
 #if !defined AMX_NO_ALIGN
   #if defined(__linux__) || defined(__APPLE__)
-    #pragma pack()    /* reset default packing */
+	#pragma pack()    /* reset default packing */
   #else
-    #pragma pack(pop) /* reset previous packing */
+	#pragma pack(pop) /* reset previous packing */
   #endif
 #endif
 
