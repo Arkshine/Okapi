@@ -13,6 +13,25 @@
 
 #else
 
+	#define WIN32_LEAN_AND_MEAN
+
+	#define NOWINRES
+	#define NOSERVICE
+	#define NOMCX
+	#define NOIME
+	#define NOSOUND
+	#define NOCOMM
+	#define NOKANJI
+	#define NORPC
+	#define NOPROXYSTUB
+	#define NOIMAGE
+	#define NOTAPE
+
+	#define PSAPI_VERSION 1
+
+	#pragma comment( lib, "Psapi.lib" ) 
+	#pragma comment( lib, "Kernel32.lib" ) 
+
 	#include <windows.h>
 	#include <string.h>
 	#include <climits>

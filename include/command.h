@@ -15,6 +15,5 @@ class Command
 };
 
 int parseHex(char *s);
-int get_function_address_from_arg(GameLibrary* library,char* argv);
 
 #endif

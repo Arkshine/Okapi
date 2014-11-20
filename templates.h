@@ -1,17 +1,9 @@
 
-#include <address_score.h>
 #include <s_address_line.h>
-#include <s_steps_address.h>
 #include <function.h>
 
 template <typename T>
 T max_val();
-
-template <>
-AddressScore max_val<AddressScore>()
-{
-	return AddressScore(0,0);
-}
 
 template <>
 int max_val<int>()
@@ -23,12 +15,6 @@ template <>
 s_address_line max_val<s_address_line>()
 {
 	return s_address_line(0,0);
-}
-
-template <>
-s_steps_address max_val<s_steps_address>()
-{
-	return s_steps_address(0,INT_MAX);
 }
 
 template <typename T>

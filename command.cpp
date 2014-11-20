@@ -42,24 +42,3 @@ int parseHex(char *s)
 
 	return sum;
 }
-
-int get_function_address_from_arg(GameLibrary* library,char* argv)
-{
-	int address = parseHex(argv);
-
-	if(!address)
-		address = library->find_func(argv);
-
-	if(!address)
-		return 0;
-
-	bool has = library->has_address(address);
-
-	if(has)
-	{
-		return address;
-	}
-
-	return 0;
-}
-	
