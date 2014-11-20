@@ -487,7 +487,7 @@ static cell AMX_NATIVE_CALL okapi_get_engfunc_ptr(AMX *amx, cell *params)
 {
 	int id = params[1];
 
-	if ((params[1] < 0) || (params[1] > EngFunc_ServerPrint))
+	if ((params[1] < 0) || (params[1] >= EngFunc_Count))
 	{
 		MF_LogError(amx, AMX_ERR_NATIVE, "Invalid engfunc id");
 
@@ -501,7 +501,7 @@ static cell AMX_NATIVE_CALL okapi_get_dllfunc_ptr(AMX *amx, cell *params)
 {
 	int id = params[1];
 
-	if ((params[1] < 0) || (params[1] > DLLFunc_CreateBaseline))
+	if ((params[1] < 0) || (params[1] >= DLLFunc_Count))
 	{
 		MF_LogError(amx, AMX_ERR_NATIVE, "Invalid dllfunc id");
 
