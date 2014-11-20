@@ -40,8 +40,8 @@
 
 	#define PSAPI_VERSION 1
 
-	#pragma comment( lib, "Psapi.lib" ) 
-	#pragma comment( lib, "Kernel32.lib" ) 
+	#pragma comment( lib, "Psapi.lib" )
+	#pragma comment( lib, "Kernel32.lib" )
 
 	#include <windows.h>
 	#include <string.h>
@@ -54,57 +54,57 @@
 
 	long get_length(void *baseAddress)
 	{
-			pid_t pid = getpid();
-			char file[255];
-			char buffer[2048];
-			snprintf(file, sizeof(file)-1, "/proc/%d/maps", pid);
-			FILE *fp = fopen(file, "rt");
-			if (fp)
+		pid_t pid = getpid();
+		char file[255];
+		char buffer[2048];
+		snprintf(file, sizeof(file)-1, "/proc/%d/maps", pid);
+		FILE *fp = fopen(file, "rt");
+		if (fp)
+		{
+			long length = 0;
+
+			void *start=NULL;
+			void *end=NULL;
+
+			while (!feof(fp))
 			{
-				long length = 0;
-
-				void *start=NULL;
-				void *end=NULL;
-
-				while (!feof(fp))
+				fgets(buffer, sizeof(buffer)-1, fp);
+				#if defined AMD64
+					sscanf(buffer, "%Lx-%Lx", &start, &end);
+				#else
+					sscanf(buffer, "%lx-%lx", &start, &end);
+				#endif
+				if(start == baseAddress)
 				{
-					fgets(buffer, sizeof(buffer)-1, fp);           
-					#if defined AMD64
-						sscanf(buffer, "%Lx-%Lx", &start, &end);
-					#else
-						sscanf(buffer, "%lx-%lx", &start, &end);
-					#endif
-					if(start == baseAddress)
+					length = (unsigned long)end  - (unsigned long)start;
+
+					char ignore[100];
+					int value;
+
+					while(!feof(fp))
 					{
-						length = (unsigned long)end  - (unsigned long)start;
+						fgets(buffer, sizeof(buffer)-1, fp);
+						#if defined AMD64
+							sscanf(buffer, "%Lx-%Lx %s %s %s %d", &start, &end, ignore, ignore, ignore, &value);
+						#else
+							sscanf(buffer, "%lx-%lx %s %s %s %d", &start, &end, ignore, ignore ,ignore, &value);
+						#endif
 
-						char ignore[100];
-						int value;
-
-						while(!feof(fp))
+						if(!value)
 						{
-							fgets(buffer, sizeof(buffer)-1, fp);
-							#if defined AMD64
-								sscanf(buffer, "%Lx-%Lx %s %s %s %d", &start, &end, ignore, ignore, ignore, &value);
-							#else
-								sscanf(buffer, "%lx-%lx %s %s %s %d", &start, &end, ignore, ignore ,ignore, &value);
-							#endif
-
-							if(!value)
-							{       
-								break;
-							}
-							else
-							{
-								length += (unsigned long)end  - (unsigned long)start;
-							}
+							break;
 						}
-					   
-						break;
+						else
+						{
+							length += (unsigned long)end  - (unsigned long)start;
+						}
 					}
-				}
 
-				fclose(fp);
+					break;
+				}
+			}
+
+			fclose(fp);
 
 			return length;
 		}
@@ -124,7 +124,7 @@
 			library->address = (void*) info.dli_fbase;
 			library->length = get_length((void*) info.dli_fbase);
 			library->handle = dlopen(info.dli_fname, RTLD_NOW);
-		   
+
 			return library;
 		}
 
@@ -151,21 +151,20 @@
 
 		s_library* library = NULL;
 
-		if(GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,(LPCSTR)address,&module))
+		if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCSTR)address, &module))
 		{
 			HANDLE process =  GetCurrentProcess();
 			_MODULEINFO moduleInfo;
 
-			if(GetModuleInformation(process,module,&moduleInfo,sizeof moduleInfo))
+			if (GetModuleInformation(process, module, &moduleInfo, sizeof moduleInfo))
 			{
 				CloseHandle(process);
 
 				library = new s_library;
 
-				library->address = (void*) moduleInfo.lpBaseOfDll;
+				library->address = (void*)moduleInfo.lpBaseOfDll;
 				library->length = moduleInfo.SizeOfImage;
 				library->handle = module;
-
 
 				return library;
 			}
@@ -174,20 +173,18 @@
 		return library;
 	}
 
-	
 	char* get_address_symbol(void* address)
 	{
 		return "";
 	}
 
 #endif
-	
+
 void* find_function(s_library* library, const char* functionName)
 {
 	#if defined __linux__
 		return dlsym(library->handle,functionName);
 	#else
-
-		return GetProcAddress((HMODULE)library->handle,functionName);
+		return GetProcAddress((HMODULE)library->handle, functionName);
 	#endif
 }

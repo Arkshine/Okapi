@@ -19,24 +19,24 @@ T create_empty();
 template <typename T>
 bool check_empty(T& a);
 
-template <typename T,int Base>
-void Trie<T,Base>::init(unsigned int val)
+template <typename T, int Base>
+void Trie<T, Base>::init(unsigned int val)
 {
 	this->val = val;
-	memset(childs, 0 ,sizeof(Trie*) * Base);
+	memset(childs, 0, sizeof(Trie*) * Base);
 	n = create_empty<T>();
 }
-	
-template <typename T,int Base>
-Trie<T,Base>::Trie(int mult)
+
+template <typename T, int Base>
+Trie<T, Base>::Trie(int mult)
 {
-	init(mult); 
+	init(mult);
 }
 
-template <typename T,int Base>
-T& Trie<T,Base>::create(unsigned int number,int mult)
+template <typename T, int Base>
+T& Trie<T, Base>::create(unsigned int number, int mult)
 {
-	if(!number)
+	if (!number)
 	{
 		return n;
 	}
@@ -47,28 +47,28 @@ T& Trie<T,Base>::create(unsigned int number,int mult)
 
 		Trie*& child = childs[digit];
 
-		if(!child)
+		if (!child)
 			child = new Trie(digit*mult);
 
-		return child->create(number,mult*Base);
+		return child->create(number, mult*Base);
 	}
 }
 
-template <typename T,int Base>
-CVector<int> Trie<T,Base>::get_keys(int val)
+template <typename T, int Base>
+CVector<int> Trie<T, Base>::get_keys(int val)
 {
 	CVector<int> list;
 
-	if(!check_empty(n))
+	if (!check_empty(n))
 	{
 		list.push_back(val);
 	}
-		
-	for(int i=0;i<Base;i++)
-	{
-		Trie<T,Base>*& child = childs[i];
 
-		if(child)
+	for (int i=0; i < Base; i++)
+	{
+		Trie<T, Base>*& child = childs[i];
+
+		if (child)
 		{
 			CVector<int> list_new = child->get_keys(child->val + val);
 
@@ -79,73 +79,73 @@ CVector<int> Trie<T,Base>::get_keys(int val)
 	return list;
 }
 
-template <typename T,int Base>
-Trie<T,Base>& Trie<T,Base>::move(Trie& other)
+template <typename T, int Base>
+Trie<T, Base>& Trie<T, Base>::move(Trie& other)
 {
 	this->val = other.val;
-	memcpy(this->childs,other.childs,sizeof(Trie*) * Base);
+	memcpy(this->childs, other.childs, sizeof(Trie*) * Base);
 	this->n = other.n;
-		
+
 	other.val = 1;
-	memset(other.childs,0,sizeof(Trie*) * Base);
+	memset(other.childs, 0, sizeof(Trie*) * Base);
 	other.n = create_empty<T>();
 
 	return *this;
 }
 
-template <typename T,int Base>
-Trie<T,Base>::~Trie()
+template <typename T, int Base>
+Trie<T, Base>::~Trie()
 {
-	for(int i=0;i<Base;i++)
+	for (int i=0; i < Base; i++)
 		delete childs[i];
 }
 
-template <typename T,int Base>
-Trie<T,Base>::Trie()
-{ 
-	init(1); 
+template <typename T, int Base>
+Trie<T, Base>::Trie()
+{
+	init(1);
 }
 
-template <typename T,int Base>
-Trie<T,Base>::Trie (const Trie& other)
-{	
-	move( const_cast<Trie&>(other) ); 
+template <typename T, int Base>
+Trie<T, Base>::Trie(const Trie& other)
+{
+	move(const_cast<Trie&>(other));
 }
 
-template <typename T,int Base>
-Trie<T,Base>& Trie<T,Base>::operator= (Trie other)
+template <typename T, int Base>
+Trie<T, Base>& Trie<T, Base>::operator= (Trie other)
 {
 	return move(other);
 }
 
-template <typename T,int Base>
-T& Trie<T,Base>::operator[](unsigned int number)
-{ 
-	return this->create(number,1); 
+template <typename T, int Base>
+T& Trie<T, Base>::operator[](unsigned int number)
+{
+	return this->create(number, 1);
 }
 
-template <typename T,int Base>
-bool Trie<T,Base>::is_empty()
+template <typename T, int Base>
+bool Trie<T, Base>::is_empty()
 {
-	if(!check_empty<T>(n))
+	if (!check_empty<T>(n))
 		return false;
 
-	for(int i=0;i<Base;i++)
+	for (int i=0; i < Base; i++)
 	{
 		Trie*& child = childs[i];
 
-		if(child)
+		if (child)
 		{
-			if(!check_empty< Trie<T,Base> >(*child))
+			if (!check_empty< Trie<T, Base> >(*child))
 				return false;
 		}
 	}
 
 	return true;
 }
-	
-template <typename T,int Base>
-CVector<int> Trie<T,Base>::get_keys()
+
+template <typename T, int Base>
+CVector<int> Trie<T, Base>::get_keys()
 {
 	return this->get_keys(0);
 }

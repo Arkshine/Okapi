@@ -15,10 +15,8 @@
 
 entvars_t* HL_TypeConversion::cbase_to_edict(void* cbase)
 {
-	if(!cbase)
+	if (!cbase)
 		return NULL;
 
-	return *(entvars_t **)((char *)(cbase) + G_OffsetHandler->PEV);
+	return *(entvars_t **)((char *)(cbase)+G_OffsetHandler->PEV);
 }
-
-	

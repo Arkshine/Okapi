@@ -14,35 +14,35 @@
 
 void clean_debug_file()
 {
-	FILE* f = fopen("debug.txt","w+");
+	FILE* f = fopen("debug.txt", "w+");
 	fclose(f);
 }
 
-void print(char* format,...)
+void print(char* format, ...)
 {
 	char buffer[1000];
 	va_list args;
-	va_start (args, format);
-	vsprintf (buffer,format, args);
-	
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+
 	SERVER_PRINT(buffer);
 	Util::debug_fprintf(buffer);
 
-	va_end (args);
+	va_end(args);
 }
 
 void patch_printf()
 {
-	#if defined __linux__
-	#else
-		unsigned char* c = (unsigned char*) &printf;
+#if defined __linux__
+#else
+	unsigned char* c = (unsigned char*)&printf;
 
-		int a;
-		VirtualProtect(c,5,PAGE_EXECUTE_READWRITE,(PDWORD)&a);
-		c[0] = 0xE9;
-		*((long*)(&c[1])) = (char*)print - (char*)printf - 5;
+	int a;
+	VirtualProtect(c, 5, PAGE_EXECUTE_READWRITE, (PDWORD)&a);
+	c[0] = 0xE9;
+	*((long*)(&c[1])) = (char*)print - (char*)printf - 5;
 
-	#endif
+#endif
 }
 
 extern "C" void __cxa_pure_virtual() { while (1); }

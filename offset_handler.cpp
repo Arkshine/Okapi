@@ -1,4 +1,3 @@
-
 #include <offset_handler.h>
 //
 // AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
@@ -22,11 +21,11 @@ void OffsetHandler::search_pev()
 
 	char* private_c = (char*)edict->pvPrivateData;
 
-	for(int i=0;0xFFF;i++)
+	for (int i=0; 0xFFF; i++)
 	{
-		long val = *((long*)(private_c+i));
+		long val = *((long*)(private_c + i));
 
-		if(val == (long)entvars)
+		if (val == (long)entvars)
 		{
 			this->PEV = i;
 
@@ -49,26 +48,26 @@ void OffsetHandler::search_virtual_table()
 
 int OffsetHandler::search_virtual_table(void* address)
 {
-	char* c_address = (char*) address;
+	char* c_address = (char*)address;
 
-	for(int i=0;0xFFF;i++)
+	for (int i=0; 0xFFF; i++)
 	{
-		long address = *((long*)(c_address+i));
+		long address = *((long*)(c_address + i));
 
-		if(GameLibraries.Engine->contains_address(address) || GameLibraries.Mod->contains_address(address))
+		if (GameLibraries.Engine->contains_address(address) || GameLibraries.Mod->contains_address(address))
 		{
-			void** address_ptr = (void**) address;
+			void** address_ptr = (void**)address;
 
 			int sum = 0;
 
-			for(int j=0;j<=10;j++)
+			for (int j=0; j <= 10; j++)
 			{
 				void* address_inside = address_ptr[j];
 
 				sum += GameLibraries.Engine->contains_address(address) | GameLibraries.Mod->contains_address(address);
 			}
 
-			if(sum > 5)
+			if (sum > 5)
 			{
 				return i;
 			}
