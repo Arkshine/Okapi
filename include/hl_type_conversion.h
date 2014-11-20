@@ -1,4 +1,3 @@
-
 #ifndef __HL_TYPE_CONVERSION_H__
 #define __HL_TYPE_CONVERSION_H__
 
@@ -6,35 +5,34 @@
 
 class HL_TypeConversion
 {
-	
 public:
 	// From fakemeta
-	inline edict_t* INDEXENT2( int iEdictNum )
+	inline edict_t* INDEXENT2(int iEdictNum)
 	{
 		if (iEdictNum >= 1 && iEdictNum <= gpGlobals->maxClients)
 			return MF_GetPlayerEdict(iEdictNum);
 		else
-			return (*g_engfuncs.pfnPEntityOfEntIndex)(iEdictNum); 
-	} 
+			return (*g_engfuncs.pfnPEntityOfEntIndex)(iEdictNum);
+	}
 
 	edict_t* entvar_to_edict(entvars_t *pev)
 	{
-		if (pev==NULL)
+		if (pev == NULL)
 		{
 			return NULL;
 		}
-	
+
 		return pev->pContainingEntity;
 	}
 
 	int entvar_to_id(entvars_t *pev)
 	{
-		if (pev==NULL)
+		if (pev == NULL)
 		{
 			return -1;
 		}
 
-		if (pev->pContainingEntity==NULL)
+		if (pev->pContainingEntity == NULL)
 		{
 			return -1;
 		}
@@ -56,19 +54,19 @@ public:
 
 	int cbase_to_id(void *cbase)
 	{
-		if (cbase==NULL)
+		if (cbase == NULL)
 		{
 			return -1;
 		}
 
 		entvars_t* pev = this->cbase_to_edict(cbase);
 
-		if (pev==NULL)
+		if (pev == NULL)
 		{
 			return -1;
 		}
-	
-		if (pev->pContainingEntity==NULL)
+
+		if (pev->pContainingEntity == NULL)
 		{
 			return -1;
 		}

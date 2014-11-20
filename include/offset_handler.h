@@ -1,4 +1,3 @@
-
 #ifndef __OFFSET_HANDLER_H__
 #define __OFFSET_HANDLER_H__
 

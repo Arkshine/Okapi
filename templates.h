@@ -1,4 +1,3 @@
-
 #include <s_address_line.h>
 #include <function.h>
 
@@ -14,7 +13,7 @@ int max_val<int>()
 template <>
 s_address_line max_val<s_address_line>()
 {
-	return s_address_line(0,0);
+	return s_address_line(0, 0);
 }
 
 template <typename T>
@@ -31,7 +30,6 @@ Function* create_empty<Function*>()
 {
 	return NULL;
 }
-
 
 template <typename T>
 bool check_empty(T& a);

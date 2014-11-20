@@ -1,4 +1,3 @@
-
 #ifndef __COMMAND_HELP_H__
 #define __COMMAND_HELP_H__
 
@@ -7,11 +6,11 @@
 
 class CommandHelp : public Command
 {
-	public:
+public:
 
-		void exec();
-		String get_description();
-		void show_help();
+	void exec();
+	String get_description();
+	void show_help();
 };
 
 #endif

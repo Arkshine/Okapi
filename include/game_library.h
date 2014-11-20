@@ -1,4 +1,3 @@
-
 #ifndef __GAME_LIBRARY_H__
 #define __GAME_LIBRARY_H__
 
@@ -12,44 +11,42 @@
 
 class GameLibrary : public s_library
 {
-	protected:
+protected:
 
-		void init()
-		{
-			
-		}
+	void init()
+	{
+	}
 
-	public:
+public:
 
-		virtual String get_name() = 0;
+	virtual String get_name() = 0;
 
-		GameLibrary(s_library s)
-		{
-			this->address = s.address;
-			this->length = s.length;
-			this->handle = s.handle;
-		}
+	GameLibrary(s_library s)
+	{
+		this->address = s.address;
+		this->length = s.length;
+		this->handle = s.handle;
+	}
 
-		char* get_address_sym(void* address)
-		{
-			return get_address_symbol((void*)((int)this->address + (int)address));
-		}
+	char* get_address_sym(void* address)
+	{
+		return get_address_symbol((void*)((int)this->address + (int)address));
+	}
 
-		int find_func(char* function_name)
-		{
-			int address = (int)find_function(this,function_name);
+	int find_func(char* function_name)
+	{
+		int address = (int)find_function(this, function_name);
 
-			if(!address)
-				return 0;
+		if (!address)
+			return 0;
 
-			return address - (int)this->address;
-		}
+		return address - (int)this->address;
+	}
 
-
-		bool contains_address(long address)
-		{
-			return (address >= (long)this->address) && (address < ((long)this->address + this->length));
-		}
+	bool contains_address(long address)
+	{
+		return (address >= (long)this->address) && (address < ((long)this->address + this->length));
+	}
 };
 
 #endif

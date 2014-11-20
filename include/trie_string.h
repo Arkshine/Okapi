@@ -1,4 +1,3 @@
-
 #ifndef __TRIE_STRING_H__
 #define __TRIE_STRING_H__
 
@@ -17,7 +16,7 @@ struct TrieString
 	char val;
 
 	void init(char val);
-	
+
 	TrieString(char val);
 
 	T& create(char* s);
@@ -26,21 +25,21 @@ struct TrieString
 
 	TrieString& move(TrieString& other);
 
-	public :
+public:
 
-		~TrieString();
+	~TrieString();
 
-		TrieString();
+	TrieString();
 
-		TrieString (const TrieString& other);
+	TrieString(const TrieString& other);
 
-		TrieString& operator= (TrieString other);
-		
-		T& operator[](char* s);
+	TrieString& operator= (TrieString other);
 
-		bool is_empty();
-	
-		CVector<String> get_keys();
+	T& operator[](char* s);
+
+	bool is_empty();
+
+	CVector<String> get_keys();
 };
 
 #include <trie_string.cpp>

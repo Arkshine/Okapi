@@ -37,16 +37,16 @@
 #include <string.h>
 
 template <class T>
-inline void clone(T*a ,T* b,size_t count)
+inline void clone(T*a, T* b, size_t count)
 {
-	for (size_t i=0; i<count; i++)
+	for (size_t i=0; i < count; i++)
 		a[i] = b[i];
 }
 
 template <>
-inline void clone<int>(int*a ,int* b,size_t count)
+inline void clone<int>(int*a, int* b, size_t count)
 {
-	memcpy(a,b,count*sizeof(int));
+	memcpy(a, b, count*sizeof(int));
 }
 
 class AssemblyCreate;
@@ -72,12 +72,12 @@ template <class T> class CVector
 		T *newData = new T[newSize];
 		if (!newData)
 			return false;
-		
+
 		if (m_Data)
 		{
-			clone<T>(newData,m_Data,m_CurrentUsedSize);
+			clone<T>(newData, m_Data, m_CurrentUsedSize);
 
-			delete [] m_Data;
+			delete[] m_Data;
 		}
 
 		m_Data = newData;
@@ -108,7 +108,7 @@ template <class T> class CVector
 		{
 			if (m_Data)
 			{
-				delete [] m_Data;
+				delete[] m_Data;
 				m_Data = NULL;
 				m_Size = 0;
 			}
@@ -122,9 +122,9 @@ template <class T> class CVector
 		{
 			size_t end = (m_CurrentUsedSize < size) ? (m_CurrentUsedSize) : size;
 
-			clone<T>(newData,m_Data,end);
+			clone<T>(newData, m_Data, end);
 
-			delete [] m_Data;
+			delete[] m_Data;
 		}
 		m_Data = newData;
 		m_Size = size;
@@ -314,10 +314,10 @@ public:
 	CVector<T>(const CVector<T> & other)
 	{
 		// copy data
-		m_Data = new T [other.m_CurrentUsedSize];
+		m_Data = new T[other.m_CurrentUsedSize];
 		m_Size = other.m_CurrentUsedSize;
 		m_CurrentUsedSize = other.m_CurrentUsedSize;
-		for (size_t i=0; i<other.m_CurrentUsedSize; i++)
+		for (size_t i=0; i < other.m_CurrentUsedSize; i++)
 			m_Data[i] = other.m_Data[i];
 	}
 
@@ -462,7 +462,7 @@ public:
 	iterator insert(iterator where, const T & value)
 	{
 		// validate iter
-		if (where < m_Data || where > (m_Data + m_CurrentUsedSize))
+		if (where < m_Data || where >(m_Data + m_CurrentUsedSize))
 			return iterator(0);
 
 		size_t ofs = where - begin();
@@ -514,19 +514,19 @@ public:
 		m_CurrentUsedSize = 0;
 		if (m_Data)
 		{
-			delete [] m_Data;
+			delete[] m_Data;
 			m_Data = NULL;
 		}
 	}
 
 	CVector<T>& merge(CVector<T>& b)
 	{
-		if(!b.m_CurrentUsedSize)
+		if (!b.m_CurrentUsedSize)
 			return *this;
 
 		this->GrowIfNeeded(b.m_CurrentUsedSize);
 
-		clone<T>(&this->m_Data[this->m_CurrentUsedSize],b.m_Data,b.m_CurrentUsedSize);
+		clone<T>(&this->m_Data[this->m_CurrentUsedSize], b.m_Data, b.m_CurrentUsedSize);
 
 		this->m_CurrentUsedSize += b.m_CurrentUsedSize;
 
@@ -535,4 +535,3 @@ public:
 };
 
 #endif // __CVECTOR_H__
-

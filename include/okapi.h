@@ -35,19 +35,19 @@
 #include <globals.h>
 
 template <class T>
-long library_find(GameLibrary* library,long address,T value)
+long library_find(GameLibrary* library, long address, T value)
 {
 	long end = (long)library->address + (long)library->length + 1 - (sizeof(T));
 
-	while(address<end)
+	while (address < end)
 	{
 		T* i_address = (T*)address;
 
-		if(*i_address == value)
+		if (*i_address == value)
 		{
 			return address;
 		}
-		
+
 		address++;
 	}
 
@@ -55,27 +55,27 @@ long library_find(GameLibrary* library,long address,T value)
 }
 
 template <class T>
-int library_replace(GameLibrary* library,T val_search,T val_replace)
+int library_replace(GameLibrary* library, T val_search, T val_replace)
 {
 	long start = (long)library->address;
-	
+
 	int count = 0;
 
-	for(long i=0;i < library->length + 1 - (long)sizeof(T);i++)
+	for (long i=0; i < library->length + 1 - (long)sizeof(T); i++)
 	{
 		T* address = (T*)(((char*)start) + i);
 
-		if(*address == val_search)
+		if (*address == val_search)
 		{
 			int protection = G_Memory.get_memory_protection((long)address);
 
 			G_Memory.make_writable((long)address);
 
 			*address = val_replace;
-			
+
 			count++;
 
-			G_Memory.set_memory_protection((long)address,protection);
+			G_Memory.set_memory_protection((long)address, protection);
 		}
 	}
 

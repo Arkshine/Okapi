@@ -1,4 +1,3 @@
-
 #ifndef __STRING_H__
 #define __STRING_H__
 
@@ -7,7 +6,7 @@
 #include <stdlib.h>
 #include "amxxmodule.h"
 
-class String 
+class String
 {
 	char* data;
 	size_t size;
@@ -16,7 +15,7 @@ class String
 	void init(size_t size)
 	{
 		this->size = size;
-		data = new char[this->size+1];
+		data = new char[this->size + 1];
 
 		data[0] = 0;
 		pos = 0;
@@ -34,8 +33,8 @@ public:
 		this->size = other.size;
 		this->pos = other.pos;
 
-		this->data = new char[this->size+1];
-		memcpy(this->data,other.data,pos);
+		this->data = new char[this->size + 1];
+		memcpy(this->data, other.data, pos);
 
 		this->data[pos] = 0;
 	}
@@ -44,21 +43,21 @@ public:
 	{
 		init(1);
 
-		this->sprintf("%s",s);
+		this->sprintf("%s", s);
 	}
 
 	String copy()
 	{
 		String a;
 
-		a.sprintf("%s",this->data);
+		a.sprintf("%s", this->data);
 
 		return a;
 	}
 
-    String& operator=(String other)
-    {
-		if(this == &other)
+	String& operator=(String other)
+	{
+		if (this == &other)
 			return *this;
 
 		char* aux_data = other.data;
@@ -73,8 +72,8 @@ public:
 		this->size = aux_size;
 		this->pos = aux_pos;
 
-        return *this;
-    }
+		return *this;
+	}
 
 	String& operator+=(char c)
 	{
@@ -82,21 +81,21 @@ public:
 		holder[0] = c;
 		holder[1] = 0;
 
-		this->sprintf("%c",c);
+		this->sprintf("%c", c);
 
 		return *this;
 	}
 
 	String& operator+=(char* c)
 	{
-		this->sprintf("%s",c);
+		this->sprintf("%s", c);
 
 		return *this;
 	}
 
 	String &operator--()
 	{
-		if(this->pos)
+		if (this->pos)
 		{
 			this->pos--;
 			data[this->pos] = 0;
@@ -107,26 +106,26 @@ public:
 
 	void sprintf(char *format, ...)
 	{
-		while(true)
+		while (true)
 		{
 			va_list args;
-			va_start (args, format);
+			va_start(args, format);
 
-			int len = size-pos;
+			int len = size - pos;
 
 #if defined __linux__
 			int zero = 1;
 #else
 			int zero = 0;
 #endif
-			int c = vsnprintf(&data[pos],len+zero,format,args);
+			int c = vsnprintf(&data[pos], len + zero, format, args);
 
-			va_end (args);
+			va_end(args);
 
-			if((c < 0) || (c > len))
+			if ((c < 0) || (c > len))
 			{
 				this->size *= 2;
-				data = (char*)realloc(data,this->size+1);
+				data = (char*)realloc(data, this->size + 1);
 				continue;
 			}
 			else
@@ -155,7 +154,5 @@ public:
 		return this->data;
 	}
 };
-
-
 
 #endif

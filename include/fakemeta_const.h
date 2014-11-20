@@ -1,21 +1,20 @@
-
 #ifndef __FAKEMETA_CONST_H
 #define __FAKEMETA_CONST_H
 
 typedef enum
 {
-	DLLFunc_GameInit,					// void )			( void );				
+	DLLFunc_GameInit,					// void )			( void );
 	DLLFunc_Spawn,						// int  )			(edict_t *pent);
 	DLLFunc_Think,						// void )			(edict_t *pent);
 	DLLFunc_Use,						// void )			(edict_t *pentUsed, edict_t *pentOther);
 	DLLFunc_Touch,						// void )			(edict_t *pentTouched, edict_t *pentOther);
 	DLLFunc_Blocked,					// void )			(edict_t *pentBlocked, edict_t *pentOther);
-	
+
 	//You can pass in 0 for glb kvd handle or a kvd handle here
 	DLLFunc_KeyValue,					// void )			(edict_t *pentKeyvalue, KeyValueData *pkvd);
 	DLLFunc_SetAbsBox,					// void )			(edict_t *pent);
 	DLLFunc_ClientConnect,				// bool )			(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[128]);
-	
+
 	DLLFunc_ClientDisconnect,			// void )			(edict_t *pEntity);
 	DLLFunc_ClientKill,					// void )			(edict_t *pEntity);
 	DLLFunc_ClientPutInServer,			// void )			(edict_t *pEntity);
@@ -32,7 +31,7 @@ typedef enum
 
 	// Returns string describing current .dll.  E.g., TeamFotrress 2, Half-Life
 	// This also gets called when the server is queried for information (for example, by a server browser tool)
-	DLLFunc_GetGameDescription,	 		// const char *)	( void );     
+	DLLFunc_GetGameDescription,	 		// const char *)	( void );
 
 	// Spectator funcs
 	DLLFunc_SpectatorConnect,			// void )			(edict_t *pEntity);
@@ -62,7 +61,6 @@ typedef enum
 	DLLFunc_CmdStart,					// void )			(const edict_t *player, const struct usercmd_s *cmd, unsigned int random_seed);
 	DLLFunc_CmdEnd,						// void )			(const edict_t *player);
 	DLLFunc_CreateBaseline				// void )			(int player, int eindex, struct entity_state_s *baseline, struct edict_s *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs);
-
 } DLLFunc_Enum;
 
 typedef enum {
@@ -106,7 +104,7 @@ typedef enum {
 	EngFunc_TraceModel,					// void )			(const float *v1, const float *v2, int hullNumber, edict_t *pent, TraceResult *ptr);
 	EngFunc_TraceTexture,				// const char *)	(edict_t *pTextureEntity, const float *v1, const float *v2 );
 	EngFunc_TraceSphere,				// void )			(const float *v1, const float *v2, int fNoMonsters, float radius, edict_t *pentToSkip, TraceResult *ptr);
-	
+
 	EngFunc_GetAimVector,				// void )			(edict_t *ent, float speed, float *rgflReturn);
 	EngFunc_ParticleEffect,				// void )			(const float *org, const float *dir, float color, float count);
 	EngFunc_LightStyle,					// void )			(int style, char *val);
@@ -148,7 +146,7 @@ typedef enum {
 	EngFunc_SetKeyValue,				// void )			(char *infobuffer, char *key, char *value);
 	EngFunc_SetClientKeyValue,			// void )			(int clientIndex, char *infobuffer, char *key, char *value);
 	EngFunc_CreateInstBaseline,			// int  )			(int classname, struct entity_state_s *baseline);
-	
+
 	// Returns pointer to info buffer that can be used with the infobuffer param of InfoKeyValue, SetKeyValue, and SetClientKeyValue
 	EngFunc_GetInfoKeyBuffer,			// char*)			(edict_t *e);
 	EngFunc_AlertMessage,				// void )			(ALERT_TYPE atype, char *szFmt, ...);

@@ -1,4 +1,3 @@
-
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 
@@ -50,6 +49,5 @@ enum ArgsType
 extern TypeHandler* G_ArgsTypeHandler[9];
 
 void list_commands();
-
 
 #endif

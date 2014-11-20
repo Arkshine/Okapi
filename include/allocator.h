@@ -1,4 +1,3 @@
-
 #ifndef __ALLOCATOR_H__
 #define __ALLOCATOR_H__
 
@@ -17,7 +16,7 @@ public:
 
 	void clear()
 	{
-		for(size_t i=0;i<data.size();i++)
+		for (size_t i=0; i < data.size(); i++)
 		{
 			delete data[i];
 		}
@@ -25,13 +24,13 @@ public:
 		data.clear();
 	}
 
-	typedef CVector<void*>::iterator iterator; 
+	typedef CVector<void*>::iterator iterator;
 
 	bool free_ptr(void* ptr)
 	{
-		for(iterator it = data.begin(); it < data.end(); it++)
+		for (iterator it = data.begin(); it < data.end(); it++)
 		{
-			if(*it == ptr)
+			if (*it == ptr)
 			{
 				delete ptr;
 
@@ -46,7 +45,6 @@ public:
 
 	Allocator()
 	{
-
 	}
 
 	template <class T>
@@ -57,18 +55,18 @@ public:
 
 		return block;
 	}
-	
-	Allocator (const Allocator& obj)
-    {
+
+	Allocator(const Allocator& obj)
+	{
 		assert(0);
 	}
 
 	Allocator& operator= (Allocator other)
-    {
+	{
 		assert(0);
 
-        return *this;
-    }
+		return *this;
+	}
 };
 
 #endif

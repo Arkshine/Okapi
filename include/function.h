@@ -1,4 +1,3 @@
-
 #ifndef ___FUNC_TION___
 #define ___FUNC_TION___
 
@@ -23,7 +22,7 @@ struct AMX_Hook
 	int amx_hook;
 	int phase;
 
-	AMX_Hook(Function* function,int amx_hook,int phase) : function(function), amx_hook(amx_hook), phase(phase){}
+	AMX_Hook(Function* function, int amx_hook, int phase) : function(function), amx_hook(amx_hook), phase(phase){}
 
 	~AMX_Hook()
 	{
@@ -36,8 +35,8 @@ class Function
 	static CVector<Function*> functions;
 	static CVector<AMX_Hook*> hooks_stack;
 
-	static long Gate(void* ebp,void* eip,Function* func, void** stack,...);
-	static float GateFloat(void* ebp,void* eip,Function* func, void** stack,...);
+	static long Gate(void* ebp, void* eip, Function* func, void** stack, ...);
+	static float GateFloat(void* ebp, void* eip, Function* func, void** stack, ...);
 
 protected:
 
@@ -49,7 +48,7 @@ protected:
 	CVector<AMX_Hook*> amx_hooks[2];
 
 	void** stack;
-	
+
 	long current_ret_data;
 	long original_ret_data;
 
@@ -61,7 +60,7 @@ protected:
 
 	Allocator allocator;
 
-	Function(void* address,CVector<TypeHandler*> arguments_handlers,TypeHandler* return_handler);
+	Function(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler);
 
 	virtual ~Function()
 	{
@@ -74,11 +73,11 @@ protected:
 
 	void clean_hooks()
 	{
-		for(int i=0;i<2;i++)
+		for (int i=0; i < 2; i++)
 		{
 			CVector<AMX_Hook*>& amx_hooks_phase = amx_hooks[i];
 
-			for(size_t j=0;j<amx_hooks_phase.size();j++)
+			for (size_t j=0; j < amx_hooks_phase.size(); j++)
 			{
 				AMX_Hook* amx_hook = amx_hooks_phase[j];
 				delete amx_hook;
@@ -94,7 +93,7 @@ protected:
 
 		int offset = 0;
 
-		for(size_t i=0;i<(size_t)n;i++)
+		for (size_t i=0; i < (size_t)n; i++)
 		{
 			TypeHandler*& handler = handlers[i];
 			offset += handler->stack_places();
@@ -109,7 +108,7 @@ protected:
 
 		CVector<TypeHandler*>& handlers = this->arguments_handlers;
 
-		for(size_t i=0;i<handlers.size();i++)
+		for (size_t i=0; i < handlers.size(); i++)
 		{
 			TypeHandler*& handler = handlers[i];
 
@@ -125,11 +124,11 @@ protected:
 
 		int offset = 0;
 
-		for(size_t i=0;i<handlers.size();i++)
+		for (size_t i=0; i < handlers.size(); i++)
 		{
 			TypeHandler*& handler = handlers[i];
 
-			handler->convert_to_amxx(allocator,&stack[offset],this->stack_amxx[i]);
+			handler->convert_to_amxx(allocator, &stack[offset], this->stack_amxx[i]);
 
 			offset += handler->stack_places();
 		}
@@ -141,29 +140,29 @@ protected:
 		this->current_ret_data = 0;
 		this->original_ret_data = 0;
 
-		if(call_hooks)
+		if (call_hooks)
 		{
 			convert_to_amxx(stack);
 		}
 
 		OkapiRet amxx_ret = OkapiRetIgnore;
 
-		if(call_hooks)
+		if (call_hooks)
 		{
 			amxx_ret = call_amxx_hooks(0);
 		}
 
-		if(amxx_ret != OkapiRetSupercede)
+		if (amxx_ret != OkapiRetSupercede)
 		{
 			this->original_ret_data = call_original(stack);
 		}
 
-		if(amxx_ret == OkapiRetIgnore)
+		if (amxx_ret == OkapiRetIgnore)
 		{
 			this->current_ret_data = this->original_ret_data;
 		}
 
-		if(call_hooks && (amxx_ret != OkapiRetSupercede))
+		if (call_hooks && (amxx_ret != OkapiRetSupercede))
 		{
 			call_amxx_hooks(1);
 		}
@@ -176,17 +175,17 @@ protected:
 
 	long virtual call_original(void** stack) = 0;
 
-	unsigned char* create_trampoline_generic(int stack_fix,bool pass_ecx, bool handle_jump = 1);
+	unsigned char* create_trampoline_generic(int stack_fix, bool pass_ecx, bool handle_jump = 1);
 
 	OkapiRet call_amxx_hook(int hook);
 
 	OkapiRet call_amxx_hooks(int phase)
 	{
 		OkapiRet ret = OkapiRetIgnore;
-		
+
 		CVector<AMX_Hook*> hooks = this->amx_hooks[phase];
-		
-		for(size_t i=0;i<hooks.size();i++)
+
+		for (size_t i=0; i < hooks.size(); i++)
 		{
 			AMX_Hook* hook = hooks[i];
 
@@ -194,16 +193,16 @@ protected:
 
 			OkapiRet ret_hook = call_amxx_hook(hook->amx_hook);
 
-			ret = (OkapiRet) max(ret,ret_hook);
+			ret = (OkapiRet)max(ret, ret_hook);
 
 			hooks_stack.pop_back();
 
-			if(ret == OkapiRetSupercede)
+			if (ret == OkapiRetSupercede)
 			{
 				return ret;
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -216,7 +215,7 @@ public:
 	{
 		clean_all_hooks();
 
-		for(size_t i=0;i<functions.size();i++)
+		for (size_t i=0; i < functions.size(); i++)
 		{
 			Function* function = functions[i];
 
@@ -228,7 +227,7 @@ public:
 
 	static void clean_all_hooks()
 	{
-		for(size_t i=0;i<functions.size();i++)
+		for (size_t i=0; i < functions.size(); i++)
 		{
 			Function* function = functions[i];
 
@@ -238,10 +237,10 @@ public:
 
 	static AMX_Hook* get_current_hook()
 	{
-		if(!hooks_stack.size())
+		if (!hooks_stack.size())
 			return NULL;
 
-		return hooks_stack[hooks_stack.size()-1];
+		return hooks_stack[hooks_stack.size() - 1];
 	}
 
 	int get_n_args()
@@ -249,26 +248,26 @@ public:
 		return this->arguments_handlers.size();
 	}
 
-	void set_arg(int n,AMX* amx,cell param)
+	void set_arg(int n, AMX* amx, cell param)
 	{
 		void** stack_arg = get_stack_for_arg(n);
 
-		this->arguments_handlers[n]->convert_from_amxx(allocator,stack_arg,amx,param);
+		this->arguments_handlers[n]->convert_from_amxx(allocator, stack_arg, amx, param);
 	}
 
 	void set_return(AMX *amx, cell *params)
 	{
-		this->current_ret_data = this->return_handler->convert_from_amxx(allocator,amx,params);
+		this->current_ret_data = this->return_handler->convert_from_amxx(allocator, amx, params);
 	}
 
 	int get_n_ret_params()
 	{
 		return this->return_handler->by_ref_n_params();
 	}
-	
+
 	long get_origin_return(AMX *amx, cell *params)
 	{
-		return this->return_handler->convert_to_amxx(amx,params,this->original_ret_data);
+		return this->return_handler->convert_to_amxx(amx, params, this->original_ret_data);
 	}
 
 	int call_n_params()
@@ -276,7 +275,7 @@ public:
 		return this->arguments_handlers.size() + this->return_handler->by_ref_n_params();
 	}
 
-	virtual long call_amx(AMX* amx, cell* params,bool call_hooks)
+	virtual long call_amx(AMX* amx, cell* params, bool call_hooks)
 	{
 		Allocator allocator_c;
 
@@ -288,11 +287,11 @@ public:
 
 		int offset = 0;
 
-		for(size_t i=0;i<handlers.size();i++)
+		for (size_t i=0; i < handlers.size(); i++)
 		{
 			TypeHandler*& handler = handlers[i];
 
-			handler->convert_from_amxx(allocator_c,&stack_call[offset],amx,params[i]);
+			handler->convert_from_amxx(allocator_c, &stack_call[offset], amx, params[i]);
 
 			offset += handler->stack_places();
 		}
@@ -303,135 +302,134 @@ public:
 
 		this->call_hooks = true;
 
-		return return_handler->convert_to_amxx(amx,&params[handlers.size()],ret);
+		return return_handler->convert_to_amxx(amx, &params[handlers.size()], ret);
 	}
 };
 
 class FunctionMethod : public Function
 {
-		int get_stack_dislocation();
+	int get_stack_dislocation();
 
-	protected:
+protected:
 
-		unsigned char* create_trampoline();
+	unsigned char* create_trampoline();
 
-		long call_original(void** stack);
+	long call_original(void** stack);
 
-	public:
-	
-		FunctionMethod(void* address,CVector<TypeHandler*> arguments_handlers,TypeHandler* return_handler);
+public:
 
-		~FunctionMethod()
-		{
-			memcpy(address,original_code,8);
+	FunctionMethod(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler);
 
-			delete[] original_code;
-		}
+	~FunctionMethod()
+	{
+		memcpy(address, original_code, 8);
+
+		delete[] original_code;
+	}
 };
 
 class FunctionCdecl : public Function
 {
-		int get_stack_dislocation();
+	int get_stack_dislocation();
 
-	protected:
+protected:
 
-		unsigned char* create_trampoline();
+	unsigned char* create_trampoline();
 
-		long call_original(void** stack);
+	long call_original(void** stack);
 
-	public:
-	
-		FunctionCdecl(void* address,CVector<TypeHandler*> arguments_handlers,TypeHandler* return_handler);
+public:
 
-		~FunctionCdecl()
-		{
-			memcpy(address,original_code,8);
+	FunctionCdecl(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler);
 
-			delete[] original_code;
-		}
+	~FunctionCdecl()
+	{
+		memcpy(address, original_code, 8);
+
+		delete[] original_code;
+	}
 };
-
 
 class FunctionVirtual : public Function
 {
-		int get_stack_dislocation()
+	int get_stack_dislocation()
+	{
+		int dislocation = 0;
+
+#ifdef __linux__
+		size_t i = 0;
+#else
+		size_t i = 1;
+#endif
+
+		for (; i < this->arguments_handlers.size(); i++)
 		{
-			int dislocation = 0;
-
-		#ifdef __linux__
-			size_t i = 0;
-		#else
-			size_t i = 1;
-		#endif
-
-			for(;i<this->arguments_handlers.size();i++)
-			{
-				dislocation += arguments_handlers[i]->stack_places() * sizeof(long);
-			}
-
-			return dislocation;
+			dislocation += arguments_handlers[i]->stack_places() * sizeof(long);
 		}
 
-		void* original_address;
+		return dislocation;
+	}
 
-	protected:
+	void* original_address;
 
-		unsigned char* create_trampoline()
-		{
-		#ifdef __linux__
-			int stack_fix = 0;
-		#else
-			int stack_fix = this->get_stack_dislocation();
-		#endif
-	
-		#ifdef __linux__
-			bool pass_ecx = 0;
-		#else
-			bool pass_ecx = 1;
-		#endif
+protected:
 
-			return this->create_trampoline_generic(stack_fix,pass_ecx,false);
-		}
+	unsigned char* create_trampoline()
+	{
+#ifdef __linux__
+		int stack_fix = 0;
+#else
+		int stack_fix = this->get_stack_dislocation();
+#endif
 
-		long call_amx(AMX* amx, cell* params,bool call_hooks);
+#ifdef __linux__
+		bool pass_ecx = 0;
+#else
+		bool pass_ecx = 1;
+#endif
 
-		long call_original(void** stack);
+		return this->create_trampoline_generic(stack_fix, pass_ecx, false);
+	}
 
-	public:
-	
-		FunctionVirtual(void* address,CVector<TypeHandler*> arguments_handlers,TypeHandler* return_handler) : Function(address,arguments_handlers,return_handler)
-		{
-			original_address = *((void**)address);
+	long call_amx(AMX* amx, cell* params, bool call_hooks);
 
-			original_code = NULL;
+	long call_original(void** stack);
 
-			this->trampoline = this->create_trampoline();
+public:
 
-			{
-				Memory m;
+	FunctionVirtual(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
+	{
+		original_address = *((void**)address);
 
-				int prot = m.get_memory_protection((long)address);
+		original_code = NULL;
 
-				m.make_writable((long)address,4);
+		this->trampoline = this->create_trampoline();
 
-				*((void**)address) = this->trampoline;
-
-				m.set_memory_protection((long)address,prot);
-			}
-		}
-
-		~FunctionVirtual()
 		{
 			Memory m;
 
 			int prot = m.get_memory_protection((long)address);
 
-			m.make_writable((long)address,4);
+			m.make_writable((long)address, 4);
 
-			*((void**)address) = original_address;
+			*((void**)address) = this->trampoline;
 
-			m.set_memory_protection((long)address,prot);
+			m.set_memory_protection((long)address, prot);
 		}
+	}
+
+	~FunctionVirtual()
+	{
+		Memory m;
+
+		int prot = m.get_memory_protection((long)address);
+
+		m.make_writable((long)address, 4);
+
+		*((void**)address) = original_address;
+
+		m.set_memory_protection((long)address, prot);
+	}
 };
 
 #endif
