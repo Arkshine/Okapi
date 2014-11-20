@@ -1,3 +1,15 @@
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+
+//
+// Okapi Module
+//
+
 #ifndef ___FUNC_TION___
 #define ___FUNC_TION___
 
@@ -352,59 +364,75 @@ public:
 
 class FunctionVirtual : public Function
 {
-	int get_stack_dislocation()
-	{
-		int dislocation = 0;
+	private:
 
-#ifdef __linux__
-		size_t i = 0;
-#else
-		size_t i = 1;
-#endif
-
-		for (; i < this->arguments_handlers.size(); i++)
+		int get_stack_dislocation()
 		{
-			dislocation += arguments_handlers[i]->stack_places() * sizeof(long);
+			int dislocation = 0;
+
+			#ifdef __linux__
+				size_t i = 0;
+			#else
+				size_t i = 1;
+			#endif
+
+			for (; i < this->arguments_handlers.size(); i++)
+			{
+				dislocation += arguments_handlers[i]->stack_places() * sizeof(long);
+			}
+
+			return dislocation;
 		}
 
-		return dislocation;
-	}
+		void* original_address;
 
-	void* original_address;
+	protected:
 
-protected:
+		unsigned char* create_trampoline()
+		{
+			#ifdef __linux__
+				int stack_fix = 0;
+			#else
+				int stack_fix = this->get_stack_dislocation();
+			#endif
 
-	unsigned char* create_trampoline()
-	{
-#ifdef __linux__
-		int stack_fix = 0;
-#else
-		int stack_fix = this->get_stack_dislocation();
-#endif
+			#ifdef __linux__
+				bool pass_ecx = 0;
+			#else
+				bool pass_ecx = 1;
+			#endif
 
-#ifdef __linux__
-		bool pass_ecx = 0;
-#else
-		bool pass_ecx = 1;
-#endif
+			return this->create_trampoline_generic(stack_fix, pass_ecx, false);
+		}
 
-		return this->create_trampoline_generic(stack_fix, pass_ecx, false);
-	}
+		long call_amx(AMX* amx, cell* params, bool call_hooks);
 
-	long call_amx(AMX* amx, cell* params, bool call_hooks);
+		long call_original(void** stack);
 
-	long call_original(void** stack);
+	public:
 
-public:
+		FunctionVirtual(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
+		{
+			original_address = *((void**)address);
 
-	FunctionVirtual(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
-	{
-		original_address = *((void**)address);
+			original_code = NULL;
 
-		original_code = NULL;
+			this->trampoline = this->create_trampoline();
 
-		this->trampoline = this->create_trampoline();
+			{
+				Memory m;
 
+				int prot = m.get_memory_protection((long)address);
+
+				m.make_writable((long)address, 4);
+
+				*((void**)address) = this->trampoline;
+
+				m.set_memory_protection((long)address, prot);
+			}
+		}
+
+		~FunctionVirtual()
 		{
 			Memory m;
 
@@ -412,24 +440,10 @@ public:
 
 			m.make_writable((long)address, 4);
 
-			*((void**)address) = this->trampoline;
+			*((void**)address) = original_address;
 
 			m.set_memory_protection((long)address, prot);
 		}
-	}
-
-	~FunctionVirtual()
-	{
-		Memory m;
-
-		int prot = m.get_memory_protection((long)address);
-
-		m.make_writable((long)address, 4);
-
-		*((void**)address) = original_address;
-
-		m.set_memory_protection((long)address, prot);
-	}
 };
 
-#endif
+#endif // ___FUNC_TION___

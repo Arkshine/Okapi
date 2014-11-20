@@ -1,56 +1,68 @@
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+
+//
+// Okapi Module
+//
+
 #ifndef __ASSEMBLY_CREATE_H__
 #define __ASSEMBLY_CREATE_H__
 
 class InstructionBytes
 {
-protected:
+	protected:
 
-	unsigned char* bytes;
+		unsigned char* bytes;
 
-public:
+	public:
 
-	InstructionBytes(unsigned char* bytes) : bytes(bytes)
-	{
-		this->bytes = bytes;
-	}
+		InstructionBytes(unsigned char* bytes) : bytes(bytes)
+		{
+			this->bytes = bytes;
+		}
 
-	virtual void set_bytes(unsigned char* bytes)
-	{
-		this->bytes = bytes;
-	}
+		virtual void set_bytes(unsigned char* bytes)
+		{
+			this->bytes = bytes;
+		}
 
-	virtual ~InstructionBytes(){};
+		virtual ~InstructionBytes(){};
 };
 
 template <class T>
 class Instruction : public InstructionBytes
 {
-public:
+	public:
 
-	virtual ~Instruction(){}
+		virtual ~Instruction(){}
 
-	Instruction(unsigned char* bytes) : InstructionBytes(bytes)
-	{
-	}
-
-	static CVector<unsigned char> get_bytes()
-	{
-		CVector<unsigned char> bytes;
-
-		for (size_t i=0; i < ARRAYSIZE(T::data); i++)
+		Instruction(unsigned char* bytes) : InstructionBytes(bytes)
 		{
-			bytes.push_back(T::data[i]);
 		}
 
-		return bytes;
-	}
+		static CVector<unsigned char> get_bytes()
+		{
+			CVector<unsigned char> bytes;
 
-	void set_long(long value)
-	{
-		assert(sizeof(T::data) >= 5);
+			for (size_t i=0; i < ARRAYSIZE(T::data); i++)
+			{
+				bytes.push_back(T::data[i]);
+			}
 
-		*((long*)(&this->bytes[1])) = value;
-	}
+			return bytes;
+		}
+
+		void set_long(long value)
+		{
+			assert(sizeof(T::data) >= 5);
+
+			*((long*)(&this->bytes[1])) = value;
+		}
 };
 
 #define INSTRUCTION(T) class T : public Instruction<T>{ public: static unsigned char data[]; T(unsigned char* bytes) : Instruction(bytes){  }
@@ -165,75 +177,78 @@ unsigned char Inst_Fld::data[]					={ 0xD9, 0x5, 0x0, 0x0, 0x0, 0x0 };
 
 class AssemblyCreate
 {
-	struct InstructionBytesOffset
-	{
-		InstructionBytes* instruction_bytes;
-		size_t offset;
+	private:
 
-		InstructionBytesOffset() { }
-		InstructionBytesOffset(InstructionBytes* instruction_bytes, size_t offset) : instruction_bytes(instruction_bytes), offset(offset) { }
-	};
-
-	CVector<unsigned char> bytes;
-	CVector<InstructionBytesOffset> instructionsBytesData;
-
-public:
-
-	~AssemblyCreate()
-	{
-		for (size_t i=0; i < instructionsBytesData.size(); i++)
+		struct InstructionBytesOffset
 		{
-			InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
+			InstructionBytes* instruction_bytes;
+			size_t offset;
 
-			delete instructionBytesData.instruction_bytes;
-		}
-	}
+			InstructionBytesOffset() { }
+			InstructionBytesOffset(InstructionBytes* instruction_bytes, size_t offset) : instruction_bytes(instruction_bytes), offset(offset) { }
+		};
 
-	template <class T>
-	T* add()
-	{
-		int pos = this->bytes.size();
+		CVector<unsigned char> bytes;
+		CVector<InstructionBytesOffset> instructionsBytesData;
 
-		CVector<unsigned char> bytes = T::get_bytes();
+	public:
 
-		this->bytes.merge(bytes);
-
-		T* object = new T(&this->bytes.m_Data[pos]);
-
-		instructionsBytesData.push_back(InstructionBytesOffset(object, pos));
-
-		return object;
-	}
-
-	unsigned char* create_block()
-	{
-		unsigned char* block = new unsigned char[bytes.size()];
-		memcpy(block, this->bytes.m_Data, bytes.size());
-
-		for (size_t i=0; i < instructionsBytesData.size(); i++)
+		~AssemblyCreate()
 		{
-			InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
-			instructionBytesData.instruction_bytes->set_bytes(&block[instructionBytesData.offset]);
+			for (size_t i=0; i < instructionsBytesData.size(); i++)
+			{
+				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
+
+				delete instructionBytesData.instruction_bytes;
+			}
 		}
 
-		return block;
-	}
-
-	unsigned char* get_block()
-	{
-		for (size_t i=0; i < instructionsBytesData.size(); i++)
+		template <class T>
+		T* add()
 		{
-			InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
-			instructionBytesData.instruction_bytes->set_bytes(&this->bytes.m_Data[instructionBytesData.offset]);
+			int pos = this->bytes.size();
+
+			CVector<unsigned char> bytes = T::get_bytes();
+
+			this->bytes.merge(bytes);
+
+			T* object = new T(&this->bytes.m_Data[pos]);
+
+			instructionsBytesData.push_back(InstructionBytesOffset(object, pos));
+
+			return object;
 		}
 
-		return this->bytes.m_Data;
-	}
+		unsigned char* create_block()
+		{
+			unsigned char* block = new unsigned char[bytes.size()];
+			memcpy(block, this->bytes.m_Data, bytes.size());
 
-	size_t size()
-	{
-		return this->bytes.size();
-	}
+			for (size_t i=0; i < instructionsBytesData.size(); i++)
+			{
+				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
+				instructionBytesData.instruction_bytes->set_bytes(&block[instructionBytesData.offset]);
+			}
+
+			return block;
+		}
+
+		unsigned char* get_block()
+		{
+			for (size_t i=0; i < instructionsBytesData.size(); i++)
+			{
+				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
+				instructionBytesData.instruction_bytes->set_bytes(&this->bytes.m_Data[instructionBytesData.offset]);
+			}
+
+			return this->bytes.m_Data;
+		}
+
+		size_t size()
+		{
+			return this->bytes.size();
+		}
 };
 
-#endif
+#endif // __ASSEMBLY_CREATE_H__
+

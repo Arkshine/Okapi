@@ -1,5 +1,17 @@
-#ifndef __FAKEMETA_CONST_H
-#define __FAKEMETA_CONST_H
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+
+//
+// Okapi Module
+//
+
+#ifndef __FAKEMETA_CONST_H__
+#define __FAKEMETA_CONST_H__
 
 typedef enum
 {
@@ -63,7 +75,8 @@ typedef enum
 	DLLFunc_CreateBaseline				// void )			(int player, int eindex, struct entity_state_s *baseline, struct edict_s *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs);
 } DLLFunc_Enum;
 
-typedef enum {
+typedef enum 
+{
 	EngFunc_PrecacheModel,				// int  )			(char *s);
 	EngFunc_PrecacheSound,				// int  )			(char *s);
 	EngFunc_SetModel,					// void )			(edict_t *e, const char *m);
@@ -155,4 +168,4 @@ typedef enum {
 
 } EngFunc_Enum;
 
-#endif
+#endif // __FAKEMETA_CONST_H__

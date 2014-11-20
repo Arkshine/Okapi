@@ -1,3 +1,14 @@
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+
+//
+// Okapi Module
+//
 
 #include <s_library.h>
 
@@ -42,64 +53,64 @@
 #if defined __linux__
 
 	long get_length(void *baseAddress)
-    {
-            pid_t pid = getpid();
-            char file[255];
-            char buffer[2048];
-            snprintf(file, sizeof(file)-1, "/proc/%d/maps", pid);
-            FILE *fp = fopen(file, "rt");
-            if (fp)
-            {
-                long length = 0;
+	{
+			pid_t pid = getpid();
+			char file[255];
+			char buffer[2048];
+			snprintf(file, sizeof(file)-1, "/proc/%d/maps", pid);
+			FILE *fp = fopen(file, "rt");
+			if (fp)
+			{
+				long length = 0;
 
-                void *start=NULL;
-                void *end=NULL;
+				void *start=NULL;
+				void *end=NULL;
 
-                while (!feof(fp))
-                {
-                    fgets(buffer, sizeof(buffer)-1, fp);           
-#if defined AMD64
-                    sscanf(buffer, "%Lx-%Lx", &start, &end);
-#else
-                    sscanf(buffer, "%lx-%lx", &start, &end);
-#endif
-                    if(start == baseAddress)
-                    {
-                        length = (unsigned long)end  - (unsigned long)start;
+				while (!feof(fp))
+				{
+					fgets(buffer, sizeof(buffer)-1, fp);           
+					#if defined AMD64
+						sscanf(buffer, "%Lx-%Lx", &start, &end);
+					#else
+						sscanf(buffer, "%lx-%lx", &start, &end);
+					#endif
+					if(start == baseAddress)
+					{
+						length = (unsigned long)end  - (unsigned long)start;
 
-                        char ignore[100];
-                        int value;
+						char ignore[100];
+						int value;
 
-                        while(!feof(fp))
-                        {
-                            fgets(buffer, sizeof(buffer)-1, fp);
-#if defined AMD64
-                            sscanf(buffer, "%Lx-%Lx %s %s %s %d", &start, &end, ignore, ignore, ignore, &value);
-#else
-                            sscanf(buffer, "%lx-%lx %s %s %s %d", &start, &end, ignore, ignore ,ignore, &value);
-#endif
+						while(!feof(fp))
+						{
+							fgets(buffer, sizeof(buffer)-1, fp);
+							#if defined AMD64
+								sscanf(buffer, "%Lx-%Lx %s %s %s %d", &start, &end, ignore, ignore, ignore, &value);
+							#else
+								sscanf(buffer, "%lx-%lx %s %s %s %d", &start, &end, ignore, ignore ,ignore, &value);
+							#endif
 
-                            if(!value)
-                            {       
-                                break;
-                            }
-                            else
-                            {
-                                length += (unsigned long)end  - (unsigned long)start;
-                            }
-                        }
-                       
-                        break;
-                    }
-                }
+							if(!value)
+							{       
+								break;
+							}
+							else
+							{
+								length += (unsigned long)end  - (unsigned long)start;
+							}
+						}
+					   
+						break;
+					}
+				}
 
-                fclose(fp);
+				fclose(fp);
 
-            return length;
-        }
+			return length;
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 
 	s_library* create_library(void* address)
 	{
@@ -113,7 +124,7 @@
 			library->address = (void*) info.dli_fbase;
 			library->length = get_length((void*) info.dli_fbase);
 			library->handle = dlopen(info.dli_fname, RTLD_NOW);
-           
+		   
 			return library;
 		}
 

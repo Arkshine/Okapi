@@ -1,3 +1,15 @@
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+
+//
+// Okapi Module
+//
+
 #ifndef __TRIE_STRING_H__
 #define __TRIE_STRING_H__
 
@@ -10,38 +22,40 @@ const int Mult = 4;
 template <typename T>
 struct TrieString
 {
-	TrieString* childs[Base];
-	T n;
+	public:
 
-	char val;
+		TrieString* childs[Base];
+		T n;
 
-	void init(char val);
+		char val;
 
-	TrieString(char val);
+		void init(char val);
 
-	T& create(char* s);
+		TrieString(char val);
 
-	CVector<String> get_keys(String s);
+		T& create(char* s);
 
-	TrieString& move(TrieString& other);
+		CVector<String> get_keys(String s);
 
-public:
+		TrieString& move(TrieString& other);
 
-	~TrieString();
+	public:
 
-	TrieString();
+		~TrieString();
 
-	TrieString(const TrieString& other);
+		TrieString();
 
-	TrieString& operator= (TrieString other);
+		TrieString(const TrieString& other);
 
-	T& operator[](char* s);
+		TrieString& operator= (TrieString other);
 
-	bool is_empty();
+		T& operator[](char* s);
 
-	CVector<String> get_keys();
+		bool is_empty();
+
+		CVector<String> get_keys();
 };
 
 #include <trie_string.cpp>
 
-#endif
+#endif // __TRIE_STRING_H__

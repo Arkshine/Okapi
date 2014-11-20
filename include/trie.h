@@ -1,3 +1,15 @@
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+
+//
+// Okapi Module
+//
+
 #ifndef __TRIE_NODE_H__
 #define __TRIE_NODE_H__
 
@@ -6,36 +18,38 @@
 template <typename T, int Base>
 class Trie
 {
-	Trie* childs[Base];
-	T n;
+	private:
 
-	unsigned int val;
+		Trie* childs[Base];
+		T n;
 
-	void init(unsigned int val);
+		unsigned int val;
 
-	Trie(int mult);
+		void init(unsigned int val);
 
-	T& create(unsigned int number, int mult);
+		Trie(int mult);
 
-	CVector<int> get_keys(int val);
+		T& create(unsigned int number, int mult);
 
-	Trie& move(Trie& other);
+		CVector<int> get_keys(int val);
 
-public:
+		Trie& move(Trie& other);
 
-	~Trie();
+	public:
 
-	Trie();
+		~Trie();
 
-	Trie(const Trie& other);
+		Trie();
 
-	Trie& operator= (Trie other);
+		Trie(const Trie& other);
 
-	T& operator[](unsigned int number);
+		Trie& operator= (Trie other);
 
-	bool is_empty();
+		T& operator[](unsigned int number);
 
-	CVector<int> get_keys();
+		bool is_empty();
+
+		CVector<int> get_keys();
 };
 
 template <typename T>
@@ -49,4 +63,4 @@ class Trie2 : public Trie < T, 2 > {};
 
 #include <trie.cpp>
 
-#endif
+#endif // __TRIE_NODE_H__

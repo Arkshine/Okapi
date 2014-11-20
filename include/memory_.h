@@ -1,24 +1,36 @@
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+
+//
+// Okapi Module
+//
+
 #ifndef __MEMORY__H__
 #define __MEMORY__H__
 
 #include <CVector.h>
 
 #ifdef __linux__
-// Code from jim yang
-#include <sys/mman.h>
+	// Code from jim yang
+	#include <sys/mman.h>
 
-const int PAGE_READONLY = PROT_READ;
-const int PAGE_EXEC = PROT_EXEC;
-const int PAGE_WRITE = PROT_WRITE;
-const int PAGE_EXECUTE_READWRITE = PROT_READ | PROT_WRITE | PROT_EXEC;
-const int PAGE_EXECUTE_READ = PROT_READ | PROT_EXEC;
-const int PAGE_READWRITE = PROT_READ | PROT_WRITE;
-const int PageSize = 4096;
+	const int PAGE_READONLY = PROT_READ;
+	const int PAGE_EXEC = PROT_EXEC;
+	const int PAGE_WRITE = PROT_WRITE;
+	const int PAGE_EXECUTE_READWRITE = PROT_READ | PROT_WRITE | PROT_EXEC;
+	const int PAGE_EXECUTE_READ = PROT_READ | PROT_EXEC;
+	const int PAGE_READWRITE = PROT_READ | PROT_WRITE;
+	const int PageSize = 4096;
 
-inline void* Align(void* address)
-{
-	return (void*)((long)address & ~(PageSize - 1));
-}
+	inline void* Align(void* address)
+	{
+		return (void*)((long)address & ~(PageSize - 1));
+	}
 #endif
 
 #ifdef __linux__
@@ -41,180 +53,181 @@ struct MemoryMap
 
 class Memory
 {
-#ifdef __linux__
+	#ifdef __linux__
 
-	CVector<MemoryMap> memory_maps;
+		CVector<MemoryMap> memory_maps;
 
-	void fill_memory_maps()
-	{
-		pid_t pid = getpid();
-		char file[255];
-		char buffer[2048];
-		snprintf(file, sizeof(file) - 1, "/proc/%d/maps", pid);
-		FILE *fp = fopen(file, "rt");
-
-		char memory_prot[10];
-
-		if (fp)
+		void fill_memory_maps()
 		{
-			void *start=NULL;
-			void *end=NULL;
+			pid_t pid = getpid();
+			char file[255];
+			char buffer[2048];
+			snprintf(file, sizeof(file) - 1, "/proc/%d/maps", pid);
+			FILE *fp = fopen(file, "rt");
 
-			while (!feof(fp))
+			char memory_prot[10];
+
+			if (fp)
 			{
-				fgets(buffer, sizeof(buffer) - 1, fp);
-#if defined AMD64
-				sscanf(buffer, "%Lx-%Lx %s", &start, &end, memory_prot);
-#else
-				sscanf(buffer, "%lx-%lx %s", &start, &end, memory_prot);
-#endif
-				int protection = 0;
+				void *start=NULL;
+				void *end=NULL;
 
-				for (int i=0; i < 4; i++)
+				while (!feof(fp))
 				{
-					char c = memory_prot[i];
+					fgets(buffer, sizeof(buffer) - 1, fp);
+					#if defined AMD64
+						sscanf(buffer, "%Lx-%Lx %s", &start, &end, memory_prot);
+					#else
+						sscanf(buffer, "%lx-%lx %s", &start, &end, memory_prot);
+					#endif
+					int protection = 0;
 
-					if (c == 'r')
-						protection |= PROT_READ;
-					if (c == 'w')
-						protection |= PROT_WRITE;
-					if (c == 'x')
-						protection |= PROT_EXEC;
+					for (int i=0; i < 4; i++)
+					{
+						char c = memory_prot[i];
+
+						if (c == 'r')
+							protection |= PROT_READ;
+						if (c == 'w')
+							protection |= PROT_WRITE;
+						if (c == 'x')
+							protection |= PROT_EXEC;
+					}
+
+					memory_maps.push_back(MemoryMap((long)start, (long)end, protection));
 				}
 
-				memory_maps.push_back(MemoryMap((long)start, (long)end, protection));
+				fclose(fp);
+			}
+		}
+
+	#endif
+
+	public:
+
+		Memory()
+		{
+			#ifdef __linux__
+				fill_memory_maps();
+			#endif
+		}
+
+		int get_memory_protection(long address)
+		{
+			#ifdef __linux__
+				for (size_t i=0; i < this->memory_maps.size(); i++)
+				{
+					MemoryMap memory_map = memory_maps[i];
+
+					if ((address >= memory_map.start_address) && (address >= memory_map.end_address))
+						return memory_map.memory_protection;
+				}
+
+				return 0;
+			#else
+				MEMORY_BASIC_INFORMATION Buffer;
+
+				VirtualQuery(LPCVOID(address), &Buffer, sizeof(MEMORY_BASIC_INFORMATION));
+
+				return Buffer.Protect;
+			#endif
+		}
+
+		int set_memory_protection(long address, int protection)
+		{
+			#ifdef __linux__
+				return this->set_memory_protection(address, protection, sysconf(_SC_PAGESIZE));
+			#else
+				MEMORY_BASIC_INFORMATION Buffer;
+
+				VirtualQuery(LPCVOID(address), &Buffer, sizeof(MEMORY_BASIC_INFORMATION));
+
+				SIZE_T size = Buffer.RegionSize;
+
+				return this->set_memory_protection(address, protection, size);
+			#endif
+		}
+
+		int set_memory_protection(long address, int protection, int size)
+		{
+			#ifdef __linux__
+				void* alignedAddress = Align((void*)address);
+				return !mprotect(alignedAddress, size, protection);
+			#else
+				static DWORD oldProtection;
+
+				return VirtualProtect((LPVOID)address, size, protection, &oldProtection);
+			#endif
+		}
+
+		void make_writable_executable(long address)
+		{
+			set_memory_protection(address, PAGE_EXECUTE_READWRITE);
+		}
+
+		void make_writable_executable(long address, int size)
+		{
+			set_memory_protection(address, PAGE_EXECUTE_READWRITE, size);
+		}
+
+		void make_writable(long address)
+		{
+			set_memory_protection(address, PAGE_EXECUTE_READWRITE);
+		}
+
+		void make_writable(long address, int size)
+		{
+			set_memory_protection(address, PAGE_EXECUTE_READWRITE, size);
+		}
+
+		void make_executable(long address)
+		{
+			set_memory_protection(address, PAGE_EXECUTE_READ);
+		}
+
+		void make_executable(long address, int size)
+		{
+			set_memory_protection(address, PAGE_EXECUTE_READ, size);
+		}
+
+		int convert_to_sys(int protection)
+		{
+			if (protection & (2 | 4))
+			{
+				return PAGE_EXECUTE_READWRITE;
+			}
+			else if (protection & 4)
+			{
+				return PAGE_EXECUTE_READ;
+			}
+			else if (protection & 2)
+			{
+				return PAGE_READWRITE;
+			}
+			else
+			{
+				return PAGE_READONLY;
 			}
 
-			fclose(fp);
-		}
-	}
-
-#endif
-public:
-	Memory()
-	{
-#ifdef __linux__
-		fill_memory_maps();
-#endif
-	}
-
-	int get_memory_protection(long address)
-	{
-#ifdef __linux__
-		for (size_t i=0; i < this->memory_maps.size(); i++)
-		{
-			MemoryMap memory_map = memory_maps[i];
-
-			if ((address >= memory_map.start_address) && (address >= memory_map.end_address))
-				return memory_map.memory_protection;
+			return 0;
 		}
 
-		return 0;
-#else
-
-		MEMORY_BASIC_INFORMATION Buffer;
-
-		VirtualQuery(LPCVOID(address), &Buffer, sizeof(MEMORY_BASIC_INFORMATION));
-
-		return Buffer.Protect;
-#endif
-	}
-
-	int set_memory_protection(long address, int protection)
-	{
-#ifdef __linux__
-		return this->set_memory_protection(address, protection, sysconf(_SC_PAGESIZE));
-#else
-		MEMORY_BASIC_INFORMATION Buffer;
-
-		VirtualQuery(LPCVOID(address), &Buffer, sizeof(MEMORY_BASIC_INFORMATION));
-
-		SIZE_T size = Buffer.RegionSize;
-
-		return this->set_memory_protection(address, protection, size);
-#endif
-	}
-
-	int set_memory_protection(long address, int protection, int size)
-	{
-#ifdef __linux__
-		void* alignedAddress = Align((void*)address);
-		return !mprotect(alignedAddress, size, protection);
-#else
-		static DWORD oldProtection;
-
-		return VirtualProtect((LPVOID)address, size, protection, &oldProtection);
-#endif
-	}
-
-	void make_writable_executable(long address)
-	{
-		set_memory_protection(address, PAGE_EXECUTE_READWRITE);
-	}
-
-	void make_writable_executable(long address, int size)
-	{
-		set_memory_protection(address, PAGE_EXECUTE_READWRITE, size);
-	}
-
-	void make_writable(long address)
-	{
-		set_memory_protection(address, PAGE_EXECUTE_READWRITE);
-	}
-
-	void make_writable(long address, int size)
-	{
-		set_memory_protection(address, PAGE_EXECUTE_READWRITE, size);
-	}
-
-	void make_executable(long address)
-	{
-		set_memory_protection(address, PAGE_EXECUTE_READ);
-	}
-
-	void make_executable(long address, int size)
-	{
-		set_memory_protection(address, PAGE_EXECUTE_READ, size);
-	}
-
-	int convert_to_sys(int protection)
-	{
-		if (protection & (2 | 4))
+		int convert_from_sys(int sys_protection)
 		{
-			return PAGE_EXECUTE_READWRITE;
-		}
-		else if (protection & 4)
-		{
-			return PAGE_EXECUTE_READ;
-		}
-		else if (protection & 2)
-		{
-			return PAGE_READWRITE;
-		}
-		else
-		{
-			return PAGE_READONLY;
-		}
+			switch (sys_protection)
+			{
+			case PAGE_READONLY:
+				return 1;
+			case PAGE_READWRITE:
+				return 1 | 2;
+			case PAGE_EXECUTE_READ:
+				return 1 | 4;
+			case PAGE_EXECUTE_READWRITE:
+				return 1 | 2 | 4;
+			}
 
-		return 0;
-	}
-
-	int convert_from_sys(int sys_protection)
-	{
-		switch (sys_protection)
-		{
-		case PAGE_READONLY:
 			return 1;
-		case PAGE_READWRITE:
-			return 1 | 2;
-		case PAGE_EXECUTE_READ:
-			return 1 | 4;
-		case PAGE_EXECUTE_READWRITE:
-			return 1 | 2 | 4;
 		}
-
-		return 1;
-	}
 };
 
-#endif
+#endif // __MEMORY__H__
