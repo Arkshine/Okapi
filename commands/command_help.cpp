@@ -30,7 +30,9 @@ void CommandHelp::exec()
 		Command* command = Commands[(char*)g_engfuncs.pfnCmd_Argv(2)];
 
 		if (!command)
-			printf("invalid command\n");
+		{
+			Util::con_printf("invalid command\n");
+		}
 		else
 		{
 			command->show_help();
@@ -38,13 +40,9 @@ void CommandHelp::exec()
 	}
 }
 
-String CommandHelp::get_description()
+const char* CommandHelp::get_description()
 {
-	String s;
-
-	s.sprintf("shows the help text of a command");
-
-	return s;
+	return "shows the help text of a command";
 }
 
 void CommandHelp::show_help()

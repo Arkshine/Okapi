@@ -21,7 +21,7 @@ class CommandHelp : public Command
 	public:
 
 		void exec();
-		String get_description();
+		const char* get_description();
 		void show_help();
 };
 

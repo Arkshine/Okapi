@@ -30,7 +30,7 @@ class GameLibrary : public s_library
 
 	public:
 
-		virtual String get_name() = 0;
+		virtual const char* get_name() = 0;
 
 		GameLibrary(s_library s)
 		{

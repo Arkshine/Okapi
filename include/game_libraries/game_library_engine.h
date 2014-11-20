@@ -24,9 +24,9 @@ class GameLibraryEngine : public GameLibrary
 			this->init();
 		}
 
-		String get_name()
+		const char* get_name()
 		{
-			return String("engine");
+			return "engine";
 		}
 };
 

@@ -24,9 +24,9 @@ class GameLibraryMod : public GameLibrary
 			this->init();
 		}
 
-		String get_name()
+		const char* get_name()
 		{
-			return String("mod");
+			return "mod";
 		}
 };
 

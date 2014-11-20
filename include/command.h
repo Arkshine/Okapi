@@ -22,7 +22,7 @@ class Command
 
 		virtual void show_help() = 0;
 		virtual void exec() = 0;
-		virtual String get_description() = 0;
+		virtual const char* get_description() = 0;
 };
 
 int parseHex(char *s);
