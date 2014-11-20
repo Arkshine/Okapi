@@ -26,7 +26,7 @@ OffsetHandler* G_OffsetHandler = NULL;
 HL_TypeConversion G_HL_TypeConversion;
 FakemetaConstToAddress* G_FakemetaConstToAddress;
 
-Trie10<Function*> G_Functions;
+FunctionsDataMap G_Functions;
 
 Allocator G_Allocator;
 

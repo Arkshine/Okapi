@@ -28,9 +28,6 @@
     <ClCompile Include="..\work.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\trie.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\public\sdk\amxxmodule.cpp">
       <Filter>Module SDK\SDK Base</Filter>
     </ClCompile>
@@ -55,9 +52,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\heap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\trie.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\string_.h">

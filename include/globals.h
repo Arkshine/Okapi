@@ -20,7 +20,6 @@
 #include <offset_handler.h>
 #include <hl_type_conversion.h>
 #include <fakemeta_const_to_address.h>
-#include <trie.h>
 #include <function.h>
 #include <allocator.h>
 
@@ -41,7 +40,8 @@ extern HL_TypeConversion G_HL_TypeConversion;
 
 extern FakemetaConstToAddress* G_FakemetaConstToAddress;
 
-extern Trie10<Function*> G_Functions;
+typedef ke::HashMap< long, Function*, ke::IntegerPolicy<long> > FunctionsDataMap;
+extern FunctionsDataMap G_Functions;
 
 extern Allocator G_Allocator;
 

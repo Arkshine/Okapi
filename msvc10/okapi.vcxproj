@@ -156,10 +156,6 @@
     <ClCompile Include="..\commands\command_help.cpp" />
     <ClCompile Include="..\public\memtools\MemoryUtils.cpp" />
     <ClCompile Include="..\s_library.cpp" />
-    <ClCompile Include="..\trie.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\work.cpp" />
     <ClInclude Include="..\include\allocator.h" />
     <ClInclude Include="..\include\assembly_create.h" />
@@ -181,7 +177,6 @@
     <ClInclude Include="..\include\okapi.h" />
     <ClInclude Include="..\include\string_.h" />
     <ClInclude Include="..\include\s_library.h" />
-    <ClInclude Include="..\include\trie.h" />
     <ClInclude Include="..\include\type_handler.h" />
     <ClInclude Include="..\include\type_handlers\type_handler_extra.h" />
     <ClInclude Include="..\include\work.h" />

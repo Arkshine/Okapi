@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <CVector.h>
 #include <heap.h>
-#include <trie.h>
 #include <s_library.h>
 #include <globals.h>
 #include <game_libraries/game_library_engine.h>
@@ -283,10 +282,17 @@ static cell AMX_NATIVE_CALL okapi_build_method(AMX *amx, cell *params)
 		return 0;
 	}
 
-	Function*& function = G_Functions[address];
+	FunctionsDataMap::Insert insert = G_Functions.findForAdd(address);
 
-	if (function)
-		return (cell)function;
+	if (insert.found())
+	{
+		return (cell)insert->value;
+	}
+
+	if (!G_Functions.add(insert))
+	{
+		return 0;
+	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[2]];
 	CVector<TypeHandler*> arguments_handlers;
@@ -299,7 +305,10 @@ static cell AMX_NATIVE_CALL okapi_build_method(AMX *amx, cell *params)
 		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
 	}
 
-	function = new FunctionMethod((void*)address, arguments_handlers, return_handler);
+	Function* function = new FunctionMethod((void*)address, arguments_handlers, return_handler);
+
+	insert->key = address;
+	insert->value = function;
 
 	return (cell)function;
 }
@@ -323,11 +332,16 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_ptr(AMX *amx, cell *params)
 
 	void** entry_address = &vtable[offset];
 
-	Function*& function = G_Functions[(long)entry_address];
+	FunctionsDataMap::Insert insert = G_Functions.findForAdd((long)entry_address);
 
-	if (function)
+	if (insert.found())
 	{
-		return (cell)function;
+		return (cell)insert->value;
+	}
+
+	if (!G_Functions.add(insert))
+	{
+		return 0;
 	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[3]];
@@ -341,7 +355,10 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_ptr(AMX *amx, cell *params)
 		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
 	}
 
-	function = new FunctionVirtual((void*)entry_address, arguments_handlers, return_handler);
+	Function* function = new FunctionVirtual((void*)entry_address, arguments_handlers, return_handler);
+
+	insert->key = (long)entry_address;
+	insert->value = function;
 
 	return (cell)function;
 }
@@ -367,11 +384,16 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_cbase(AMX *amx, cell *params)
 
 	void** entry_address = &vtable[offset];
 
-	Function*& function = G_Functions[(long)entry_address];
+	FunctionsDataMap::Insert insert = G_Functions.findForAdd((long)entry_address);
 
-	if (function)
+	if (insert.found())
 	{
-		return (cell)function;
+		return (cell)insert->value;
+	}
+
+	if (!G_Functions.add(insert))
+	{
+		return 0;
 	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[3]];
@@ -385,7 +407,10 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_cbase(AMX *amx, cell *params)
 		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
 	}
 
-	function = new FunctionVirtual((void*)entry_address, arguments_handlers, return_handler);
+	Function* function = new FunctionVirtual((void*)entry_address, arguments_handlers, return_handler);
+
+	insert->key = (long)entry_address;
+	insert->value = function;
 
 	return (cell)function;
 }
@@ -418,11 +443,16 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_class(AMX *amx, cell *params)
 
 	void** entry_address = &vtable[offset];
 
-	Function*& function = G_Functions[(long)entry_address];
+	FunctionsDataMap::Insert insert = G_Functions.findForAdd((long)entry_address);
 
-	if (function)
+	if (insert.found())
 	{
-		return (cell)function;
+		return (cell)insert->value;
+	}
+
+	if (!G_Functions.add(insert))
+	{
+		return 0;
 	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[3]];
@@ -436,7 +466,10 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_class(AMX *amx, cell *params)
 		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
 	}
 
-	function = new FunctionVirtual((void*)entry_address, arguments_handlers, return_handler);
+	Function* function = new FunctionVirtual((void*)entry_address, arguments_handlers, return_handler);
+
+	insert->key = (long)entry_address;
+	insert->value = function;
 
 	return (cell)function;
 }
@@ -454,10 +487,17 @@ static cell AMX_NATIVE_CALL okapi_build_function(AMX *amx, cell *params)
 		return 0;
 	}
 
-	Function*& function = G_Functions[address];
+	FunctionsDataMap::Insert insert = G_Functions.findForAdd(address);
 
-	if (function)
-		return (cell)function;
+	if (insert.found())
+	{
+		return (cell)insert->value;
+	}
+
+	if (!G_Functions.add(insert))
+	{
+		return 0;
+	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[2]];
 	CVector<TypeHandler*> arguments_handlers;
@@ -468,7 +508,10 @@ static cell AMX_NATIVE_CALL okapi_build_function(AMX *amx, cell *params)
 		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
 	}
 
-	function = new FunctionCdecl((void*)address, arguments_handlers, return_handler);
+	Function* function = new FunctionCdecl((void*)address, arguments_handlers, return_handler);
+
+	insert->key = address;
+	insert->value = function;
 
 	return (cell)function;
 }
@@ -1474,7 +1517,7 @@ void OnMetaAttach(void)
 	GameLibraries.Engine = new GameLibraryEngine(*engine_library);
 	GameLibraries.Mod = new GameLibraryMod(*mod_library);
 
-	g_engfuncs.pfnAddServerCommand("okapi", okapi);
+	REG_SVR_COMMAND("okapi", okapi);
 
 	Commands.insert("help", new CommandHelp());
 
@@ -1498,12 +1541,14 @@ void OnPluginsLoaded()
 	{
 		G_OffsetHandler = new OffsetHandler();
 	}
+
+	G_Functions.init();
 }
 
 void OnPluginsUnloaded()
 {
 	Function::clean();
 
-	G_Functions = Trie10<Function*>();
+	G_Functions.clear();
 	G_Allocator.clear();
 }
