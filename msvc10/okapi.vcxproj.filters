@@ -7,9 +7,6 @@
     <ClCompile Include="..\sdk\amxxmodule.cpp">
       <Filter>Module SDK\SDK Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\command.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\function.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -25,19 +22,19 @@
     <ClCompile Include="..\offset_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\okapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\s_library.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\work.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\trie.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\trie_string.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\work.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\okapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

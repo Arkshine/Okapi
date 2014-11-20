@@ -155,24 +155,17 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\command.cpp" />
     <ClCompile Include="..\commands\command_help.cpp" />
-    <ClCompile Include="..\function.cpp" />
-    <ClCompile Include="..\globals.cpp" />
-    <ClCompile Include="..\hl_type_conversion.cpp" />
-    <ClCompile Include="..\offset_handler.cpp" />
-    <ClCompile Include="..\okapi.cpp" />
     <ClCompile Include="..\s_library.cpp" />
     <ClCompile Include="..\trie.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\trie_string.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\work.cpp" />
-    <ClCompile Include="..\my_util.cpp" />
     <ClInclude Include="..\include\allocator.h" />
     <ClInclude Include="..\include\assembly_create.h" />
     <ClInclude Include="..\include\command.h" />
@@ -198,6 +191,12 @@
     <ClInclude Include="..\include\type_handler.h" />
     <ClInclude Include="..\include\type_handlers\type_handler_extra.h" />
     <ClInclude Include="..\include\work.h" />
+    <ClCompile Include="..\function.cpp" />
+    <ClCompile Include="..\globals.cpp" />
+    <ClCompile Include="..\hl_type_conversion.cpp" />
+    <ClCompile Include="..\my_util.cpp" />
+    <ClCompile Include="..\offset_handler.cpp" />
+    <ClCompile Include="..\okapi.cpp" />
     <ClCompile Include="..\sdk\amxxmodule.cpp" />
     <ClInclude Include="..\templates.h" />
   </ItemGroup>

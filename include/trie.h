@@ -18,7 +18,7 @@
 template <typename T, int Base>
 class Trie
 {
-	private:
+	public:
 
 		Trie* childs[Base];
 		T n;
