@@ -11,180 +11,49 @@
 //
 
 #include <s_library.h>
+#include <MemoryUtils.h>
 
-#if defined __linux__
+s_library* create_library(void* address)
+{
+	DynLibInfo info;
+	s_library* library = NULL;
 
-	#include <dlfcn.h>
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <unistd.h>
-	#include <string.h>
-	#include <stdio.h>
-	#include <stdlib.h>
+	memset(&info, 0, sizeof(DynLibInfo));
 
-#else
-
-	#define WIN32_LEAN_AND_MEAN
-
-	#define NOWINRES
-	#define NOSERVICE
-	#define NOMCX
-	#define NOIME
-	#define NOSOUND
-	#define NOCOMM
-	#define NOKANJI
-	#define NORPC
-	#define NOPROXYSTUB
-	#define NOIMAGE
-	#define NOTAPE
-
-	#define PSAPI_VERSION 1
-
-	#pragma comment( lib, "Psapi.lib" )
-	#pragma comment( lib, "Kernel32.lib" )
-
-	#include <windows.h>
-	#include <string.h>
-	#include <climits>
-	#include <psapi.h>
-
-#endif
-
-#if defined __linux__
-
-	long get_length(void *baseAddress)
+	if (g_MemUtils.GetLibraryInfo(address, info))
 	{
-		pid_t pid = getpid();
-		char file[255];
-		char buffer[2048];
-		snprintf(file, sizeof(file)-1, "/proc/%d/maps", pid);
-		FILE *fp = fopen(file, "rt");
-		if (fp)
-		{
-			long length = 0;
+		library = new s_library;
 
-			void *start=NULL;
-			void *end=NULL;
+		library->address = info.baseAddress;
+		library->length  = info.memorySize;
 
-			while (!feof(fp))
-			{
-				fgets(buffer, sizeof(buffer)-1, fp);
-				#if defined AMD64
-					sscanf(buffer, "%Lx-%Lx", &start, &end);
-				#else
-					sscanf(buffer, "%lx-%lx", &start, &end);
-				#endif
-				if(start == baseAddress)
-				{
-					length = (unsigned long)end  - (unsigned long)start;
-
-					char ignore[100];
-					int value;
-
-					while(!feof(fp))
-					{
-						fgets(buffer, sizeof(buffer)-1, fp);
-						#if defined AMD64
-							sscanf(buffer, "%Lx-%Lx %s %s %s %d", &start, &end, ignore, ignore, ignore, &value);
-						#else
-							sscanf(buffer, "%lx-%lx %s %s %s %d", &start, &end, ignore, ignore ,ignore, &value);
-						#endif
-
-						if(!value)
-						{
-							break;
-						}
-						else
-						{
-							length += (unsigned long)end  - (unsigned long)start;
-						}
-					}
-
-					break;
-				}
-			}
-
-			fclose(fp);
-
-			return length;
-		}
-
-		return 0;
-	}
-
-	s_library* create_library(void* address)
-	{
-		s_library* library = NULL;
-		Dl_info info;
-
-		if(dladdr(address,&info))
-		{
-			library = new s_library;
-
-			library->address = (void*) info.dli_fbase;
-			library->length = get_length((void*) info.dli_fbase);
-			library->handle = dlopen(info.dli_fname, RTLD_NOW);
-
-			return library;
-		}
-
-		return NULL;
-	}
-
-	char* get_address_symbol(void* address)
-	{
-		Dl_info info;
-
-		if(dladdr(address,&info))
-		{
-			return (char*)info.dli_sname;
-		}
-
-		return "";
-	}
-
-#else
-
-	s_library* create_library(void* address)
-	{
-		HMODULE module;
-
-		s_library* library = NULL;
-
-		if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCSTR)address, &module))
-		{
-			HANDLE process =  GetCurrentProcess();
-			_MODULEINFO moduleInfo;
-
-			if (GetModuleInformation(process, module, &moduleInfo, sizeof moduleInfo))
-			{
-				CloseHandle(process);
-
-				library = new s_library;
-
-				library->address = (void*)moduleInfo.lpBaseOfDll;
-				library->length = moduleInfo.SizeOfImage;
-				library->handle = module;
-
-				return library;
-			}
-		}
+		#if defined(__linux__) || defined(__APPLE__)
+			library->handle  = dlopen(info.dli_fname, RTLD_NOW);
+		#else
+			library->handle  = (void *)info.handle;
+		#endif
 
 		return library;
 	}
 
-	char* get_address_symbol(void* address)
-	{
-		return "";
-	}
+	return library;
+}
 
-#endif
-
-void* find_function(s_library* library, const char* functionName)
+const char* get_address_symbol(void* address)
 {
-	#if defined __linux__
-		return dlsym(library->handle,functionName);
-	#else
-		return GetProcAddress((HMODULE)library->handle, functionName);
+	#if defined(__linux__) || defined(__APPLE__)
+		Dl_info info;
+
+		if (dladdr(address, &info))
+		{
+			return info.dli_sname;
+		}
 	#endif
+
+	return "";
+}
+
+void* find_function(s_library* library, const char* functionName, bool is_hidden)
+{
+	return g_MemUtils.ResolveSymbol(library->handle, functionName, is_hidden);
 }

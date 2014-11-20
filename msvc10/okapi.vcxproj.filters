@@ -37,6 +37,9 @@
     <ClCompile Include="..\public\sdk\amxxmodule.cpp">
       <Filter>Module SDK\SDK Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\public\memtools\MemoryUtils.cpp">
+      <Filter>Memtools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\work.h">
@@ -123,6 +126,9 @@
     <ClInclude Include="..\public\sdk\amxxmodule.h">
       <Filter>Module SDK\SDK Base</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\memtools\MemoryUtils.h">
+      <Filter>Memtools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -151,6 +157,9 @@
     </Filter>
     <Filter Include="Pawn Includes">
       <UniqueIdentifier>{8e41d30e-8208-48fa-a3e1-47dd96179e7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memtools">
+      <UniqueIdentifier>{0bc55a44-6e65-4d8d-8cc3-8cb96e3b4455}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

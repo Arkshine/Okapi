@@ -39,7 +39,7 @@ class GameLibrary : public s_library
 			this->handle = s.handle;
 		}
 
-		char* get_address_sym(void* address)
+		const char* get_address_sym(void* address)
 		{
 			return get_address_symbol((void*)((int)this->address + (int)address));
 		}

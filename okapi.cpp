@@ -516,7 +516,7 @@ static cell AMX_NATIVE_CALL okapi_get_ptr_symbol(AMX *amx, cell *params)
 {
 	long address = params[1];
 
-	char *s = get_address_symbol((void*)address);
+	const char *s = get_address_symbol((void*)address);
 
 	if (s && s[0])
 	{
