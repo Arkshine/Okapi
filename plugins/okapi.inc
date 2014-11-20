@@ -16,22 +16,6 @@
 #include <okapi_const>
 
 /**
- * Gets the address of the function that best matches the treemap
- * 
- * @param treemap		the treemap
- * @param any			a sequence of pairs (function_address, relation_number) to refine the search
- * @return				the address of the best matching function
- *						0 if no address is found
- *						
- *    Function address means the actual address, not the offset in the library.
- *	  This function deals with actual addresses, not offsets.
- *	  When you provide pairs function_address/relation_number, only addresses with the right relation_number
- * 	to the function are considered
- *
- */
-native okapi_get_treemap_ptr(const treemap[],any:...)
-
-/**
  *   Gets the base address of where the engine library is allocated in memory
  *  
  * @return					the base address
