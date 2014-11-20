@@ -18,7 +18,6 @@
 #include <CVector.h>
 #include <trie.h>
 #include <string_.h>
-#include <trie_string.h>
 
 class GameLibrary : public s_library
 {

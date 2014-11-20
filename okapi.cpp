@@ -19,7 +19,6 @@
 #include <heap.h>
 #include <trie.h>
 #include <s_library.h>
-#include <trie_string.h>
 #include <globals.h>
 #include <game_libraries/game_library_engine.h>
 #include <game_libraries/game_library_mod.h>
@@ -1445,11 +1444,9 @@ void okapi()
 	}
 	else
 	{
-		const char* arg = g_engfuncs.pfnCmd_Argv(1);
+		Command* command;
 
-		Command* command = Commands[(char*)arg];
-
-		if (!command)
+		if (!Commands.retrieve(g_engfuncs.pfnCmd_Argv(1), &command))
 		{
 			con_printf("invalid command\n");
 		}
@@ -1479,7 +1476,7 @@ void OnMetaAttach(void)
 
 	g_engfuncs.pfnAddServerCommand("okapi", okapi);
 
-	Commands["help"] = new CommandHelp();
+	Commands.insert("help", new CommandHelp());
 
 	if (!G_FakemetaConstToAddress)
 		G_FakemetaConstToAddress = new FakemetaConstToAddress();

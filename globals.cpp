@@ -13,14 +13,14 @@
 #include <globals.h>
 
 #include <game_library.h>
-#include <trie_string.h>
+#include <sm_stringhashmap.h>
 #include <command.h>
 #include <offset_handler.h>
 #include <function.h>
 #include <my_util.h>
 
 GameLibrariesType GameLibraries ={ NULL, NULL };
-TrieString<Command*> Commands;
+StringHashMap<Command*> Commands;
 Memory G_Memory;
 OffsetHandler* G_OffsetHandler = NULL;
 HL_TypeConversion G_HL_TypeConversion;
@@ -38,19 +38,13 @@ void list_commands()
 {
 	con_printf("available commands:\n\n");
 
-	CVector<String> command_names = Commands.get_keys();
-
-	for (size_t i=0; i < command_names.size(); i++)
+	for (StringHashMap<Command*>::iterator iter = Commands.iter(); !iter.empty(); iter.next())
 	{
-		String command_name = command_names[i];
-
-		if (command_name.get_ptr() == "help")
+		if (iter->key.compare("help") == 0)
 		{
 			continue;
 		}
 
-		Command* command = Commands[command_name.get_ptr()];
-
-		con_printf("\t%s - %s\n", command_names[i].get_ptr(), command->get_description());
+		con_printf("\t%s - %s\n", iter->key.chars(), iter->value->get_description());
 	}
 }

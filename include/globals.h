@@ -14,7 +14,7 @@
 #define __GLOBALS_H__
 
 #include <game_library.h>
-#include <trie_string.h>
+#include <sm_stringhashmap.h>
 #include <command.h>
 #include <memory_.h>
 #include <offset_handler.h>
@@ -31,7 +31,7 @@ struct GameLibrariesType
 };
 
 extern GameLibrariesType GameLibraries;
-extern TrieString<Command*> Commands;
+extern StringHashMap<Command*> Commands;
 
 extern Memory G_Memory;
 

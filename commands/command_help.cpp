@@ -27,9 +27,9 @@ void CommandHelp::exec()
 	}
 	else
 	{
-		Command* command = Commands[(char*)g_engfuncs.pfnCmd_Argv(2)];
+		Command* command;
 
-		if (!command)
+		if (!Commands.retrieve(g_engfuncs.pfnCmd_Argv(2), &command))
 		{
 			Util::con_printf("invalid command\n");
 		}
