@@ -45,16 +45,16 @@ class Instruction : public InstructionBytes
 		{
 		}
 
-		static CVector<unsigned char> get_bytes()
+		static ke::Vector<unsigned char> get_bytes()
 		{
-			CVector<unsigned char> bytes;
+			ke::Vector<unsigned char> bytes;
 
 			for (size_t i=0; i < ARRAYSIZE(T::data); i++)
 			{
-				bytes.push_back(T::data[i]);
+				bytes.append(T::data[i]);
 			}
 
-			return bytes;
+			return ke::Move(bytes);
 		}
 
 		void set_long(long value)
@@ -188,14 +188,14 @@ class AssemblyCreate
 			InstructionBytesOffset(InstructionBytes* instruction_bytes, size_t offset) : instruction_bytes(instruction_bytes), offset(offset) { }
 		};
 
-		CVector<unsigned char> bytes;
-		CVector<InstructionBytesOffset> instructionsBytesData;
+		ke::Vector<unsigned char> bytes;
+		ke::Vector<InstructionBytesOffset> instructionsBytesData;
 
 	public:
 
 		~AssemblyCreate()
 		{
-			for (size_t i=0; i < instructionsBytesData.size(); i++)
+			for (size_t i=0; i < instructionsBytesData.length(); i++)
 			{
 				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
 
@@ -206,25 +206,28 @@ class AssemblyCreate
 		template <class T>
 		T* add()
 		{
-			int pos = this->bytes.size();
+			int pos = this->bytes.length();
 
-			CVector<unsigned char> bytes = T::get_bytes();
+			ke::Vector<unsigned char>& bytes = T::get_bytes();
 
-			this->bytes.merge(bytes);
+			for (size_t i = 0; i < bytes.length(); ++i)
+			{
+				this->bytes.append(bytes.at(i));
+			}
 
-			T* object = new T(&this->bytes.m_Data[pos]);
+			T* object = new T(&this->bytes.buffer()[pos]);
 
-			instructionsBytesData.push_back(InstructionBytesOffset(object, pos));
+			instructionsBytesData.append(InstructionBytesOffset(object, pos));
 
 			return object;
 		}
 
 		unsigned char* create_block()
 		{
-			unsigned char* block = new unsigned char[bytes.size()];
-			memcpy(block, this->bytes.m_Data, bytes.size());
+			unsigned char* block = new unsigned char[bytes.length()];
+			memcpy(block, this->bytes.buffer(), bytes.length());
 
-			for (size_t i=0; i < instructionsBytesData.size(); i++)
+			for (size_t i=0; i < instructionsBytesData.length(); i++)
 			{
 				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
 				instructionBytesData.instruction_bytes->set_bytes(&block[instructionBytesData.offset]);
@@ -235,18 +238,18 @@ class AssemblyCreate
 
 		unsigned char* get_block()
 		{
-			for (size_t i=0; i < instructionsBytesData.size(); i++)
+			for (size_t i=0; i < instructionsBytesData.length(); i++)
 			{
 				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
-				instructionBytesData.instruction_bytes->set_bytes(&this->bytes.m_Data[instructionBytesData.offset]);
+				instructionBytesData.instruction_bytes->set_bytes(&this->bytes.buffer()[instructionBytesData.offset]);
 			}
 
-			return this->bytes.m_Data;
+			return this->bytes.buffer();
 		}
 
 		size_t size()
 		{
-			return this->bytes.size();
+			return this->bytes.length();
 		}
 };
 

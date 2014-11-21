@@ -13,7 +13,7 @@
 #ifndef __HEAP_MIN_H__
 #define __HEAP_MIN_H__
 
-#include <CVector.h>
+#include <am-vector.h>
 
 template <typename T>
 T max_val();
@@ -39,18 +39,18 @@ struct CompareMax
 template <typename T, class Compare>
 struct Heap
 {
-	CVector<T> data;
+	ke::Vector<T> data;
 
 	void fix(size_t id)
 	{
-		if (id >= data.size())
+		if (id >= data.length())
 			return;
 
 		T& cur = data[id];
 
 		size_t left_id = id * 2;
 
-		if (left_id >= data.size())
+		if (left_id >= data.length())
 			return;
 
 		T left = data[left_id];
@@ -60,7 +60,7 @@ struct Heap
 
 		size_t right_id = left_id + 1;
 
-		if (right_id < data.size())
+		if (right_id < data.length())
 		{
 			T right = data[right_id];
 

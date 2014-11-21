@@ -15,7 +15,6 @@
 #include <my_util.h>
 #include <work.h>
 #include <stdio.h>
-#include <CVector.h>
 #include <heap.h>
 #include <s_library.h>
 #include <globals.h>
@@ -295,14 +294,14 @@ static cell AMX_NATIVE_CALL okapi_build_method(AMX *amx, cell *params)
 	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[2]];
-	CVector<TypeHandler*> arguments_handlers;
+	ke::Vector<TypeHandler*>* arguments_handlers = new ke::Vector<TypeHandler*>;
 
-	arguments_handlers.push_back(G_ArgsTypeHandler[params[3]]);
+	arguments_handlers->append(G_ArgsTypeHandler[params[3]]);
 
 	for (int i=4; i <= params_n; i++)
 	{
 		int id = *MF_GetAmxAddr(amx, params[i]);
-		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
+		arguments_handlers->append(G_ArgsTypeHandler[id]);
 	}
 
 	Function* function = new FunctionMethod((void*)address, arguments_handlers, return_handler);
@@ -345,14 +344,14 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_ptr(AMX *amx, cell *params)
 	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[3]];
-	CVector<TypeHandler*> arguments_handlers;
+	ke::Vector<TypeHandler*>* arguments_handlers = new ke::Vector<TypeHandler*>;
 
-	arguments_handlers.push_back(G_ArgsTypeHandler[ArgInt]);
+	arguments_handlers->append(G_ArgsTypeHandler[ArgInt]);
 
 	for (int i=4; i <= params_n; i++)
 	{
 		int id = *MF_GetAmxAddr(amx, params[i]);
-		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
+		arguments_handlers->append(G_ArgsTypeHandler[id]);
 	}
 
 	Function* function = new FunctionVirtual((void*)entry_address, arguments_handlers, return_handler);
@@ -397,18 +396,18 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_cbase(AMX *amx, cell *params)
 	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[3]];
-	CVector<TypeHandler*> arguments_handlers;
+	ke::Vector<TypeHandler*>* arguments_handlers = new ke::Vector<TypeHandler*>;
 
-	arguments_handlers.push_back(G_ArgsTypeHandler[ArgCBase]);
+	arguments_handlers->append(G_ArgsTypeHandler[ArgCBase]);
 
 	for (int i=4; i <= params_n; i++)
 	{
 		int id = *MF_GetAmxAddr(amx, params[i]);
-		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
+		arguments_handlers->append(G_ArgsTypeHandler[id]);
 	}
 
 	Function* function = new FunctionVirtual((void*)entry_address, arguments_handlers, return_handler);
-
+	
 	insert->key = (long)entry_address;
 	insert->value = function;
 
@@ -456,14 +455,14 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_class(AMX *amx, cell *params)
 	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[3]];
-	CVector<TypeHandler*> arguments_handlers;
+	ke::Vector<TypeHandler*>* arguments_handlers = new ke::Vector<TypeHandler*>;
 
-	arguments_handlers.push_back(G_ArgsTypeHandler[ArgCBase]);
+	arguments_handlers->append(G_ArgsTypeHandler[ArgCBase]);
 
 	for (int i=4; i <= params_n; i++)
 	{
 		int id = *MF_GetAmxAddr(amx, params[i]);
-		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
+		arguments_handlers->append(G_ArgsTypeHandler[id]);
 	}
 
 	Function* function = new FunctionVirtual((void*)entry_address, arguments_handlers, return_handler);
@@ -500,12 +499,12 @@ static cell AMX_NATIVE_CALL okapi_build_function(AMX *amx, cell *params)
 	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[2]];
-	CVector<TypeHandler*> arguments_handlers;
+	ke::Vector<TypeHandler*>* arguments_handlers = new ke::Vector<TypeHandler*>;
 
 	for (int i=3; i <= params_n; i++)
 	{
 		int id = *MF_GetAmxAddr(amx, params[i]);
-		arguments_handlers.push_back(G_ArgsTypeHandler[id]);
+		arguments_handlers->append(G_ArgsTypeHandler[id]);
 	}
 
 	Function* function = new FunctionCdecl((void*)address, arguments_handlers, return_handler);

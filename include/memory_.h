@@ -13,7 +13,8 @@
 #ifndef __MEMORY__H__
 #define __MEMORY__H__
 
-#include <CVector.h>
+#include <am-vector.h>
+#include <MemoryUtils.h>
 
 #ifdef __linux__
 	// Code from jim yang
@@ -55,7 +56,7 @@ class Memory
 {
 	#ifdef __linux__
 
-		CVector<MemoryMap> memory_maps;
+		ke::Vector<MemoryMap> memory_maps;
 
 		void fill_memory_maps()
 		{
@@ -94,7 +95,7 @@ class Memory
 							protection |= PROT_EXEC;
 					}
 
-					memory_maps.push_back(MemoryMap((long)start, (long)end, protection));
+					memory_maps.append(MemoryMap((long)start, (long)end, protection));
 				}
 
 				fclose(fp);
@@ -115,7 +116,7 @@ class Memory
 		int get_memory_protection(long address)
 		{
 			#ifdef __linux__
-				for (size_t i=0; i < this->memory_maps.size(); i++)
+				for (size_t i=0; i < this->memory_maps.length(); i++)
 				{
 					MemoryMap memory_map = memory_maps[i];
 

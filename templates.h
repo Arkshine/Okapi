@@ -40,9 +40,6 @@ template <typename T>
 bool check_empty(T& a);
 
 template <>
-bool check_empty(CVector<int>& a);
-
-template <>
 bool check_empty(Command*& a);
 
 template <>
@@ -82,12 +79,6 @@ template <typename T>
 bool check_empty(T& a)
 {
 	return a.is_empty();
-}
-
-template <>
-bool check_empty(CVector<int>& a)
-{
-	return a.size() == 0;
 }
 
 template <>

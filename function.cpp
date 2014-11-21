@@ -13,13 +13,12 @@
 #include <function.h>
 
 #include "amxxmodule.h"
-#include <CVector.h>
 #include <assembly_create.h>
 #include <type_handler.h>
 #include <memory_.h>
 
-CVector<Function*> Function::functions;
-CVector<AMX_Hook*> Function::hooks_stack;
+ke::Vector<Function*> Function::functions;
+ke::Vector<AMX_Hook*> Function::hooks_stack;
 
 long Function::Gate(void* ebp, void* eip, Function* func, void** stack, ...)
 {
@@ -31,15 +30,15 @@ float Function::GateFloat(void* ebp, void* eip, Function* func, void** stack, ..
 	return func->call(stack);
 }
 
-Function::Function(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler) :
+Function::Function(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler) :
 address(address),
 arguments_handlers(arguments_handlers),
 return_handler(return_handler),
 trampoline(NULL)
 {
-	functions.push_back(this);
+	functions.append(this);
 
-	stack_amxx = new cell[arguments_handlers.size()];
+	stack_amxx = new cell[arguments_handlers->length()];
 
 	this->call_hooks = true;
 }
@@ -150,14 +149,14 @@ AMX_Hook* Function::add_hook(AMX *amx, const char* callback, int phase)
 
 	assembly.add<Inst_Enter>();
 
-	int start = (int)this->arguments_handlers.size() - 1;
+	int start = (int)this->arguments_handlers->length() - 1;
 	int end = 0;
 
 	assembly.add<Inst_Push_VAL>()->set_long(FP_DONE);
 
 	for (int i=start; i >= end; i--)
 	{
-		assembly.add<Inst_Push_VAL>()->set_long(this->arguments_handlers[i]->get_amx_param_type());
+		assembly.add<Inst_Push_VAL>()->set_long(this->arguments_handlers->at(i)->get_amx_param_type());
 	}
 
 	assembly.add<Inst_Push_VAL>()->set_long((long)callback);
@@ -165,7 +164,7 @@ AMX_Hook* Function::add_hook(AMX *amx, const char* callback, int phase)
 
 	Inst_Call* inst_call  = assembly.add<Inst_Call>();
 
-	assembly.add<Inst_Add_ESP_Val>()->set_inc(4 * (this->arguments_handlers.size() + 3));
+	assembly.add<Inst_Add_ESP_Val>()->set_inc(4 * (this->arguments_handlers->length() + 3));
 
 	assembly.add<Inst_Leave>();
 
@@ -187,22 +186,20 @@ AMX_Hook* Function::add_hook(AMX *amx, const char* callback, int phase)
 
 	AMX_Hook* amx_hook = new AMX_Hook(this, ret, phase);
 
-	amx_hooks[phase].push_back(amx_hook);
+	amx_hooks[phase].append(amx_hook);
 
 	return amx_hook;
 }
 
-typedef CVector<AMX_Hook*>::iterator it_t;
-
 void Function::del_hook(AMX_Hook* hook)
 {
-	CVector<AMX_Hook*>& hooks_phase = this->amx_hooks[hook->phase];
+	ke::Vector<AMX_Hook*>& hooks_phase = this->amx_hooks[hook->phase];
 
-	for (it_t it = hooks_phase.begin(); it != hooks_phase.end(); it++)
+	for (size_t iter = 0; iter < hooks_phase.length(); ++iter)
 	{
-		if (*it == hook)
+		if (hooks_phase[iter] == hook)
 		{
-			hooks_phase.erase(it);
+			hooks_phase.remove(iter);
 
 			delete hook;
 
@@ -217,7 +214,7 @@ OkapiRet Function::call_amxx_hook(int hook)
 
 	assembly.add<Inst_Enter>();
 
-	int start = (int)this->arguments_handlers.size() - 1;
+	int start = (int)this->arguments_handlers->length() - 1;
 	int end = 0;
 
 	for (int i=start; i >= end; i--)
@@ -229,7 +226,7 @@ OkapiRet Function::call_amxx_hook(int hook)
 
 	Inst_Call* inst_call  = assembly.add<Inst_Call>();
 
-	assembly.add<Inst_Add_ESP_Val>()->set_inc(4 * (this->arguments_handlers.size() + 1));
+	assembly.add<Inst_Add_ESP_Val>()->set_inc(4 * (this->arguments_handlers->length() + 1));
 
 	assembly.add<Inst_Leave>();
 
@@ -257,9 +254,9 @@ int FunctionMethod::get_stack_dislocation()
 	size_t i = 1;
 #endif
 
-	for (; i < this->arguments_handlers.size(); i++)
+	for (; i < this->arguments_handlers->length(); ++i)
 	{
-		dislocation += arguments_handlers[i]->stack_places() * sizeof(long);
+		dislocation += arguments_handlers->at(i)->stack_places() * sizeof(long);
 	}
 
 	return dislocation;
@@ -340,14 +337,14 @@ long FunctionMethod::call_original(void** stack)
 	return ret_data;
 }
 
-FunctionMethod::FunctionMethod(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
+FunctionMethod::FunctionMethod(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
 {
 	original_code = new unsigned char[8];
 
 	this->trampoline = this->create_trampoline();
 }
 
-FunctionCdecl::FunctionCdecl(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
+FunctionCdecl::FunctionCdecl(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
 {
 	original_code = new unsigned char[8];
 
@@ -358,9 +355,9 @@ int FunctionCdecl::get_stack_dislocation()
 {
 	int dislocation = 0;
 
-	for (size_t i = 0; i < this->arguments_handlers.size(); i++)
+	for (size_t i = 0; i < this->arguments_handlers->length(); ++i)
 	{
-		dislocation += arguments_handlers[i]->stack_places() * sizeof(long);
+		dislocation += arguments_handlers->at(i)->stack_places() * sizeof(long);
 	}
 
 	return dislocation;
@@ -484,13 +481,13 @@ long FunctionVirtual::call_amx(AMX* amx, cell* params, bool call_hooks)
 
 	void** stack_call = allocator_c.alloc<void*>(stack_places);
 
-	CVector<TypeHandler*>& handlers = this->arguments_handlers;
+	ke::Vector<TypeHandler*>* handlers = this->arguments_handlers;
 
 	int offset = 0;
 
-	for (size_t i=0; i < handlers.size(); i++)
+	for (size_t i = 0; i < handlers->length(); ++i)
 	{
-		TypeHandler*& handler = handlers[i];
+		TypeHandler*& handler = handlers->at(i);
 
 		handler->convert_from_amxx(allocator_c, &stack_call[offset], amx, params[i]);
 
@@ -508,5 +505,5 @@ long FunctionVirtual::call_amx(AMX* amx, cell* params, bool call_hooks)
 		ret = this->call_original(stack_call);
 	}
 
-	return return_handler->convert_to_amxx(amx, &params[handlers.size()], ret);
+	return return_handler->convert_to_amxx(amx, &params[handlers->length()], ret);
 }

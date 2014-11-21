@@ -141,7 +141,6 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/$(ProjectName)_debug.pdb</ProgramDatabaseFile>
       <ImportLibrary>.\Debug/$(ProjectName)_debug.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -161,7 +160,6 @@
     <ClInclude Include="..\include\assembly_create.h" />
     <ClInclude Include="..\include\command.h" />
     <ClInclude Include="..\include\commands\command_help.h" />
-    <ClInclude Include="..\include\CVector.h" />
     <ClInclude Include="..\include\fakemeta_const.h" />
     <ClInclude Include="..\include\fakemeta_const_to_address.h" />
     <ClInclude Include="..\include\function.h" />
@@ -175,7 +173,6 @@
     <ClInclude Include="..\include\my_util.h" />
     <ClInclude Include="..\include\offset_handler.h" />
     <ClInclude Include="..\include\okapi.h" />
-    <ClInclude Include="..\include\string_.h" />
     <ClInclude Include="..\include\s_library.h" />
     <ClInclude Include="..\include\type_handler.h" />
     <ClInclude Include="..\include\type_handlers\type_handler_extra.h" />

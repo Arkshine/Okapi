@@ -13,11 +13,11 @@
 #ifndef __ALLOCATOR_H__
 #define __ALLOCATOR_H__
 
-#include <CVector.h>
+#include <am-vector.h>
 
 class Allocator
 {
-	CVector<void*> data;
+	ke::Vector<void*> data;
 
 	public:
 
@@ -28,7 +28,7 @@ class Allocator
 
 		void clear()
 		{
-			for (size_t i=0; i < data.size(); i++)
+			for (size_t i=0; i < data.length(); i++)
 			{
 				delete data[i];
 			}
@@ -36,17 +36,15 @@ class Allocator
 			data.clear();
 		}
 
-		typedef CVector<void*>::iterator iterator;
-
 		bool free_ptr(void* ptr)
 		{
-			for (iterator it = data.begin(); it < data.end(); it++)
+			for (size_t i = 0; i < data.length(); ++i)
 			{
-				if (*it == ptr)
+				if (data[i] == ptr)
 				{
 					delete ptr;
 
-					data.erase(it);
+					data.remove(i);
 
 					return true;
 				}
@@ -63,7 +61,7 @@ class Allocator
 		T* alloc(int size)
 		{
 			T* block = new T[size];
-			data.push_back((void*)block);
+			data.append((void*)block);
 
 			return block;
 		}

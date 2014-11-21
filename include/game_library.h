@@ -15,8 +15,7 @@
 
 #include <s_library.h>
 #include <heap.h>
-#include <CVector.h>
-#include <string_.h>
+#include <am-vector.h>
 
 class GameLibrary : public s_library
 {

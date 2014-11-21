@@ -14,7 +14,7 @@
 #define ___FUNC_TION___
 
 #include "amxxmodule.h"
-#include <CVector.h>
+#include <am-vector.h>
 #include <type_handler.h>
 #include <allocator.h>
 #include <memory_.h>
@@ -44,8 +44,8 @@ struct AMX_Hook
 
 class Function
 {
-	static CVector<Function*> functions;
-	static CVector<AMX_Hook*> hooks_stack;
+	static ke::Vector<Function*> functions;
+	static ke::Vector<AMX_Hook*> hooks_stack;
 
 	static long Gate(void* ebp, void* eip, Function* func, void** stack, ...);
 	static float GateFloat(void* ebp, void* eip, Function* func, void** stack, ...);
@@ -54,10 +54,10 @@ protected:
 
 	void* address;
 	unsigned char* trampoline;
-	CVector<TypeHandler*> arguments_handlers;
+	ke::AutoPtr< ke::Vector<TypeHandler*> > arguments_handlers;
 	TypeHandler* return_handler;
 
-	CVector<AMX_Hook*> amx_hooks[2];
+	ke::Vector<AMX_Hook*> amx_hooks[2];
 
 	void** stack;
 
@@ -72,7 +72,7 @@ protected:
 
 	Allocator allocator;
 
-	Function(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler);
+	Function(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler);
 
 	virtual ~Function()
 	{
@@ -85,11 +85,11 @@ protected:
 
 	void clean_hooks()
 	{
-		for (int i=0; i < 2; i++)
+		for (size_t i = 0; i < 2; ++i)
 		{
-			CVector<AMX_Hook*>& amx_hooks_phase = amx_hooks[i];
+			ke::Vector<AMX_Hook*>& amx_hooks_phase = amx_hooks[i];
 
-			for (size_t j=0; j < amx_hooks_phase.size(); j++)
+			for (size_t j = 0; j < amx_hooks_phase.length(); ++j)
 			{
 				AMX_Hook* amx_hook = amx_hooks_phase[j];
 				delete amx_hook;
@@ -101,13 +101,13 @@ protected:
 
 	void** get_stack_for_arg(int n)
 	{
-		CVector<TypeHandler*>& handlers = this->arguments_handlers;
+		ke::Vector<TypeHandler*>* handlers = this->arguments_handlers;
 
 		int offset = 0;
 
-		for (size_t i=0; i < (size_t)n; i++)
+		for (size_t i=0; i < (size_t)n; ++i)
 		{
-			TypeHandler*& handler = handlers[i];
+			TypeHandler*& handler = handlers->at(i);
 			offset += handler->stack_places();
 		}
 
@@ -118,11 +118,11 @@ protected:
 	{
 		int n = 0;
 
-		CVector<TypeHandler*>& handlers = this->arguments_handlers;
+		ke::Vector<TypeHandler*>* handlers = this->arguments_handlers;
 
-		for (size_t i=0; i < handlers.size(); i++)
+		for (size_t i = 0; i < handlers->length(); ++i)
 		{
-			TypeHandler*& handler = handlers[i];
+			TypeHandler*& handler = handlers->at(i);
 
 			n += handler->stack_places();
 		}
@@ -132,13 +132,13 @@ protected:
 
 	void convert_to_amxx(void** stack)
 	{
-		CVector<TypeHandler*>& handlers = this->arguments_handlers;
+		ke::Vector<TypeHandler*>* handlers = this->arguments_handlers;
 
 		int offset = 0;
 
-		for (size_t i=0; i < handlers.size(); i++)
+		for (size_t i = 0; i < handlers->length(); ++i)
 		{
-			TypeHandler*& handler = handlers[i];
+			TypeHandler*& handler = handlers->at(i);
 
 			handler->convert_to_amxx(allocator, &stack[offset], this->stack_amxx[i]);
 
@@ -195,19 +195,19 @@ protected:
 	{
 		OkapiRet ret = OkapiRetIgnore;
 
-		CVector<AMX_Hook*> hooks = this->amx_hooks[phase];
+		ke::Vector<AMX_Hook*>& hooks = this->amx_hooks[phase];
 
-		for (size_t i=0; i < hooks.size(); i++)
+		for (size_t i=0; i < hooks.length(); i++)
 		{
 			AMX_Hook* hook = hooks[i];
 
-			hooks_stack.push_back(hook);
+			hooks_stack.append(hook);
 
 			OkapiRet ret_hook = call_amxx_hook(hook->amx_hook);
 
 			ret = (OkapiRet)max(ret, ret_hook);
 
-			hooks_stack.pop_back();
+			hooks_stack.pop();
 
 			if (ret == OkapiRetSupercede)
 			{
@@ -227,7 +227,7 @@ public:
 	{
 		clean_all_hooks();
 
-		for (size_t i=0; i < functions.size(); i++)
+		for (size_t i=0; i < functions.length(); i++)
 		{
 			Function* function = functions[i];
 
@@ -239,7 +239,7 @@ public:
 
 	static void clean_all_hooks()
 	{
-		for (size_t i=0; i < functions.size(); i++)
+		for (size_t i=0; i < functions.length(); i++)
 		{
 			Function* function = functions[i];
 
@@ -249,22 +249,22 @@ public:
 
 	static AMX_Hook* get_current_hook()
 	{
-		if (!hooks_stack.size())
+		if (!hooks_stack.length())
 			return NULL;
 
-		return hooks_stack[hooks_stack.size() - 1];
+		return hooks_stack[hooks_stack.length() - 1];
 	}
 
 	int get_n_args()
 	{
-		return this->arguments_handlers.size();
+		return this->arguments_handlers->length();
 	}
 
 	void set_arg(int n, AMX* amx, cell param)
 	{
 		void** stack_arg = get_stack_for_arg(n);
 
-		this->arguments_handlers[n]->convert_from_amxx(allocator, stack_arg, amx, param);
+		this->arguments_handlers->at(n)->convert_from_amxx(allocator, stack_arg, amx, param);
 	}
 
 	void set_return(AMX *amx, cell *params)
@@ -284,7 +284,7 @@ public:
 
 	int call_n_params()
 	{
-		return this->arguments_handlers.size() + this->return_handler->by_ref_n_params();
+		return this->arguments_handlers->length() + this->return_handler->by_ref_n_params();
 	}
 
 	virtual long call_amx(AMX* amx, cell* params, bool call_hooks)
@@ -295,13 +295,13 @@ public:
 
 		void** stack_call = allocator_c.alloc<void*>(stack_places);
 
-		CVector<TypeHandler*>& handlers = this->arguments_handlers;
+		ke::Vector<TypeHandler*>* handlers = this->arguments_handlers;
 
 		int offset = 0;
 
-		for (size_t i=0; i < handlers.size(); i++)
+		for (size_t i = 0; i < handlers->length(); ++i)
 		{
-			TypeHandler*& handler = handlers[i];
+			TypeHandler*& handler = handlers->at(i);
 
 			handler->convert_from_amxx(allocator_c, &stack_call[offset], amx, params[i]);
 
@@ -314,7 +314,7 @@ public:
 
 		this->call_hooks = true;
 
-		return return_handler->convert_to_amxx(amx, &params[handlers.size()], ret);
+		return return_handler->convert_to_amxx(amx, &params[handlers->length()], ret);
 	}
 };
 
@@ -330,7 +330,7 @@ protected:
 
 public:
 
-	FunctionMethod(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler);
+	FunctionMethod(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler);
 
 	~FunctionMethod()
 	{
@@ -352,7 +352,7 @@ protected:
 
 public:
 
-	FunctionCdecl(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler);
+	FunctionCdecl(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler);
 
 	~FunctionCdecl()
 	{
@@ -376,9 +376,9 @@ class FunctionVirtual : public Function
 				size_t i = 1;
 			#endif
 
-			for (; i < this->arguments_handlers.size(); i++)
+			for (; i < this->arguments_handlers->length(); ++i)
 			{
-				dislocation += arguments_handlers[i]->stack_places() * sizeof(long);
+				dislocation += arguments_handlers->at(i)->stack_places() * sizeof(long);
 			}
 
 			return dislocation;
@@ -411,7 +411,7 @@ class FunctionVirtual : public Function
 
 	public:
 
-		FunctionVirtual(void* address, CVector<TypeHandler*> arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
+		FunctionVirtual(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
 		{
 			original_address = *((void**)address);
 
