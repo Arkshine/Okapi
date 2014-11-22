@@ -48,9 +48,6 @@
     <ClInclude Include="..\include\game_libraries\game_library_mod.h">
       <Filter>Header Files\game_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\moduleconfig.h">
-      <Filter>Module SDK</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\sdk\amxxmodule.h">
       <Filter>Module SDK\SDK Base</Filter>
     </ClInclude>
@@ -110,6 +107,9 @@
     </ClInclude>
     <ClInclude Include="..\includes\work.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\moduleconfig.h">
+      <Filter>Module SDK</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

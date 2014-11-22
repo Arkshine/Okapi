@@ -188,7 +188,7 @@
     <ClInclude Include="..\includes\templates.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\moduleconfig.h" />
+    <ClInclude Include="..\includes\moduleconfig.h" />
     <ClInclude Include="..\public\sdk\amxxmodule.h" />
   </ItemGroup>
   <ItemGroup>

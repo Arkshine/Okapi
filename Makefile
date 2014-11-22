@@ -5,8 +5,8 @@
 ### EDIT THESE PATHS FOR YOUR OWN SETUP ###
 ###########################################
 
-HLSDK = ./hlsdk/multiplayer
-MM_ROOT = ./metamod/metamod
+HLSDK   = ../hlsdk
+MM_ROOT = ../metamod-am/metamod
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
@@ -14,7 +14,7 @@ MM_ROOT = ./metamod/metamod
 
 PROJECT = okapi
 
-OBJECTS = sdk/amxxmodule.cpp okapi.cpp work.cpp my_util.cpp s_library.cpp commands/command_help.cpp s_steps_address.cpp address_score.cpp address_line.cpp globals.cpp command.cpp game_library.cpp offset_handler.cpp hl_type_conversion.cpp function.cpp
+OBJECTS = public/sdk/amxxmodule.cpp okapi.cpp work.cpp my_util.cpp s_library.cpp commands/command_help.cpp s_steps_address.cpp globals.cpp command.cpp offset_handler.cpp hl_type_conversion.cpp function.cpp public/memtools/MemoryUtils.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
@@ -24,13 +24,15 @@ C_OPT_FLAGS = -DNDEBUG -O2 -funroll-loops -fomit-frame-pointer -pipe
 C_DEBUG_FLAGS = -D_DEBUG -DDEBUG -g -ggdb3
 C_GCC4_FLAGS = -fvisibility=hidden
 CPP_GCC4_FLAGS = -fvisibility-inlines-hidden
-CPP = gcc
+CPP = gcc-4.4
 CPP_OSX = clang
 
 LINK =
 
-INCLUDE = -I. -I$(HLSDK) -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine -I$(HLSDK)/game_shared \
-          -I$(MM_ROOT) -Isdk -Iinclude/
+INCLUDE =   -I. -Isdk -Iincludes \
+			-Ipublic -Ipublic/sdk -Ipublic/amtl -Ipublic/memtools \
+			-I$(HLSDK) -I$(HLSDK)/public -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine -I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared \
+			-I$(MM_ROOT)
 
 ################################################
 ### DO NOT EDIT BELOW HERE FOR MOST PROJECTS ###
@@ -42,18 +44,18 @@ ifeq "$(OS)" "Darwin"
 	CPP = $(CPP_OSX)
 	LIB_EXT = dylib
 	LIB_SUFFIX = _amxx
-	CFLAGS += -DOSX
-	LINK += -dynamiclib -lstdc++ -mmacosx-version-min=10.5
+	CFLAGS += -DOSX -D_OSX -DPOSIX
+	LINK += -dynamiclib -lstdc++ -mmacosx-version-min=10.5 -arch=i386
 else
 	LIB_EXT = so
 	LIB_SUFFIX = _amxx_i386
-	CFLAGS += -DLINUX
+	CFLAGS += -DLINUX -D_LINUX -DPOSIX
 	LINK += -shared
 endif
 
 LINK += -m32 -lm -ldl
 
-CFLAGS += -DPAWN_CELL_SIZE=32 -DJIT -DASM32 -DHAVE_STDINT_H -fno-strict-aliasing -m32 -Wall -Wno-write-strings -Wno-unknown-pragmas
+CFLAGS += -DOKAPI_BUILD -DPAWN_CELL_SIZE=32 -DJIT -DASM32 -DHAVE_STDINT_H -fno-strict-aliasing -m32 -Wall -Wno-write-strings -Wno-unknown-pragmas
 CPPFLAGS += -fno-exceptions -fno-rtti
 
 BINARY = $(PROJECT)$(LIB_SUFFIX).$(LIB_EXT)
@@ -83,6 +85,12 @@ ifeq "$(shell expr $(IS_CLANG) \| $(CPP_MAJOR) \>= 4)" "1"
 	CPPFLAGS += $(CPP_GCC4_FLAGS)
 endif
 
+ifeq "$(IS_CLANG)" "1"
+	CFLAGS += -Wno-logical-op-parentheses
+else
+	CFLAGS += -Wno-parentheses
+endif
+
 # Clang >= 3 || GCC >= 4.7
 ifeq "$(shell expr $(IS_CLANG) \& $(CPP_MAJOR) \>= 3 \| $(CPP_MAJOR) \>= 4 \& $(CPP_MINOR) \>= 7)" "1"
 	CFLAGS += -Wno-delete-non-virtual-dtor
@@ -92,6 +100,12 @@ endif
 ifeq "$(shell expr $(OS) \= Linux \& $(IS_CLANG) \= 0)" "1"
 	LINK += -static-libgcc
 endif
+
+# OS is Linux and using clang
+ifeq "$(shell expr $(OS) \= Linux \& $(IS_CLANG) \= 1)" "1"
+	LINK += -lgcc_eh
+endif
+
 
 OBJ_BIN := $(OBJECTS:%.cpp=$(BIN_DIR)/%.o)
 
@@ -105,7 +119,9 @@ $(BIN_DIR)/%.o: %.cpp
 
 all:
 	mkdir -p $(BIN_DIR)
-	mkdir -p $(BIN_DIR)/sdk
+	mkdir -p $(BIN_DIR)/commands
+	mkdir -p $(BIN_DIR)/public/memtools
+	mkdir -p $(BIN_DIR)/public/sdk
 	$(MAKE) -f $(MAKEFILE_NAME) $(PROJECT)
 
 $(PROJECT): $(OBJ_BIN)
@@ -118,6 +134,8 @@ default: all
 
 clean:
 	rm -rf $(BIN_DIR)/*.o
-	rm -rf $(BIN_DIR)/sdk/*.o
+	rm -rf $(BIN_DIR)/commands/*.o
+	rm -rf $(BIN_DIR)/public/memtools/*.o
+	rm -rf $(BIN_DIR)/public/sdk/*.o
 	rm -f $(BIN_DIR)/$(BINARY)
 

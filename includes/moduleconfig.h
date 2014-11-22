@@ -14,13 +14,15 @@
 #ifndef __MODULECONFIG_H__
 #define __MODULECONFIG_H__
 
+#include "okapi_version.h"
+
 // Module info
-#define MODULE_NAME "okapi"
-#define MODULE_VERSION "1.0"
-#define MODULE_AUTHOR "joaquimandrade"
-#define MODULE_URL "http://www.amxmodx.org"
-#define MODULE_LOGTAG "OKAPI"
-#define MODULE_LIBRARY "okapi"
+#define MODULE_NAME     "Okapi"
+#define MODULE_VERSION  OKAPI_VERSION
+#define MODULE_AUTHOR   "joaquimandrade"
+#define MODULE_URL      "http://www.amxmodx.org"
+#define MODULE_LOGTAG   "OKAPI"
+#define MODULE_LIBRARY  "okapi"
 #define MODULE_LIBCLASS ""
 // If you want the module not to be reloaded on mapchange, remove / comment out the next line
 #define MODULE_RELOAD_ON_MAPCHANGE
