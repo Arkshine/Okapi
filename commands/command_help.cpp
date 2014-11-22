@@ -20,7 +20,7 @@ void CommandHelp::exec()
 {
 	if (g_engfuncs.pfnCmd_Argc() == 2)
 	{
-		Util::con_printf("Usage: okapi help <command>\n");
+		Util::con_printf(" Usage: okapi help <command>\n");
 		Util::con_printf("\n");
 
 		list_commands();
@@ -31,7 +31,7 @@ void CommandHelp::exec()
 
 		if (!Commands.retrieve(g_engfuncs.pfnCmd_Argv(2), &command))
 		{
-			Util::con_printf("invalid command\n");
+			Util::con_printf(" invalid command\n");
 		}
 		else
 		{
@@ -47,5 +47,5 @@ const char* CommandHelp::get_description()
 
 void CommandHelp::show_help()
 {
-	Util::con_printf("usage: okapi help <command>\n");
+	Util::con_printf(" usage: okapi help <command>\n");
 }

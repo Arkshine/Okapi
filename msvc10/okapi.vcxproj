@@ -159,12 +159,13 @@
     <ClInclude Include="..\includes\allocator.h" />
     <ClInclude Include="..\includes\assembly_create.h" />
     <ClInclude Include="..\includes\command.h" />
-    <ClInclude Include="..\include\commands\command_help.h" />
+    <ClInclude Include="..\includes\commands\command_help.h" />
+    <ClInclude Include="..\includes\commands\command_version.h" />
     <ClInclude Include="..\includes\fakemeta_const.h" />
     <ClInclude Include="..\includes\fakemeta_const_to_address.h" />
     <ClInclude Include="..\includes\function.h" />
-    <ClInclude Include="..\include\game_libraries\game_library_engine.h" />
-    <ClInclude Include="..\include\game_libraries\game_library_mod.h" />
+    <ClInclude Include="..\includes\game_libraries\game_library_engine.h" />
+    <ClInclude Include="..\includes\game_libraries\game_library_mod.h" />
     <ClInclude Include="..\includes\game_library.h" />
     <ClInclude Include="..\includes\globals.h" />
     <ClInclude Include="..\includes\heap.h" />
@@ -175,7 +176,7 @@
     <ClInclude Include="..\includes\okapi.h" />
     <ClInclude Include="..\includes\s_library.h" />
     <ClInclude Include="..\includes\type_handler.h" />
-    <ClInclude Include="..\include\type_handlers\type_handler_extra.h" />
+    <ClInclude Include="..\includes\type_handlers\type_handler_extra.h" />
     <ClInclude Include="..\includes\work.h" />
     <ClCompile Include="..\function.cpp" />
     <ClCompile Include="..\globals.cpp" />

@@ -36,18 +36,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\commands\command_help.h">
-      <Filter>Header Files\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\type_handlers\type_handler_extra.h">
-      <Filter>Header Files\type_handlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\game_libraries\game_library_engine.h">
-      <Filter>Header Files\game_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\game_libraries\game_library_mod.h">
-      <Filter>Header Files\game_libraries</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\sdk\amxxmodule.h">
       <Filter>Module SDK\SDK Base</Filter>
     </ClInclude>
@@ -110,6 +98,21 @@
     </ClInclude>
     <ClInclude Include="..\includes\moduleconfig.h">
       <Filter>Module SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\commands\command_help.h">
+      <Filter>Header Files\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\game_libraries\game_library_engine.h">
+      <Filter>Header Files\game_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\game_libraries\game_library_mod.h">
+      <Filter>Header Files\game_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\type_handlers\type_handler_extra.h">
+      <Filter>Header Files\type_handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\commands\command_version.h">
+      <Filter>Header Files\commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

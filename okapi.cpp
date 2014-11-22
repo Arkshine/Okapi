@@ -21,6 +21,7 @@
 #include <game_libraries/game_library_engine.h>
 #include <game_libraries/game_library_mod.h>
 #include <commands/command_help.h>
+#include <commands/command_version.h>
 #include <function.h>
 #include <type_handlers/type_handler_extra.h>
 
@@ -1519,6 +1520,7 @@ void OnMetaAttach(void)
 	REG_SVR_COMMAND("okapi", okapi);
 
 	Commands.insert("help", new CommandHelp());
+	Commands.insert("version", new CommandVersion());
 
 	if (!G_FakemetaConstToAddress)
 		G_FakemetaConstToAddress = new FakemetaConstToAddress();
