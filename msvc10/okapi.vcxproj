@@ -68,7 +68,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\;..\include;..\public;..\public\amtl;..\public\sdk;..\public\memtools;$(METAMOD)\metamod;$(HLSDK)\common;$(HLSDK)\engine;$(HLSDK)\dlls;$(HLSDK)\pm_shared;$(HLSDK)\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\includes;..\public;..\public\amtl;..\public\sdk;..\public\memtools;$(METAMOD)\metamod;$(HLSDK)\common;$(HLSDK)\engine;$(HLSDK)\dlls;$(HLSDK)\pm_shared;$(HLSDK)\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FUN_EXPORTS;HAVE_STDINT_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -116,7 +116,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;..\include;..\public;..\public\amtl;..\public\sdk;..\public\memtools;$(METAMOD)\metamod;$(HLSDK)\common;$(HLSDK)\engine;$(HLSDK)\dlls;$(HLSDK)\pm_shared;$(HLSDK)\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\includes;..\public;..\public\amtl;..\public\sdk;..\public\memtools;$(METAMOD)\metamod;$(HLSDK)\common;$(HLSDK)\engine;$(HLSDK)\dlls;$(HLSDK)\pm_shared;$(HLSDK)\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;FUN_EXPORTS;HAVE_STDINT_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -156,27 +156,27 @@
     <ClCompile Include="..\public\memtools\MemoryUtils.cpp" />
     <ClCompile Include="..\s_library.cpp" />
     <ClCompile Include="..\work.cpp" />
-    <ClInclude Include="..\include\allocator.h" />
-    <ClInclude Include="..\include\assembly_create.h" />
-    <ClInclude Include="..\include\command.h" />
+    <ClInclude Include="..\includes\allocator.h" />
+    <ClInclude Include="..\includes\assembly_create.h" />
+    <ClInclude Include="..\includes\command.h" />
     <ClInclude Include="..\include\commands\command_help.h" />
-    <ClInclude Include="..\include\fakemeta_const.h" />
-    <ClInclude Include="..\include\fakemeta_const_to_address.h" />
-    <ClInclude Include="..\include\function.h" />
+    <ClInclude Include="..\includes\fakemeta_const.h" />
+    <ClInclude Include="..\includes\fakemeta_const_to_address.h" />
+    <ClInclude Include="..\includes\function.h" />
     <ClInclude Include="..\include\game_libraries\game_library_engine.h" />
     <ClInclude Include="..\include\game_libraries\game_library_mod.h" />
-    <ClInclude Include="..\include\game_library.h" />
-    <ClInclude Include="..\include\globals.h" />
-    <ClInclude Include="..\include\heap.h" />
-    <ClInclude Include="..\include\hl_type_conversion.h" />
-    <ClInclude Include="..\include\memory_.h" />
-    <ClInclude Include="..\include\my_util.h" />
-    <ClInclude Include="..\include\offset_handler.h" />
-    <ClInclude Include="..\include\okapi.h" />
-    <ClInclude Include="..\include\s_library.h" />
-    <ClInclude Include="..\include\type_handler.h" />
+    <ClInclude Include="..\includes\game_library.h" />
+    <ClInclude Include="..\includes\globals.h" />
+    <ClInclude Include="..\includes\heap.h" />
+    <ClInclude Include="..\includes\hl_type_conversion.h" />
+    <ClInclude Include="..\includes\memory_.h" />
+    <ClInclude Include="..\includes\my_util.h" />
+    <ClInclude Include="..\includes\offset_handler.h" />
+    <ClInclude Include="..\includes\okapi.h" />
+    <ClInclude Include="..\includes\s_library.h" />
+    <ClInclude Include="..\includes\type_handler.h" />
     <ClInclude Include="..\include\type_handlers\type_handler_extra.h" />
-    <ClInclude Include="..\include\work.h" />
+    <ClInclude Include="..\includes\work.h" />
     <ClCompile Include="..\function.cpp" />
     <ClCompile Include="..\globals.cpp" />
     <ClCompile Include="..\hl_type_conversion.cpp" />
@@ -185,7 +185,7 @@
     <ClCompile Include="..\okapi.cpp" />
     <ClCompile Include="..\public\sdk\amxxmodule.cpp" />
     <ClInclude Include="..\public\memtools\MemoryUtils.h" />
-    <ClInclude Include="..\templates.h" />
+    <ClInclude Include="..\includes\templates.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\moduleconfig.h" />
@@ -195,6 +195,7 @@
     <None Include="..\plugins\okapi.inc" />
     <None Include="..\plugins\okapi_const.inc" />
     <None Include="..\plugins\okapi_extra.inc" />
+    <None Include="..\plugins\okapi_memory.inc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
