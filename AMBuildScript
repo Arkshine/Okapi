@@ -254,7 +254,6 @@ class OkapiConfig(object):
     binary = compiler.Library(name)
     binary.compiler.cxxincludes += [os.path.join(context.currentSourcePath)]
     if builder.target_platform == 'windows':
-      binary.sources += ['version.rc']
       binary.compiler.rcdefines += [
         'BINARY_NAME="{0}"'.format(binary.outputFile),
         'RC_COMPILE',
@@ -342,5 +341,8 @@ binary.sources = [
   'commands/command_help.cpp',
   'public/memtools/MemoryUtils.cpp',
 ]
+
+if builder.target_platform == 'windows':
+  binary.sources += ['includes/version.rc']
 
 builder.Add(binary)
