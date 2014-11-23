@@ -10,8 +10,8 @@
 // Okapi Module
 //
 
-#ifndef __MEMORY__H__
-#define __MEMORY__H__
+#ifndef MEMORY__H
+#define MEMORY__H
 
 #include <am-vector.h>
 #include <MemoryUtils.h>
@@ -231,4 +231,4 @@ class Memory
 		}
 };
 
-#endif // __MEMORY__H__
+#endif // MEMORY__H

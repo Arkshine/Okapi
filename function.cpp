@@ -11,11 +11,10 @@
 //
 
 #include <function.h>
-
 #include "amxxmodule.h"
-#include <assembly_create.h>
-#include <type_handler.h>
-#include <memory_.h>
+#include "assembly_create.h"
+#include "type_handler.h"
+#include "memory_.h"
 
 ke::Vector<Function*> Function::functions;
 ke::Vector<AMX_Hook*> Function::hooks_stack;
@@ -31,10 +30,7 @@ float Function::GateFloat(void* ebp, void* eip, Function* func, void** stack, ..
 }
 
 Function::Function(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler) :
-address(address),
-arguments_handlers(arguments_handlers),
-return_handler(return_handler),
-trampoline(NULL)
+					address(address), arguments_handlers(arguments_handlers), return_handler(return_handler), trampoline(NULL)
 {
 	functions.append(this);
 
@@ -78,7 +74,7 @@ unsigned char* Function::create_trampoline_generic(int stack_fix, bool pass_ecx,
 									assembly.add<Inst_Enter>();												// enter
 	Inst_Call* inst_call		  = assembly.add<Inst_Call>();												// call original
 									assembly.add<Inst_Leave>();												// leave
-									assembly.add<Inst_Add_ESP_Val>()->set_inc(8 + 4 * pass_ecx);				// add esp, 8or12
+									assembly.add<Inst_Add_ESP_Val>()->set_inc(8 + 4 * pass_ecx);			// add esp, 8or12
 									assembly.add<Inst_Mov_EDX_ptrESPpVAL>()->set_inc(-(8 + 4 * pass_ecx));	// mov edx, [esp-8or12]
 									assembly.add<Inst_Mov_ptrESP_EDX>();									// mov [esp], edx
 
@@ -95,22 +91,18 @@ unsigned char* Function::create_trampoline_generic(int stack_fix, bool pass_ecx,
 		inst_store_patch_part2	=	assembly.add<Inst_Mov_ECX_VAL>();										// mov eax, patch_part2
 									assembly.add<Inst_Mov_ptrEDXpVAL_ECX>()->set_inc(4);					// mov [edx+4], eax
 	}
-	assembly.add<Inst_RetN>()->set_count(stack_fix);						// retn stack_fix
+									assembly.add<Inst_RetN>()->set_count(stack_fix);						// retn stack_fix
 
 	int size = assembly.size();
 
 	unsigned char* block = assembly.create_block();
-
 	unsigned char jump[8];
 
 	if (handle_jump)
 	{
 		jump[0] = 0xE9;
 		*((long*)&jump[1]) = (long)block - ((long)address + 5);
-	}
 
-	if (handle_jump)
-	{
 		inst_store_fix_part1->set_long(((long*)address)[0]);
 		inst_store_fix_part2->set_long(((long*)address)[1]);
 	}
@@ -124,16 +116,13 @@ unsigned char* Function::create_trampoline_generic(int stack_fix, bool pass_ecx,
 		inst_call->set_address((long)&Function::Gate);
 	}
 
-	if (handle_jump)
-	{
-		inst_store_patch_part1->set_long(((long*)jump)[0]);
-		inst_store_patch_part2->set_long(((long*)jump)[1]);
-	}
-
 	Memory m;
 
 	if (handle_jump)
 	{
+		inst_store_patch_part1->set_long(((long*)jump)[0]);
+		inst_store_patch_part2->set_long(((long*)jump)[1]);
+
 		m.make_writable_executable((long)address);
 		memcpy(address, jump, 5);
 	}
@@ -149,12 +138,12 @@ AMX_Hook* Function::add_hook(AMX *amx, const char* callback, int phase)
 
 	assembly.add<Inst_Enter>();
 
-	int start = (int)this->arguments_handlers->length() - 1;
-	int end = 0;
+	size_t start = this->arguments_handlers->length() - 1;
+	size_t end = 0;
 
 	assembly.add<Inst_Push_VAL>()->set_long(FP_DONE);
 
-	for (int i=start; i >= end; i--)
+	for (size_t i = start; i != end; --i)
 	{
 		assembly.add<Inst_Push_VAL>()->set_long(this->arguments_handlers->at(i)->get_amx_param_type());
 	}
@@ -165,9 +154,7 @@ AMX_Hook* Function::add_hook(AMX *amx, const char* callback, int phase)
 	Inst_Call* inst_call  = assembly.add<Inst_Call>();
 
 	assembly.add<Inst_Add_ESP_Val>()->set_inc(4 * (this->arguments_handlers->length() + 3));
-
 	assembly.add<Inst_Leave>();
-
 	assembly.add<Inst_Ret>();
 
 	int size = assembly.size();
@@ -208,16 +195,118 @@ void Function::del_hook(AMX_Hook* hook)
 	}
 }
 
+void Function::clean_hooks()
+{
+	for (size_t i = 0; i < 2; ++i)
+	{
+		ke::Vector<AMX_Hook*>& amx_hooks_phase = amx_hooks[i];
+
+		for (size_t j = 0; j < amx_hooks_phase.length(); ++j)
+		{
+			AMX_Hook* amx_hook = amx_hooks_phase[j];
+			delete amx_hook;
+		}
+
+		amx_hooks_phase.clear();
+	}
+}
+
+void** Function::get_stack_for_arg(int n)
+{
+	ke::Vector<TypeHandler*>* handlers = this->arguments_handlers;
+
+	int offset = 0;
+
+	for (size_t i = 0; i < (size_t)n; ++i)
+	{
+		TypeHandler*& handler = handlers->at(i);
+
+		offset += handler->stack_places();
+	}
+
+	return &stack[offset];
+}
+
+int Function::get_stack_places()
+{
+	int n = 0;
+
+	ke::Vector<TypeHandler*>* handlers = this->arguments_handlers;
+
+	for (size_t i = 0; i < handlers->length(); ++i)
+	{
+		TypeHandler*& handler = handlers->at(i);
+
+		n += handler->stack_places();
+	}
+
+	return n;
+}
+
+void Function::convert_to_amxx(void** stack)
+{
+	ke::Vector<TypeHandler*>* handlers = this->arguments_handlers;
+
+	int offset = 0;
+
+	for (size_t i = 0; i < handlers->length(); ++i)
+	{
+		TypeHandler*& handler = handlers->at(i);
+
+		handler->convert_to_amxx(allocator, &stack[offset], this->stack_amxx[i]);
+
+		offset += handler->stack_places();
+	}
+}
+
+long Function::call(void** stack)
+{
+	this->stack = stack;
+	this->current_ret_data = 0;
+	this->original_ret_data = 0;
+
+	if (call_hooks)
+	{
+		convert_to_amxx(stack);
+	}
+
+	OkapiRet amxx_ret = OkapiRetIgnore;
+
+	if (call_hooks)
+	{
+		amxx_ret = call_amxx_hooks(0);
+	}
+
+	if (amxx_ret != OkapiRetSupercede)
+	{
+		this->original_ret_data = call_original(stack);
+	}
+
+	if (amxx_ret == OkapiRetIgnore)
+	{
+		this->current_ret_data = this->original_ret_data;
+	}
+
+	if (call_hooks && (amxx_ret != OkapiRetSupercede))
+	{
+		call_amxx_hooks(1);
+	}
+
+	this->stack = NULL;
+	allocator.clear();
+
+	return this->current_ret_data;
+}
+
 OkapiRet Function::call_amxx_hook(int hook)
 {
 	AssemblyCreate assembly;
 
 	assembly.add<Inst_Enter>();
 
-	int start = (int)this->arguments_handlers->length() - 1;
-	int end = 0;
+	size_t start = this->arguments_handlers->length() - 1;
 
-	for (int i=start; i >= end; i--)
+	for (size_t i = start; i != 0; i--)
 	{
 		assembly.add<Inst_Push_VAL>()->set_long(this->stack_amxx[i]);
 	}
@@ -227,9 +316,7 @@ OkapiRet Function::call_amxx_hook(int hook)
 	Inst_Call* inst_call  = assembly.add<Inst_Call>();
 
 	assembly.add<Inst_Add_ESP_Val>()->set_inc(4 * (this->arguments_handlers->length() + 1));
-
 	assembly.add<Inst_Leave>();
-
 	assembly.add<Inst_Ret>();
 
 	int size = assembly.size();
@@ -244,236 +331,100 @@ OkapiRet Function::call_amxx_hook(int hook)
 	return reinterpret_cast<OkapiRet(*)()>(block)();
 }
 
-int FunctionMethod::get_stack_dislocation()
+OkapiRet Function::call_amxx_hooks(int phase)
 {
-	int dislocation = 0;
+	OkapiRet ret = OkapiRetIgnore;
 
-#ifdef __linux__
-	size_t i = 0;
-#else
-	size_t i = 1;
-#endif
+	ke::Vector<AMX_Hook*>& hooks = this->amx_hooks[phase];
 
-	for (; i < this->arguments_handlers->length(); ++i)
+	for (size_t i = 0; i < hooks.length(); ++i)
 	{
-		dislocation += arguments_handlers->at(i)->stack_places() * sizeof(long);
+		AMX_Hook* hook = hooks[i];
+
+		hooks_stack.append(hook);
+
+		OkapiRet ret_hook = call_amxx_hook(hook->amx_hook);
+
+		ret = (OkapiRet)ke::Max(ret, ret_hook);
+
+		hooks_stack.pop();
+
+		if (ret == OkapiRetSupercede)
+		{
+			return ret;
+		}
 	}
 
-	return dislocation;
+	return ret;
 }
 
-unsigned char* FunctionMethod::create_trampoline()
+void Function::clean()
 {
-#ifdef __linux__
-	int stack_fix = 0;
-#else
-	int stack_fix = this->get_stack_dislocation();
-#endif
+	clean_all_hooks();
 
-#ifdef __linux__
-	bool pass_ecx = 0;
-#else
-	bool pass_ecx = 1;
-#endif
+	for (size_t i = 0; i < functions.length(); ++i)
+	{
+		Function* function = functions[i];
 
-	return this->create_trampoline_generic(stack_fix, pass_ecx);
+		delete function;
+	}
+
+	functions.clear();
 }
 
-long FunctionMethod::call_original(void** stack)
+void Function::clean_all_hooks()
 {
-	float ret_data;
-
-	AssemblyCreate assembly;
-
-	assembly.add<Inst_Enter>();
-
-	int start = this->get_stack_dislocation() / 4;
-
-#ifdef __linux__
-	int end = 0;
-#else
-	assembly.add<Inst_Mov_ECX_VAL>()->set_long((long)stack[0]);
-	assembly.add<Inst_Push_ECX>();
-
-	int end = 1;
-#endif
-
-	for (int i=start; i >= end; i--)
+	for (size_t i = 0; i < functions.length(); ++i)
 	{
-		assembly.add<Inst_Push_VAL>()->set_long((long)stack[i]);
+		Function* function = functions[i];
+
+		function->clean_hooks();
 	}
-
-	Inst_Call* inst_call  = assembly.add<Inst_Call>();		// call original
-
-#ifdef __linux__
-	assembly.add<Inst_Add_ESP_Val>()->set_inc(this->get_stack_dislocation());
-#endif
-
-	if (return_handler->uses_st_register())
-	{
-		assembly.add<Inst_Fstp>()->set_ptr((long)&ret_data);
-	}
-
-	assembly.add<Inst_Leave>();
-
-	assembly.add<Inst_Ret>();
-
-	int size = assembly.size();
-
-	unsigned char* block = assembly.get_block();
-
-	inst_call->set_address((long)this->address);
-
-	Memory m;
-	m.make_writable_executable((long)block, size);
-
-	long ret = reinterpret_cast<long(*)()>(block)();
-
-	if (!return_handler->uses_st_register())
-	{
-		return ret;
-	}
-
-	return ret_data;
 }
 
-FunctionMethod::FunctionMethod(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
+AMX_Hook* Function::get_current_hook()
 {
-	original_code = new unsigned char[8];
+	if (!hooks_stack.length())
+	{
+		return NULL;
+	}
 
-	this->trampoline = this->create_trampoline();
+	return hooks_stack[hooks_stack.length() - 1];
 }
 
-FunctionCdecl::FunctionCdecl(void* address, ke::Vector<TypeHandler*>* arguments_handlers, TypeHandler* return_handler) : Function(address, arguments_handlers, return_handler)
+int Function::get_n_args()
 {
-	original_code = new unsigned char[8];
-
-	this->trampoline = this->create_trampoline();
+	return this->arguments_handlers->length();
 }
 
-int FunctionCdecl::get_stack_dislocation()
+void Function::set_arg(int n, AMX* amx, cell param)
 {
-	int dislocation = 0;
+	void** stack_arg = get_stack_for_arg(n);
 
-	for (size_t i = 0; i < this->arguments_handlers->length(); ++i)
-	{
-		dislocation += arguments_handlers->at(i)->stack_places() * sizeof(long);
-	}
-
-	return dislocation;
+	this->arguments_handlers->at(n)->convert_from_amxx(allocator, stack_arg, amx, param);
 }
 
-unsigned char* FunctionCdecl::create_trampoline()
+void Function::set_return(AMX *amx, cell *params)
 {
-	return this->create_trampoline_generic(0, false);
+	this->current_ret_data = this->return_handler->convert_from_amxx(allocator, amx, params);
 }
 
-long FunctionCdecl::call_original(void** stack)
+int Function::get_n_ret_params()
 {
-	float ret_data;
-
-	AssemblyCreate assembly;
-
-	assembly.add<Inst_Enter>();
-
-	int start = this->get_stack_dislocation() / 4;
-
-	for (int i=start; i >= 0; i--)
-	{
-		assembly.add<Inst_Push_VAL>()->set_long((long)stack[i]);
-	}
-
-	Inst_Call* inst_call  = assembly.add<Inst_Call>();		// call original
-
-	assembly.add<Inst_Add_ESP_Val>()->set_inc(this->get_stack_dislocation());
-
-	if (return_handler->uses_st_register())
-	{
-		assembly.add<Inst_Fstp>()->set_ptr((long)&ret_data);
-	}
-
-	assembly.add<Inst_Leave>();
-
-	assembly.add<Inst_Ret>();
-
-	int size = assembly.size();
-
-	unsigned char* block = assembly.get_block();
-
-	inst_call->set_address((long)this->address);
-
-	Memory m;
-	m.make_writable_executable((long)block, size);
-
-	long ret = reinterpret_cast<long(*)()>(block)();
-
-	if (!return_handler->uses_st_register())
-	{
-		return ret;
-	}
-
-	return ret_data;
+	return this->return_handler->by_ref_n_params();
 }
 
-long FunctionVirtual::call_original(void** stack)
+long Function::get_origin_return(AMX *amx, cell *params)
 {
-	float ret_data;
-
-	AssemblyCreate assembly;
-
-	assembly.add<Inst_Enter>();
-
-	int start = this->get_stack_dislocation() / 4;
-
-#ifdef __linux__
-	int end = 0;
-#else
-	assembly.add<Inst_Mov_ECX_VAL>()->set_long((long)stack[0]);
-	assembly.add<Inst_Push_ECX>();
-
-	int end = 1;
-#endif
-
-	for (int i=start; i >= end; i--)
-	{
-		assembly.add<Inst_Push_VAL>()->set_long((long)stack[i]);
-	}
-
-	Inst_Call* inst_call  = assembly.add<Inst_Call>();		// call original
-
-#ifdef __linux__
-	assembly.add<Inst_Add_ESP_Val>()->set_inc(this->get_stack_dislocation());
-#endif
-
-	if (return_handler->uses_st_register())
-	{
-		assembly.add<Inst_Fstp>()->set_ptr((long)&ret_data);
-	}
-
-	assembly.add<Inst_Leave>();
-
-	assembly.add<Inst_Ret>();
-
-	int size = assembly.size();
-
-	unsigned char* block = assembly.get_block();
-
-	inst_call->set_address((long)this->original_address);
-
-	Memory m;
-	m.make_writable_executable((long)block, size);
-
-	long ret = reinterpret_cast<long(*)()>(block)();
-
-	if (!return_handler->uses_st_register())
-	{
-		return ret;
-	}
-
-	return ret_data;
+	return this->return_handler->convert_to_amxx(amx, params, this->original_ret_data);
 }
 
-long FunctionVirtual::call_amx(AMX* amx, cell* params, bool call_hooks)
+int Function::call_n_params()
+{
+	return this->arguments_handlers->length() + this->return_handler->by_ref_n_params();
+}
+
+long Function::call_amx(AMX* amx, cell* params, bool call_hooks)
 {
 	Allocator allocator_c;
 
@@ -494,16 +445,11 @@ long FunctionVirtual::call_amx(AMX* amx, cell* params, bool call_hooks)
 		offset += handler->stack_places();
 	}
 
-	long ret;
+	this->call_hooks = call_hooks;
 
-	if (call_hooks)
-	{
-		ret = this->call(stack_call);
-	}
-	else
-	{
-		ret = this->call_original(stack_call);
-	}
+	long ret = this->call_original(stack_call);
+
+	this->call_hooks = true;
 
 	return return_handler->convert_to_amxx(amx, &params[handlers->length()], ret);
 }

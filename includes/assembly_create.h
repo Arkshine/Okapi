@@ -10,15 +10,13 @@
 // Okapi Module
 //
 
-#ifndef __ASSEMBLY_CREATE_H__
-#define __ASSEMBLY_CREATE_H__
+#ifndef ASSEMBLY_CREATE_H
+#define ASSEMBLY_CREATE_H
+
+#include "am-vector.h"
 
 class InstructionBytes
 {
-	protected:
-
-		unsigned char* bytes;
-
 	public:
 
 		InstructionBytes(unsigned char* bytes) : bytes(bytes)
@@ -31,7 +29,11 @@ class InstructionBytes
 			this->bytes = bytes;
 		}
 
-		virtual ~InstructionBytes(){};
+		virtual ~InstructionBytes() {};
+
+	protected:
+
+		unsigned char* bytes;
 };
 
 template <class T>
@@ -39,17 +41,15 @@ class Instruction : public InstructionBytes
 {
 	public:
 
-		virtual ~Instruction(){}
+		Instruction(unsigned char* bytes) : InstructionBytes(bytes)	{};
 
-		Instruction(unsigned char* bytes) : InstructionBytes(bytes)
-		{
-		}
+		virtual ~Instruction() {};
 
 		static ke::Vector<unsigned char> get_bytes()
 		{
 			ke::Vector<unsigned char> bytes;
 
-			for (size_t i=0; i < ARRAYSIZE(T::data); i++)
+			for (size_t i = 0; i < T::size; ++i)
 			{
 				bytes.append(T::data[i]);
 			}
@@ -59,121 +59,11 @@ class Instruction : public InstructionBytes
 
 		void set_long(long value)
 		{
-			assert(sizeof(T::data) >= 5);
+			assert(T::size >= 5);
 
 			*((long*)(&this->bytes[1])) = value;
 		}
 };
-
-#define INSTRUCTION(T) class T : public Instruction<T>{ public: static unsigned char data[]; T(unsigned char* bytes) : Instruction(bytes){  }
-
-INSTRUCTION(Inst_Mov_EDX_VAL) };
-INSTRUCTION(Inst_Mov_EAX_VAL) };
-INSTRUCTION(Inst_Mov_ECX_VAL) };
-
-INSTRUCTION(Inst_Mov_ptrEDX_EAX) };
-INSTRUCTION(Inst_Mov_ptrEDX_ECX) };
-INSTRUCTION(Inst_Mov_ptrEDXpVAL_EAX)
-
-void set_inc(unsigned char value)
-{
-	*((unsigned char*)(&this->bytes[2])) = value;
-}
-};
-INSTRUCTION(Inst_Mov_ptrEDXpVAL_ECX)
-
-void set_inc(unsigned char value)
-{
-	*((unsigned char*)(&this->bytes[2])) = value;
-}
-};
-INSTRUCTION(Inst_Pop_EDX) };
-INSTRUCTION(Inst_Push_ECX) };
-INSTRUCTION(Inst_Push_ESP) };
-INSTRUCTION(Inst_Push_VAL) };
-INSTRUCTION(Inst_Push_EDX) };
-INSTRUCTION(Inst_Enter) };
-INSTRUCTION(Inst_Call)
-
-void set_address(long address)
-{
-	*((long*)(&this->bytes[1])) = (long)address - ((long)this->bytes + 5);
-}
-};
-
-INSTRUCTION(Inst_Leave) };
-INSTRUCTION(Inst_Add_ESP_Val)
-
-void set_inc(unsigned char value)
-{
-	*((unsigned char*)(&this->bytes[2])) = value;
-}
-};
-
-INSTRUCTION(Inst_Mov_EDX_ptrESPpVAL)
-
-void set_inc(unsigned char value)
-{
-	*((unsigned char*)(&this->bytes[3])) = value;
-}
-};
-INSTRUCTION(Inst_Mov_ptrESP_EDX) };
-INSTRUCTION(Inst_Ret) };
-INSTRUCTION(Inst_RetN)
-
-void set_count(unsigned char value)
-{
-	*((unsigned char*)(&this->bytes[1])) = value;
-}
-};
-
-INSTRUCTION(Inst_Fst)
-
-void set_ptr(long value)
-{
-	*((long*)(&this->bytes[2])) = value;
-}
-};
-
-INSTRUCTION(Inst_Fstp)
-
-void set_ptr(long value)
-{
-	*((long*)(&this->bytes[2])) = value;
-}
-};
-
-INSTRUCTION(Inst_Fld)
-
-void set_ptr(long value)
-{
-	*((long*)(&this->bytes[2])) = value;
-}
-};
-
-unsigned char Inst_Mov_EDX_VAL::data[]			={ 0xBA, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Mov_EAX_VAL::data[]			={ 0xB8, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Mov_ECX_VAL::data[]			={ 0xB9, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Mov_ptrEDX_EAX::data[]	    ={ 0x89, 0x2 };
-unsigned char Inst_Mov_ptrEDX_ECX::data[]		={ 0x89, 0xA };
-unsigned char Inst_Mov_ptrEDXpVAL_EAX::data[]	={ 0x89, 0x42, 0x0 };
-unsigned char Inst_Mov_ptrEDXpVAL_ECX::data[]	={ 0x89, 0x4A, 0x0 };
-unsigned char Inst_Pop_EDX::data[]			    ={ 0x5A };
-unsigned char Inst_Push_ECX::data[]				={ 0x51 };
-unsigned char Inst_Push_ESP::data[]				={ 0x54 };
-unsigned char Inst_Push_VAL::data[]				={ 0x68, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Push_EDX::data[]				={ 0x52 };
-unsigned char Inst_Enter::data[]				={ 0xC8, 0x0, 0x0, 0x0 };
-unsigned char Inst_Call::data[]					={ 0xE8, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Leave::data[]				={ 0xC9 };
-unsigned char Inst_Add_ESP_Val::data[]			={ 0x83, 0xC4, 0xC };
-unsigned char Inst_Mov_EDX_ptrESPpVAL::data[]	={ 0x8B, 0x54, 0x24, 0x0 };
-unsigned char Inst_Mov_ptrESP_EDX::data[]		={ 0x89, 0x14, 0x24 };
-unsigned char Inst_Ret::data[]					={ 0xC3 };
-unsigned char Inst_RetN::data[]					={ 0xC2, 0x0, 0x0 };
-unsigned char Inst_Fst::data[]					={ 0xD9, 0x15, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Fstp::data[]					={ 0xD9, 0x1D, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Fld::data[]					={ 0xD9, 0x5, 0x0, 0x0, 0x0, 0x0 };
 
 class AssemblyCreate
 {
@@ -193,15 +83,7 @@ class AssemblyCreate
 
 	public:
 
-		~AssemblyCreate()
-		{
-			for (size_t i=0; i < instructionsBytesData.length(); i++)
-			{
-				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
-
-				delete instructionBytesData.instruction_bytes;
-			}
-		}
+		~AssemblyCreate();
 
 		template <class T>
 		T* add()
@@ -222,36 +104,97 @@ class AssemblyCreate
 			return object;
 		}
 
-		unsigned char* create_block()
-		{
-			unsigned char* block = new unsigned char[bytes.length()];
-			memcpy(block, this->bytes.buffer(), bytes.length());
+		unsigned char* create_block();
+		unsigned char* get_block();
 
-			for (size_t i=0; i < instructionsBytesData.length(); i++)
-			{
-				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
-				instructionBytesData.instruction_bytes->set_bytes(&block[instructionBytesData.offset]);
-			}
-
-			return block;
-		}
-
-		unsigned char* get_block()
-		{
-			for (size_t i=0; i < instructionsBytesData.length(); i++)
-			{
-				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
-				instructionBytesData.instruction_bytes->set_bytes(&this->bytes.buffer()[instructionBytesData.offset]);
-			}
-
-			return this->bytes.buffer();
-		}
-
-		size_t size()
-		{
-			return this->bytes.length();
-		}
+		size_t size();
 };
 
-#endif // __ASSEMBLY_CREATE_H__
 
+#define INSTRUCTION(T) class T : public Instruction<T>{ public: static unsigned char data[]; static size_t size; T(unsigned char* bytes) : Instruction(bytes) {};
+
+INSTRUCTION(Inst_Mov_EDX_VAL) };
+INSTRUCTION(Inst_Mov_EAX_VAL) };
+INSTRUCTION(Inst_Mov_ECX_VAL) };
+
+INSTRUCTION(Inst_Mov_ptrEDX_EAX) };
+INSTRUCTION(Inst_Mov_ptrEDX_ECX) };
+INSTRUCTION(Inst_Mov_ptrEDXpVAL_EAX)
+
+	void set_inc(unsigned char value)
+	{
+		*((unsigned char*)(&this->bytes[2])) = value;
+	}
+};
+INSTRUCTION(Inst_Mov_ptrEDXpVAL_ECX)
+
+	void set_inc(unsigned char value)
+	{
+		*((unsigned char*)(&this->bytes[2])) = value;
+	}
+};
+INSTRUCTION(Inst_Pop_EDX) };
+INSTRUCTION(Inst_Push_ECX) };
+INSTRUCTION(Inst_Push_ESP) };
+INSTRUCTION(Inst_Push_VAL) };
+INSTRUCTION(Inst_Push_EDX) };
+INSTRUCTION(Inst_Enter) };
+INSTRUCTION(Inst_Call)
+
+	void set_address(long address)
+	{
+		*((long*)(&this->bytes[1])) = (long)address - ((long)this->bytes + 5);
+	}
+};
+
+INSTRUCTION(Inst_Leave) };
+INSTRUCTION(Inst_Add_ESP_Val)
+
+	void set_inc(unsigned char value)
+	{
+		*((unsigned char*)(&this->bytes[2])) = value;
+	}
+};
+
+INSTRUCTION(Inst_Mov_EDX_ptrESPpVAL)
+
+	void set_inc(unsigned char value)
+	{
+		*((unsigned char*)(&this->bytes[3])) = value;
+	}
+};
+INSTRUCTION(Inst_Mov_ptrESP_EDX) };
+INSTRUCTION(Inst_Ret) };
+INSTRUCTION(Inst_RetN)
+
+	void set_count(unsigned char value)
+	{
+		*((unsigned char*)(&this->bytes[1])) = value;
+	}
+};
+
+INSTRUCTION(Inst_Fst)
+
+	void set_ptr(long value)
+	{
+		*((long*)(&this->bytes[2])) = value;
+	}
+};
+
+INSTRUCTION(Inst_Fstp)
+
+	void set_ptr(long value)
+	{
+		*((long*)(&this->bytes[2])) = value;
+	}
+};
+
+INSTRUCTION(Inst_Fld)
+
+	void set_ptr(long value)
+	{
+		*((long*)(&this->bytes[2])) = value;
+	}
+};
+
+#endif // ASSEMBLY_CREATE_H

@@ -13,19 +13,10 @@
     <ClCompile Include="..\hl_type_conversion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\my_util.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\offset_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\okapi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\s_library.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\work.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\public\sdk\amxxmodule.cpp">
@@ -33,6 +24,60 @@
     </ClCompile>
     <ClCompile Include="..\public\memtools\MemoryUtils.cpp">
       <Filter>Memtools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\commands\command_version.cpp">
+      <Filter>Source Files\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\game_library.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\type_handlers\int_handler.cpp">
+      <Filter>Source Files\type_handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\type_handlers\void_handler.cpp">
+      <Filter>Source Files\type_handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\type_handlers\cbase_handler.cpp">
+      <Filter>Source Files\type_handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\type_handlers\float_handler.cpp">
+      <Filter>Source Files\type_handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\type_handlers\vector_handler.cpp">
+      <Filter>Source Files\type_handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\type_handlers\entvars_handler.cpp">
+      <Filter>Source Files\type_handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\type_handlers\string_handler.cpp">
+      <Filter>Source Files\type_handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\type_handlers\edict_handler.cpp">
+      <Filter>Source Files\type_handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\type_handlers\vectorptr_handler.cpp">
+      <Filter>Source Files\type_handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\natives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\functions\function_cdecl.cpp">
+      <Filter>Source Files\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\functions\function_virtual.cpp">
+      <Filter>Source Files\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\functions\function_method.cpp">
+      <Filter>Source Files\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\assembly_create.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -66,67 +111,34 @@
     <ClInclude Include="..\includes\globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\includes\heap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\includes\hl_type_conversion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\memory_.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\includes\my_util.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\includes\offset_handler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\includes\okapi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\includes\s_library.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\includes\templates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\type_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\includes\work.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\includes\moduleconfig.h">
       <Filter>Module SDK</Filter>
     </ClInclude>
-    <ClInclude Include="..\includes\commands\command_help.h">
-      <Filter>Header Files\commands</Filter>
+    <ClInclude Include="..\includes\utils.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\includes\game_libraries\game_library_engine.h">
-      <Filter>Header Files\game_libraries</Filter>
+    <ClInclude Include="..\includes\library_utils.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\includes\game_libraries\game_library_mod.h">
-      <Filter>Header Files\game_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="..\includes\type_handlers\type_handler_extra.h">
-      <Filter>Header Files\type_handlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\includes\commands\command_version.h">
-      <Filter>Header Files\commands</Filter>
+    <ClInclude Include="..\includes\natives.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{eb37090f-4c71-498d-9822-51116484fec9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\commands">
-      <UniqueIdentifier>{95dbac9d-012d-48a6-b7f0-ca3663abd1ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\type_handlers">
-      <UniqueIdentifier>{faf33221-0a0f-4843-a616-4a27094b49d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\game_libraries">
-      <UniqueIdentifier>{2b2de3e1-51af-4283-8078-654c5b35d706}</UniqueIdentifier>
     </Filter>
     <Filter Include="Module SDK">
       <UniqueIdentifier>{1ea98e5c-ade6-4063-9103-c8f1b3a0015c}</UniqueIdentifier>
@@ -145,6 +157,12 @@
     </Filter>
     <Filter Include="Memtools">
       <UniqueIdentifier>{0bc55a44-6e65-4d8d-8cc3-8cb96e3b4455}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\type_handlers">
+      <UniqueIdentifier>{5315ec3d-b85f-45d9-a397-66db599f6dec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\functions">
+      <UniqueIdentifier>{1b68b221-a286-4e5a-8643-e319a6761ca0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -11,8 +11,9 @@
 // Okapi Module
 //
 
-#include "amxxmodule.h"
-#include <globals.h>
+#include "offset_handler.h"
+#include "globals.h"
+#include <amxxmodule.h>
 
 void OffsetHandler::search_pev()
 {
@@ -21,7 +22,7 @@ void OffsetHandler::search_pev()
 
 	char* private_c = (char*)edict->pvPrivateData;
 
-	for (int i=0; 0xFFF; i++)
+	for (size_t i = 0; i < 0xFFF; ++i)
 	{
 		long val = *((long*)(private_c + i));
 
@@ -33,7 +34,7 @@ void OffsetHandler::search_pev()
 		}
 	}
 
-	printf("PEV value was not found. This should not happen\n");
+	Util::con_printf("PEV value was not found. This should not happen\n");
 
 	this->PEV = 0;
 }
@@ -46,25 +47,25 @@ void OffsetHandler::search_virtual_table()
 	this->EntityVirtualTable = search_virtual_table(edict->pvPrivateData);
 }
 
-int OffsetHandler::search_virtual_table(void* address)
+size_t OffsetHandler::search_virtual_table(void* address)
 {
 	char* c_address = (char*)address;
 
-	for (int i=0; 0xFFF; i++)
+	for (size_t i = 0; i < 0xFFF; ++i)
 	{
 		long address = *((long*)(c_address + i));
 
-		if (GameLibraries.Engine->contains_address(address) || GameLibraries.Mod->contains_address(address))
+		if (G_GameLibraries.Engine->contains_address(address) || G_GameLibraries.Mod->contains_address(address))
 		{
 			void** address_ptr = (void**)address;
 
-			int sum = 0;
+			size_t sum = 0;
 
-			for (int j=0; j <= 10; j++)
+			for (size_t j = 0; j <= 10; ++j)
 			{
 				void* address_inside = address_ptr[j];
 
-				sum += GameLibraries.Engine->contains_address(address) | GameLibraries.Mod->contains_address(address);
+				sum += G_GameLibraries.Engine->contains_address(address) | G_GameLibraries.Mod->contains_address(address);
 			}
 
 			if (sum > 5)
@@ -74,7 +75,7 @@ int OffsetHandler::search_virtual_table(void* address)
 		}
 	}
 
-	printf("Virtual table was not found. This should not happen\n");
+	Util::con_printf("Virtual table was not found. This should not happen\n");
 
 	return 0;
 }

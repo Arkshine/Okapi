@@ -10,51 +10,40 @@
 // Okapi Module
 //
 
-#ifndef __GAME_LIBRARY_H__
-#define __GAME_LIBRARY_H__
+#ifndef GAME_LIBRARY_H
+#define GAME_LIBRARY_H
 
-#include <s_library.h>
-#include <heap.h>
-#include <am-vector.h>
+#include "library_utils.h"
 
 class GameLibrary : public s_library
 {
-	protected:
-
-		void init()
-		{
-		}
-
 	public:
 
 		virtual const char* get_name() = 0;
 
-		GameLibrary(s_library s)
-		{
-			this->address = s.address;
-			this->length = s.length;
-			this->handle = s.handle;
-		}
+		GameLibrary(s_library s);
 
-		const char* get_address_sym(void* address)
-		{
-			return get_address_symbol((void*)((int)this->address + (int)address));
-		}
-
-		int find_func(const char* function_name)
-		{
-			int address = (int)find_function(this, function_name);
-
-			if (!address)
-				return 0;
-
-			return address - (int)this->address;
-		}
-
-		bool contains_address(long address)
-		{
-			return (address >= (long)this->address) && (address < ((long)this->address + this->length));
-		}
+		const char* get_address_sym (void* address);
+		int         find_func       (const char* function_name);
+		bool        contains_address(long address);
 };
 
-#endif // __GAME_LIBRARY_H__
+class GameLibraryEngine : public GameLibrary
+{
+	public:
+
+		GameLibraryEngine(s_library s) : GameLibrary(s) {};
+
+		const char* get_name();
+};
+
+class GameLibraryMod : public GameLibrary
+{
+	public:
+
+		GameLibraryMod(s_library s) : GameLibrary(s) {};
+
+		const char* get_name();
+};
+
+#endif // GAME_LIBRARY_H

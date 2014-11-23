@@ -10,39 +10,34 @@
 // Okapi Module
 //
 
-#include <work.h>
+#include "utils.h"
+#include <amxxmodule.h>
 
-void clean_debug_file()
+void Util::con_printf(const char *format, ...)
 {
-	FILE* f = fopen("debug.txt", "w+");
-	fclose(f);
-}
+	static char buffer[1000];
 
-void print(char* format, ...)
-{
-	char buffer[1000];
 	va_list args;
 	va_start(args, format);
-	vsprintf(buffer, format, args);
 
+	vsprintf(buffer, format, args);
 	SERVER_PRINT(buffer);
-	Util::debug_fprintf(buffer);
 
 	va_end(args);
 }
 
-void patch_printf()
+void Util::debug_fprintf(const char * format, ...)
 {
-#if defined __linux__
-#else
-	unsigned char* c = (unsigned char*)&printf;
+	static char buffer[1000];
 
-	int a;
-	VirtualProtect(c, 5, PAGE_EXECUTE_READWRITE, (PDWORD)&a);
-	c[0] = 0xE9;
-	*((long*)(&c[1])) = (char*)print - (char*)printf - 5;
+	va_list args;
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+	va_end(args);
 
-#endif
+	FILE* f = fopen("debug.txt", "a+");
+	fprintf(f, buffer);
+	fclose(f);
 }
 
 extern "C" void __cxa_pure_virtual() { while (1); }

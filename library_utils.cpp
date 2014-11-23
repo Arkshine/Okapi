@@ -10,7 +10,7 @@
 // Okapi Module
 //
 
-#include <s_library.h>
+#include "library_utils.h"
 #include <MemoryUtils.h>
 
 s_library* create_library(void* address)
