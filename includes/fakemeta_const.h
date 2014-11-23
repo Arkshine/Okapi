@@ -10,8 +10,8 @@
 // Okapi Module
 //
 
-#ifndef __FAKEMETA_CONST_H__
-#define __FAKEMETA_CONST_H__
+#ifndef FAKEMETA_CONST_H
+#define FAKEMETA_CONST_H
 
 typedef enum
 {
@@ -173,4 +173,4 @@ typedef enum
 
 } EngFunc_Enum;
 
-#endif // __FAKEMETA_CONST_H__
+#endif // FAKEMETA_CONST_H

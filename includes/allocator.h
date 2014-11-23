@@ -10,14 +10,14 @@
 // Okapi Module
 //
 
-#ifndef __ALLOCATOR_H__
-#define __ALLOCATOR_H__
+#ifndef ALLOCATOR_H
+#define ALLOCATOR_H
 
 #include <am-vector.h>
 
 class Allocator
 {
-	ke::Vector<void*> data;
+	ke::Vector<uintptr_t*> data;
 
 	public:
 
@@ -28,7 +28,7 @@ class Allocator
 
 		void clear()
 		{
-			for (size_t i=0; i < data.length(); i++)
+			for (size_t i = 0; i < data.length(); ++i)
 			{
 				delete data[i];
 			}
@@ -36,7 +36,7 @@ class Allocator
 			data.clear();
 		}
 
-		bool free_ptr(void* ptr)
+		bool free_ptr(uintptr_t* ptr)
 		{
 			for (size_t i = 0; i < data.length(); ++i)
 			{
@@ -61,7 +61,7 @@ class Allocator
 		T* alloc(int size)
 		{
 			T* block = new T[size];
-			data.append((void*)block);
+			data.append((uintptr_t*)block);
 
 			return block;
 		}
@@ -79,4 +79,4 @@ class Allocator
 		}
 };
 
-#endif // __ALLOCATOR_H__
+#endif // ALLOCATOR_H

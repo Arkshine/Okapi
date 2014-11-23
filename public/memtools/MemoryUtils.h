@@ -34,6 +34,7 @@
 	#include <stdint.h>
 	#include <am-vector.h>
 	#include <sm_symtable.h>
+	#include <dlfcn.h>
 #endif
 
 #if defined(__APPLE__)
@@ -74,6 +75,9 @@ struct DynLibInfo
 #endif
 	void *baseAddress;
 	size_t memorySize;
+#if defined(__linux__) || defined(__APPLE__)
+	const char *name;
+#endif
 };
 
 #if defined(__linux__) || defined(__APPLE__)
@@ -94,7 +98,7 @@ class MemoryUtils
 	public: 
 		void *DecodeAndFindPattern(const void *libPtr, const char *pattern);
 		void *FindPattern(const void *libPtr, const char *pattern, size_t len);
-		void *ResolveSymbol(void *handle, const char *symbol, bool is_hidden = false);
+		void *ResolveSymbol(void *handle, const char *symbol);
 
 	public:
 		bool GetLibraryInfo(const void *libPtr, DynLibInfo &lib);

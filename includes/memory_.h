@@ -10,51 +10,50 @@
 // Okapi Module
 //
 
-#ifndef __MEMORY__H__
-#define __MEMORY__H__
+#ifndef MEMORY__H
+#define MEMORY__H
 
 #include <am-vector.h>
 #include <MemoryUtils.h>
 
-#ifdef __linux__
-	// Code from jim yang
-	#include <sys/mman.h>
+#if defined(LINUX) || defined(OSX)
 
-	const int PAGE_READONLY = PROT_READ;
-	const int PAGE_EXEC = PROT_EXEC;
-	const int PAGE_WRITE = PROT_WRITE;
+	#include <sys/mman.h>
+	#include <sys/types.h>
+	#include <unistd.h>
+
+	const int PAGE_READONLY          = PROT_READ;
+	const int PAGE_EXEC              = PROT_EXEC;
+	const int PAGE_WRITE             = PROT_WRITE;
 	const int PAGE_EXECUTE_READWRITE = PROT_READ | PROT_WRITE | PROT_EXEC;
-	const int PAGE_EXECUTE_READ = PROT_READ | PROT_EXEC;
-	const int PAGE_READWRITE = PROT_READ | PROT_WRITE;
-	const int PageSize = 4096;
+	const int PAGE_EXECUTE_READ      = PROT_READ | PROT_EXEC;
+	const int PAGE_READWRITE         = PROT_READ | PROT_WRITE;
+	const int PageSize               = 4096;
 
 	inline void* Align(void* address)
 	{
 		return (void*)((long)address & ~(PageSize - 1));
 	}
-#endif
 
-#ifdef __linux__
-
-struct MemoryMap
-{
-	long start_address;
-	long end_address;
-	int memory_protection;
-
-	MemoryMap(long start_address=0, long end_address=0, long memory_protection=0) :
-		start_address(start_address),
-		end_address(end_address),
-		memory_protection(memory_protection)
+	struct MemoryMap
 	{
-	}
-};
+		long start_address;
+		long end_address;
+		int memory_protection;
+
+		MemoryMap(long start_address=0, long end_address=0, long memory_protection=0) :
+			start_address(start_address),
+			end_address(end_address),
+			memory_protection(memory_protection)
+		{
+		}
+	};
 
 #endif
 
 class Memory
 {
-	#ifdef __linux__
+	#if defined(LINUX) || defined(OSX)
 
 		ke::Vector<MemoryMap> memory_maps;
 
@@ -77,13 +76,13 @@ class Memory
 				{
 					fgets(buffer, sizeof(buffer) - 1, fp);
 					#if defined AMD64
-						sscanf(buffer, "%Lx-%Lx %s", &start, &end, memory_prot);
+						sscanf(buffer, "%p-%p %s", &start, &end, memory_prot);
 					#else
-						sscanf(buffer, "%lx-%lx %s", &start, &end, memory_prot);
+						sscanf(buffer, "%p-%p %s", &start, &end, memory_prot);
 					#endif
 					int protection = 0;
 
-					for (int i=0; i < 4; i++)
+					for (int i = 0; i < 4; i++)
 					{
 						char c = memory_prot[i];
 
@@ -108,20 +107,22 @@ class Memory
 
 		Memory()
 		{
-			#ifdef __linux__
+			#if defined(LINUX) || defined(OSX)
 				fill_memory_maps();
 			#endif
 		}
 
 		int get_memory_protection(long address)
 		{
-			#ifdef __linux__
-				for (size_t i=0; i < this->memory_maps.length(); i++)
+			#if defined(LINUX) || defined(OSX)
+				for (size_t i = 0; i < this->memory_maps.length(); ++i)
 				{
 					MemoryMap memory_map = memory_maps[i];
 
 					if ((address >= memory_map.start_address) && (address >= memory_map.end_address))
+					{
 						return memory_map.memory_protection;
+					}
 				}
 
 				return 0;
@@ -136,7 +137,7 @@ class Memory
 
 		int set_memory_protection(long address, int protection)
 		{
-			#ifdef __linux__
+			#if defined(LINUX) || defined(OSX)
 				return this->set_memory_protection(address, protection, sysconf(_SC_PAGESIZE));
 			#else
 				MEMORY_BASIC_INFORMATION Buffer;
@@ -151,7 +152,7 @@ class Memory
 
 		int set_memory_protection(long address, int protection, int size)
 		{
-			#ifdef __linux__
+			#if defined(LINUX) || defined(OSX)
 				void* alignedAddress = Align((void*)address);
 				return !mprotect(alignedAddress, size, protection);
 			#else
@@ -217,18 +218,21 @@ class Memory
 		{
 			switch (sys_protection)
 			{
-			case PAGE_READONLY:
-				return 1;
-			case PAGE_READWRITE:
-				return 1 | 2;
-			case PAGE_EXECUTE_READ:
-				return 1 | 4;
-			case PAGE_EXECUTE_READWRITE:
-				return 1 | 2 | 4;
+				case PAGE_READONLY:
+					return 1;
+
+				case PAGE_READWRITE:
+					return 1 | 2;
+
+				case PAGE_EXECUTE_READ:
+					return 1 | 4;
+
+				case PAGE_EXECUTE_READWRITE:
+					return 1 | 2 | 4;
 			}
 
 			return 1;
 		}
 };
 
-#endif // __MEMORY__H__
+#endif // MEMORY__H

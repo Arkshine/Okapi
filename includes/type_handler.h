@@ -10,10 +10,12 @@
 // Okapi Module
 //
 
-#ifndef __TYPE_HANDLER__
-#define __TYPE_HANDLER__
+#ifndef TYPE_HANDLER
+#define TYPE_HANDLER
 
 #include <allocator.h>
+#include "assembly_create.h"
+#include "amxxmodule.h"
 
 class TypeHandler
 {
@@ -40,12 +42,138 @@ class TypeHandler
 
 		virtual ForwardParam get_amx_param_type() = 0;
 
-		virtual char* get_name() = 0;
+		virtual const char* get_name() = 0;
 
 		virtual void convert_to_amxx(Allocator& allocator, void** stack, cell& value) = 0;
 
 		virtual void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param) = 0;
 };
 
-#endif // __TYPE_HANDLER__
+class IntHandler : public TypeHandler
+{
+	const char* get_name();
+
+	ForwardParam get_amx_param_type();
+
+	void convert_to_amxx(Allocator& allocator, void** stack, cell& value);
+	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param);
+
+	long convert_to_amxx(AMX *amx, cell* params, long value);
+	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params);
+};
+
+class VoidHandler : public TypeHandler
+{
+	const char* get_name();
+
+	ForwardParam get_amx_param_type();
+
+	void convert_to_amxx(Allocator& allocator, void** stack, cell& value);
+	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param);
+
+	long convert_to_amxx(AMX *amx, cell* params, long value);
+	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params);
+};
+
+class CBaseHandler : public TypeHandler
+{
+	const char* get_name();
+
+	ForwardParam get_amx_param_type();
+
+	void convert_to_amxx(Allocator& allocator, void** stack, cell& value);
+	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param);
+
+	long convert_to_amxx(AMX *amx, cell* params, long value);
+	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params);
+};
+
+class FloatHandler : public TypeHandler
+{
+	const char* get_name();
+
+	ForwardParam get_amx_param_type();
+
+	bool uses_st_register();
+
+	void convert_to_amxx(Allocator& allocator, void** stack, cell& value);
+	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param);
+
+	long convert_to_amxx(AMX *amx, cell* params, long value);
+	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params);
+};
+
+class VecHandler : public TypeHandler
+{
+	const char* get_name();
+
+	ForwardParam get_amx_param_type();
+
+	int by_ref_n_params();
+	int stack_places();
+
+	void convert_to_amxx(Allocator& allocator, void** stack, cell& value);
+	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param);
+
+	long convert_to_amxx(AMX *amx, cell* params, long value);
+	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params);
+};
+
+class EntvarsHandler : public TypeHandler
+{
+	const char* get_name();
+
+	ForwardParam get_amx_param_type();
+
+	void convert_to_amxx(Allocator& allocator, void** stack, cell& value);
+	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param);
+
+	long convert_to_amxx(AMX *amx, cell* params, long value);
+	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params);
+};
+
+class StrHandler : public TypeHandler
+{
+	const char* get_name();
+
+	ForwardParam get_amx_param_type();
+
+	int by_ref_n_params();
+
+	void convert_to_amxx(Allocator& allocator, void** stack, cell& value);
+	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param);
+
+	long convert_to_amxx(AMX *amx, cell* params, long value);
+	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params);
+};
+
+class EdictHandler : public TypeHandler
+{
+	const char* get_name();
+
+	ForwardParam get_amx_param_type();
+
+	void convert_to_amxx(Allocator& allocator, void** stack, cell& value);
+	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param);
+
+	long convert_to_amxx(AMX *amx, cell* params, long value);
+	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params);
+};
+
+class VecPtrHandler : public TypeHandler
+{
+	const char* get_name();
+
+	ForwardParam get_amx_param_type();
+
+	int by_ref_n_params();
+
+	void convert_to_amxx(Allocator& allocator, void** stack, cell& value);
+	void convert_from_amxx(Allocator& allocator, void** stack, AMX* amx, cell param);
+
+	long convert_to_amxx(AMX *amx, cell* params, long value);
+	long convert_from_amxx(Allocator& allocator, AMX *amx, cell* params);
+};
+
+#endif // TYPE_HANDLER
 

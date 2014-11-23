@@ -10,8 +10,8 @@
 // Okapi Module
 //
 
-#ifndef __OFFSET_HANDLER_H__
-#define __OFFSET_HANDLER_H__
+#ifndef OFFSET_HANDLER_H
+#define OFFSET_HANDLER_H
 
 struct OffsetHandler
 {
@@ -30,5 +30,4 @@ struct OffsetHandler
 	static int search_virtual_table(void *address);
 };
 
-#endif // __OFFSET_HANDLER_H__
-
+#endif // OFFSET_HANDLER_H

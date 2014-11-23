@@ -11,9 +11,6 @@
 //
 
 #include <command.h>
-#include <commands/command_help.h>
-#include <my_util.h>
-#include "amxxmodule.h"
 #include <globals.h>
 
 void CommandHelp::exec()
@@ -29,7 +26,7 @@ void CommandHelp::exec()
 	{
 		Command* command;
 
-		if (!Commands.retrieve(g_engfuncs.pfnCmd_Argv(2), &command))
+		if (!G_Commands.retrieve(g_engfuncs.pfnCmd_Argv(2), &command))
 		{
 			Util::con_printf(" invalid command\n");
 		}

@@ -14,7 +14,12 @@ MM_ROOT = ../metamod-am/metamod
 
 PROJECT = okapi
 
-OBJECTS = public/sdk/amxxmodule.cpp okapi.cpp work.cpp my_util.cpp s_library.cpp commands/command_help.cpp s_steps_address.cpp globals.cpp command.cpp offset_handler.cpp hl_type_conversion.cpp function.cpp public/memtools/MemoryUtils.cpp
+OBJECTS = public/sdk/amxxmodule.cpp public/memtools/MemoryUtils.cpp okapi.cpp \
+          natives.cpp utils.cpp s_library.cpp assembly_create.cpp \
+          commands/command_help.cpp commands/command_version.cpp \
+          s_steps_address.cpp globals.cpp offset_handler.cpp hl_type_conversion.cpp \
+          function.cpp functions/function_cdecl.cpp functions/function_method.cpp functions/function_virtual.cpp \
+          type_handlers/handler_edict.cpp type_handlers/handler_entvars.cpp type_handlers/handler_float.cpp type_handlers/handler_int.cpp type_handlers/handler_string.cpp type_handlers/handler_vector.cpp type_handlers/handler_vector-ptr.cpp type_handlers/handler_void.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###

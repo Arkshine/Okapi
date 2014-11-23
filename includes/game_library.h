@@ -10,11 +10,10 @@
 // Okapi Module
 //
 
-#ifndef __GAME_LIBRARY_H__
-#define __GAME_LIBRARY_H__
+#ifndef GAME_LIBRARY_H
+#define GAME_LIBRARY_H
 
 #include <s_library.h>
-#include <heap.h>
 #include <am-vector.h>
 
 class GameLibrary : public s_library
@@ -32,8 +31,8 @@ class GameLibrary : public s_library
 		GameLibrary(s_library s)
 		{
 			this->address = s.address;
-			this->length = s.length;
-			this->handle = s.handle;
+			this->length  = s.length;
+			this->handle  = s.handle;
 		}
 
 		const char* get_address_sym(void* address)
@@ -46,7 +45,9 @@ class GameLibrary : public s_library
 			int address = (int)find_function(this, function_name);
 
 			if (!address)
+			{
 				return 0;
+			}
 
 			return address - (int)this->address;
 		}
@@ -57,4 +58,34 @@ class GameLibrary : public s_library
 		}
 };
 
-#endif // __GAME_LIBRARY_H__
+class GameLibraryEngine : public GameLibrary
+{
+	public:
+
+		GameLibraryEngine(s_library s) : GameLibrary(s)
+		{
+			this->init();
+		}
+
+		const char* get_name()
+		{
+			return "engine";
+		}
+};
+
+class GameLibraryMod : public GameLibrary
+{
+	public:
+
+		GameLibraryMod(s_library s) : GameLibrary(s)
+		{
+			this->init();
+		}
+
+		const char* get_name()
+		{
+			return "mod";
+		}
+};
+
+#endif // GAME_LIBRARY_H

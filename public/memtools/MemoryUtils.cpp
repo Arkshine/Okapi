@@ -151,7 +151,7 @@ void *MemoryUtils::FindPattern(const void *libPtr, const char *pattern, size_t l
 	return NULL;
 }
 
-void *MemoryUtils::ResolveSymbol(void *handle, const char *symbol, bool is_hidden)
+void *MemoryUtils::ResolveSymbol(void *handle, const char *symbol)
 {
 #if defined(WIN32)
 
@@ -159,9 +159,11 @@ void *MemoryUtils::ResolveSymbol(void *handle, const char *symbol, bool is_hidde
 	
 #elif defined(__linux__)
 
-	if (!is_hidden)
+	void *address = dlsym(handle, symbol);
+	
+	if (address != NULL)
 	{
-		return dlsym(handle, symbol);
+		return address;
 	}
 
 	struct link_map *dlmap;
@@ -570,6 +572,8 @@ bool MemoryUtils::GetLibraryInfo(const void *libPtr, DynLibInfo &lib)
 		}
 	}
 
+	lib.name = info.dli_fname;
+
 #elif defined(__APPLE__)
 
 	Dl_info info;
@@ -622,6 +626,8 @@ bool MemoryUtils::GetLibraryInfo(const void *libPtr, DynLibInfo &lib)
 		
 		seg = (struct segment_command *)((uintptr_t)seg + seg->cmdsize);
 	}
+
+	lib.name = info.dli_fname;
 
 #endif
 

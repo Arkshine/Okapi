@@ -10,7 +10,7 @@
 // Okapi Module
 //
 
-#include <s_library.h>
+#include "s_library.h"
 #include <MemoryUtils.h>
 
 s_library* create_library(void* address)
@@ -28,7 +28,7 @@ s_library* create_library(void* address)
 		library->length  = info.memorySize;
 
 		#if defined(__linux__) || defined(__APPLE__)
-			library->handle  = dlopen(info.dli_fname, RTLD_NOW);
+			library->handle  = dlopen(info.name, RTLD_NOW);
 		#else
 			library->handle  = (void *)info.handle;
 		#endif
@@ -53,7 +53,7 @@ const char* get_address_symbol(void* address)
 	return "";
 }
 
-void* find_function(s_library* library, const char* functionName, bool is_hidden)
+void* find_function(s_library* library, const char* functionName)
 {
-	return g_MemUtils.ResolveSymbol(library->handle, functionName, is_hidden);
+	return g_MemUtils.ResolveSymbol(library->handle, functionName);
 }

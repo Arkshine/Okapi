@@ -10,9 +10,10 @@
 // Okapi Module
 //
 
-#include "amxxmodule.h"
-#include <game_library.h>
-#include <globals.h>
+#ifndef NATIVES_H
+#define NATIVES_H
+
+#include "globals.h"
 
 template <class T>
 long library_find(GameLibrary* library, long address, T value)
@@ -61,3 +62,7 @@ int library_replace(GameLibrary* library, T val_search, T val_replace)
 
 	return count;
 }
+
+extern AMX_NATIVE_INFO OkapiNatives[];
+
+#endif // NATIVES_H

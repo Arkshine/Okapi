@@ -10,8 +10,8 @@
 // Okapi Module
 //
 
-#ifndef __COMMAND_H__
-#define __COMMAND_H__
+#ifndef COMMAND_H
+#define COMMAND_H
 
 #include <game_library.h>
 
@@ -24,7 +24,23 @@ class Command
 		virtual const char* get_description() = 0;
 };
 
-int parseHex(char *s);
+class CommandHelp : public Command
+{
+	public:
 
-#endif // __COMMAND_H__
+		void exec();
+		const char* get_description();
+		void show_help();
+};
+
+class CommandVersion : public Command
+{
+	public:
+
+		void exec();
+		const char* get_description();
+		void show_help();
+};
+
+#endif // COMMAND_H
 

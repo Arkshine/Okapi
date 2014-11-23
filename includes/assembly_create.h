@@ -10,8 +10,11 @@
 // Okapi Module
 //
 
-#ifndef __ASSEMBLY_CREATE_H__
-#define __ASSEMBLY_CREATE_H__
+#ifndef ASSEMBLY_CREATE_H
+#define ASSEMBLY_CREATE_H
+
+#include "am-vector.h"
+#include <memory.h>
 
 class InstructionBytes
 {
@@ -45,27 +48,23 @@ class Instruction : public InstructionBytes
 		{
 		}
 
-		static ke::Vector<unsigned char> get_bytes()
+		static void get_bytes(ke::Vector<unsigned char>& bytes)
 		{
-			ke::Vector<unsigned char> bytes;
-
-			for (size_t i=0; i < ARRAYSIZE(T::data); i++)
+			for (size_t i = 0; i < T::size; i++)
 			{
 				bytes.append(T::data[i]);
 			}
-
-			return ke::Move(bytes);
 		}
 
 		void set_long(long value)
 		{
-			assert(sizeof(T::data) >= 5);
+			//assert(sizeof(T::size) >= 5);
 
 			*((long*)(&this->bytes[1])) = value;
 		}
 };
 
-#define INSTRUCTION(T) class T : public Instruction<T>{ public: static unsigned char data[]; T(unsigned char* bytes) : Instruction(bytes){  }
+#define INSTRUCTION(T) class T : public Instruction<T>{ public: static unsigned char data[]; static size_t size; T(unsigned char* bytes) : Instruction(bytes) {};
 
 INSTRUCTION(Inst_Mov_EDX_VAL) };
 INSTRUCTION(Inst_Mov_EAX_VAL) };
@@ -151,30 +150,6 @@ void set_ptr(long value)
 }
 };
 
-unsigned char Inst_Mov_EDX_VAL::data[]			={ 0xBA, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Mov_EAX_VAL::data[]			={ 0xB8, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Mov_ECX_VAL::data[]			={ 0xB9, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Mov_ptrEDX_EAX::data[]	    ={ 0x89, 0x2 };
-unsigned char Inst_Mov_ptrEDX_ECX::data[]		={ 0x89, 0xA };
-unsigned char Inst_Mov_ptrEDXpVAL_EAX::data[]	={ 0x89, 0x42, 0x0 };
-unsigned char Inst_Mov_ptrEDXpVAL_ECX::data[]	={ 0x89, 0x4A, 0x0 };
-unsigned char Inst_Pop_EDX::data[]			    ={ 0x5A };
-unsigned char Inst_Push_ECX::data[]				={ 0x51 };
-unsigned char Inst_Push_ESP::data[]				={ 0x54 };
-unsigned char Inst_Push_VAL::data[]				={ 0x68, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Push_EDX::data[]				={ 0x52 };
-unsigned char Inst_Enter::data[]				={ 0xC8, 0x0, 0x0, 0x0 };
-unsigned char Inst_Call::data[]					={ 0xE8, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Leave::data[]				={ 0xC9 };
-unsigned char Inst_Add_ESP_Val::data[]			={ 0x83, 0xC4, 0xC };
-unsigned char Inst_Mov_EDX_ptrESPpVAL::data[]	={ 0x8B, 0x54, 0x24, 0x0 };
-unsigned char Inst_Mov_ptrESP_EDX::data[]		={ 0x89, 0x14, 0x24 };
-unsigned char Inst_Ret::data[]					={ 0xC3 };
-unsigned char Inst_RetN::data[]					={ 0xC2, 0x0, 0x0 };
-unsigned char Inst_Fst::data[]					={ 0xD9, 0x15, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Fstp::data[]					={ 0xD9, 0x1D, 0x0, 0x0, 0x0, 0x0 };
-unsigned char Inst_Fld::data[]					={ 0xD9, 0x5, 0x0, 0x0, 0x0, 0x0 };
-
 class AssemblyCreate
 {
 	private:
@@ -195,7 +170,7 @@ class AssemblyCreate
 
 		~AssemblyCreate()
 		{
-			for (size_t i=0; i < instructionsBytesData.length(); i++)
+			for (size_t i = 0; i < instructionsBytesData.length(); i++)
 			{
 				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
 
@@ -208,7 +183,9 @@ class AssemblyCreate
 		{
 			int pos = this->bytes.length();
 
-			ke::Vector<unsigned char>& bytes = T::get_bytes();
+
+			ke::Vector < unsigned char > bytes;
+			T::get_bytes(bytes);
 
 			for (size_t i = 0; i < bytes.length(); ++i)
 			{
@@ -227,7 +204,7 @@ class AssemblyCreate
 			unsigned char* block = new unsigned char[bytes.length()];
 			memcpy(block, this->bytes.buffer(), bytes.length());
 
-			for (size_t i=0; i < instructionsBytesData.length(); i++)
+			for (size_t i = 0; i < instructionsBytesData.length(); i++)
 			{
 				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
 				instructionBytesData.instruction_bytes->set_bytes(&block[instructionBytesData.offset]);
@@ -238,7 +215,7 @@ class AssemblyCreate
 
 		unsigned char* get_block()
 		{
-			for (size_t i=0; i < instructionsBytesData.length(); i++)
+			for (size_t i = 0; i < instructionsBytesData.length(); i++)
 			{
 				InstructionBytesOffset instructionBytesData = instructionsBytesData[i];
 				instructionBytesData.instruction_bytes->set_bytes(&this->bytes.buffer()[instructionBytesData.offset]);
@@ -253,5 +230,5 @@ class AssemblyCreate
 		}
 };
 
-#endif // __ASSEMBLY_CREATE_H__
+#endif // ASSEMBLY_CREATE_H
 

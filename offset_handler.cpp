@@ -11,8 +11,8 @@
 // Okapi Module
 //
 
-#include "amxxmodule.h"
-#include <globals.h>
+#include <amxxmodule.h>
+#include "globals.h"
 
 void OffsetHandler::search_pev()
 {
@@ -21,7 +21,7 @@ void OffsetHandler::search_pev()
 
 	char* private_c = (char*)edict->pvPrivateData;
 
-	for (int i=0; 0xFFF; i++)
+	for (int i = 0; i < 0xFFF; i++)
 	{
 		long val = *((long*)(private_c + i));
 
@@ -50,21 +50,21 @@ int OffsetHandler::search_virtual_table(void* address)
 {
 	char* c_address = (char*)address;
 
-	for (int i=0; 0xFFF; i++)
+	for (int i = 0; i < 0xFFF; ++i)
 	{
 		long address = *((long*)(c_address + i));
 
-		if (GameLibraries.Engine->contains_address(address) || GameLibraries.Mod->contains_address(address))
+		if (G_GameLibraries.Engine->contains_address(address) || G_GameLibraries.Mod->contains_address(address))
 		{
 			void** address_ptr = (void**)address;
 
 			int sum = 0;
 
-			for (int j=0; j <= 10; j++)
+			for (int j = 0; j <= 10; ++j)
 			{
 				void* address_inside = address_ptr[j];
 
-				sum += GameLibraries.Engine->contains_address(address) | GameLibraries.Mod->contains_address(address);
+				sum += G_GameLibraries.Engine->contains_address(address) | G_GameLibraries.Mod->contains_address(address);
 			}
 
 			if (sum > 5)

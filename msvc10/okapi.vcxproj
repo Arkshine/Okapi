@@ -152,41 +152,47 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\assembly_create.cpp" />
     <ClCompile Include="..\commands\command_help.cpp" />
+    <ClCompile Include="..\commands\command_version.cpp" />
+    <ClCompile Include="..\functions\function_cdecl.cpp" />
+    <ClCompile Include="..\functions\function_method.cpp" />
+    <ClCompile Include="..\functions\function_virtual.cpp" />
+    <ClCompile Include="..\natives.cpp" />
     <ClCompile Include="..\public\memtools\MemoryUtils.cpp" />
     <ClCompile Include="..\s_library.cpp" />
-    <ClCompile Include="..\work.cpp" />
     <ClInclude Include="..\includes\allocator.h" />
     <ClInclude Include="..\includes\assembly_create.h" />
     <ClInclude Include="..\includes\command.h" />
-    <ClInclude Include="..\includes\commands\command_help.h" />
-    <ClInclude Include="..\includes\commands\command_version.h" />
     <ClInclude Include="..\includes\fakemeta_const.h" />
     <ClInclude Include="..\includes\fakemeta_const_to_address.h" />
     <ClInclude Include="..\includes\function.h" />
-    <ClInclude Include="..\includes\game_libraries\game_library_engine.h" />
-    <ClInclude Include="..\includes\game_libraries\game_library_mod.h" />
     <ClInclude Include="..\includes\game_library.h" />
     <ClInclude Include="..\includes\globals.h" />
-    <ClInclude Include="..\includes\heap.h" />
     <ClInclude Include="..\includes\hl_type_conversion.h" />
     <ClInclude Include="..\includes\memory_.h" />
-    <ClInclude Include="..\includes\my_util.h" />
+    <ClInclude Include="..\includes\utils.h" />
+    <ClInclude Include="..\includes\natives.h" />
     <ClInclude Include="..\includes\offset_handler.h" />
-    <ClInclude Include="..\includes\okapi.h" />
     <ClInclude Include="..\includes\s_library.h" />
     <ClInclude Include="..\includes\type_handler.h" />
-    <ClInclude Include="..\includes\type_handlers\type_handler_extra.h" />
-    <ClInclude Include="..\includes\work.h" />
     <ClCompile Include="..\function.cpp" />
     <ClCompile Include="..\globals.cpp" />
     <ClCompile Include="..\hl_type_conversion.cpp" />
-    <ClCompile Include="..\my_util.cpp" />
+    <ClCompile Include="..\type_handlers\handler_cbase.cpp" />
+    <ClCompile Include="..\type_handlers\handler_edict.cpp" />
+    <ClCompile Include="..\type_handlers\handler_entvars.cpp" />
+    <ClCompile Include="..\type_handlers\handler_float.cpp" />
+    <ClCompile Include="..\type_handlers\handler_int.cpp" />
+    <ClCompile Include="..\type_handlers\handler_string.cpp" />
+    <ClCompile Include="..\type_handlers\handler_vector-ptr.cpp" />
+    <ClCompile Include="..\type_handlers\handler_vector.cpp" />
+    <ClCompile Include="..\type_handlers\handler_void.cpp" />
+    <ClCompile Include="..\utils.cpp" />
     <ClCompile Include="..\offset_handler.cpp" />
     <ClCompile Include="..\okapi.cpp" />
     <ClCompile Include="..\public\sdk\amxxmodule.cpp" />
     <ClInclude Include="..\public\memtools\MemoryUtils.h" />
-    <ClInclude Include="..\includes\templates.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\moduleconfig.h" />

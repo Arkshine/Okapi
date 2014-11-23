@@ -10,8 +10,8 @@
 // Okapi Module
 //
 
-#ifndef __S_LIBRARY__H__
-#define __S_LIBRARY__H__
+#ifndef S_LIBRARY_H
+#define S_LIBRARY_H
 
 struct s_library
 {
@@ -22,7 +22,7 @@ struct s_library
 
 s_library* create_library(void* address);
 const char* get_address_symbol(void* address);
-void* find_function(s_library* library, const char* functionName, bool is_hidden = false);
+void* find_function(s_library* library, const char* functionName);
 
-#endif // __S_LIBRARY__H__
+#endif // S_LIBRARY_H
 
