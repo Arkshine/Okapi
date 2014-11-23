@@ -10,25 +10,19 @@
 // Okapi Module
 //
 
-#ifndef __OFFSET_HANDLER_H__
-#define __OFFSET_HANDLER_H__
+#ifndef __S_LIBRARY__H__
+#define __S_LIBRARY__H__
 
-struct OffsetHandler
+struct s_library
 {
-	int PEV;
-	int EntityVirtualTable;
-
-	void search_pev();
-	void search_virtual_table();
-
-	OffsetHandler()
-	{
-		search_pev();
-		search_virtual_table();
-	}
-
-	static int search_virtual_table(void *address);
+	void* handle;
+	void* address;
+	int length;
 };
 
-#endif // __OFFSET_HANDLER_H__
+s_library* create_library(void* address);
+const char* get_address_symbol(void* address);
+void* find_function(s_library* library, const char* functionName, bool is_hidden = false);
+
+#endif // __S_LIBRARY__H__
 

@@ -10,18 +10,17 @@
 // Okapi Module
 //
 
-#ifndef LIBRARY_UTIL_H
-#define LIBRARY_UTIL_H
+#ifndef __WORK_H__
+#define __WORK_H__
 
-struct s_library
-{
-	void* handle;
-	void* address;
-	int length;
-};
+#include <my_util.h>
+#include <stdio.h>
+#include "amxxmodule.h"
 
-s_library* create_library(void* address);
-const char* get_address_symbol(void* address);
-void* find_function(s_library* library, const char* functionName, bool is_hidden = false);
+void clean_debug_file();
+void print(char* format, ...);
+void patch_printf();
 
-#endif // LIBRARY_UTIL_H
+extern "C" void __cxa_pure_virtual();
+
+#endif // __WORK_H__

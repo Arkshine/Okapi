@@ -11,11 +11,14 @@
 //
 
 #include <command.h>
+#include <commands/command_help.h>
+#include <my_util.h>
+#include "amxxmodule.h"
 #include <globals.h>
 
 void CommandHelp::exec()
 {
-	if (CMD_ARGC() == 2)
+	if (g_engfuncs.pfnCmd_Argc() == 2)
 	{
 		Util::con_printf(" Usage: okapi help <command>\n");
 		Util::con_printf("\n");
@@ -26,7 +29,7 @@ void CommandHelp::exec()
 	{
 		Command* command;
 
-		if (!G_Commands.retrieve(CMD_ARGV(2), &command))
+		if (!Commands.retrieve(g_engfuncs.pfnCmd_Argv(2), &command))
 		{
 			Util::con_printf(" invalid command\n");
 		}

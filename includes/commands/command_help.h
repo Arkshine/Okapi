@@ -10,25 +10,19 @@
 // Okapi Module
 //
 
-#ifndef __OFFSET_HANDLER_H__
-#define __OFFSET_HANDLER_H__
+#ifndef __COMMAND_HELP_H__
+#define __COMMAND_HELP_H__
 
-struct OffsetHandler
+#include <command.h>
+#include <string.h>
+
+class CommandHelp : public Command
 {
-	int PEV;
-	int EntityVirtualTable;
+	public:
 
-	void search_pev();
-	void search_virtual_table();
-
-	OffsetHandler()
-	{
-		search_pev();
-		search_virtual_table();
-	}
-
-	static int search_virtual_table(void *address);
+		void exec();
+		const char* get_description();
+		void show_help();
 };
 
-#endif // __OFFSET_HANDLER_H__
-
+#endif // __COMMAND_HELP_H__

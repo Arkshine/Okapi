@@ -11,29 +11,40 @@
 //
 
 #include <globals.h>
-#include "utils.h"
 
-GameLibrariesType       G_GameLibraries = { NULL, NULL };
-StringHashMap<Command*> G_Commands;
-Memory                  G_Memory;
-OffsetHandler*          G_OffsetHandler = NULL;
-HL_TypeConversion       G_HL_TypeConversion;
+#include <game_library.h>
+#include <sm_stringhashmap.h>
+#include <command.h>
+#include <offset_handler.h>
+#include <function.h>
+#include <my_util.h>
+
+GameLibrariesType GameLibraries ={ NULL, NULL };
+StringHashMap<Command*> Commands;
+Memory G_Memory;
+OffsetHandler* G_OffsetHandler = NULL;
+HL_TypeConversion G_HL_TypeConversion;
 FakemetaConstToAddress* G_FakemetaConstToAddress;
-FunctionsDataMap        G_Functions;
-Allocator               G_Allocator;
-TypeHandler*            G_ArgsTypeHandler[9] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+FunctionsDataMap G_Functions;
+
+Allocator G_Allocator;
+
+TypeHandler* G_ArgsTypeHandler[9] ={ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+using Util::con_printf;
 
 void list_commands()
 {
-	Util::con_printf("available commands:\n\n");
+	con_printf("available commands:\n\n");
 
-	for (StringHashMap<Command*>::iterator iter = G_Commands.iter(); !iter.empty(); iter.next())
+	for (StringHashMap<Command*>::iterator iter = Commands.iter(); !iter.empty(); iter.next())
 	{
 		if (iter->key.compare("help") == 0)
 		{
 			continue;
 		}
 
-		Util::con_printf("\t%s - %s\n", iter->key.chars(), iter->value->get_description());
+		con_printf("\t%s - %s\n", iter->key.chars(), iter->value->get_description());
 	}
 }

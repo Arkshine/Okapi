@@ -10,25 +10,25 @@
 // Okapi Module
 //
 
-#ifndef __OFFSET_HANDLER_H__
-#define __OFFSET_HANDLER_H__
+#ifndef __GAME_LIBRARY_MOD_H__
+#define __GAME_LIBRARY_MOD_H__
 
-struct OffsetHandler
+#include <game_library.h>
+
+class GameLibraryMod : public GameLibrary
 {
-	int PEV;
-	int EntityVirtualTable;
+	public:
 
-	void search_pev();
-	void search_virtual_table();
+		GameLibraryMod(s_library s) : GameLibrary(s)
+		{
+			this->init();
+		}
 
-	OffsetHandler()
-	{
-		search_pev();
-		search_virtual_table();
-	}
-
-	static int search_virtual_table(void *address);
+		const char* get_name()
+		{
+			return "mod";
+		}
 };
 
-#endif // __OFFSET_HANDLER_H__
+#endif // __GAME_LIBRARY_MOD_H__
 

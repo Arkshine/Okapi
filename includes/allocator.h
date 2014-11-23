@@ -10,8 +10,8 @@
 // Okapi Module
 //
 
-#ifndef ALLOCATOR_H
-#define ALLOCATOR_H
+#ifndef __ALLOCATOR_H__
+#define __ALLOCATOR_H__
 
 #include <am-vector.h>
 
@@ -21,12 +21,14 @@ class Allocator
 
 	public:
 
-		Allocator() {}
-		~Allocator() {}
+		~Allocator()
+		{
+			this->clear();
+		}
 
 		void clear()
 		{
-			for (size_t i = 0; i < data.length(); ++i)
+			for (size_t i=0; i < data.length(); i++)
 			{
 				delete data[i];
 			}
@@ -51,6 +53,10 @@ class Allocator
 			return false;
 		}
 
+		Allocator()
+		{
+		}
+
 		template <class T>
 		T* alloc(int size)
 		{
@@ -73,4 +79,4 @@ class Allocator
 		}
 };
 
-#endif // ALLOCATOR_H
+#endif // __ALLOCATOR_H__

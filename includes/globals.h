@@ -10,8 +10,8 @@
 // Okapi Module
 //
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef __GLOBALS_H__
+#define __GLOBALS_H__
 
 #include <game_library.h>
 #include <sm_stringhashmap.h>
@@ -20,8 +20,8 @@
 #include <offset_handler.h>
 #include <hl_type_conversion.h>
 #include <fakemeta_const_to_address.h>
+#include <function.h>
 #include <allocator.h>
-#include "function.h"
 
 struct GameLibrariesType
 {
@@ -29,17 +29,21 @@ struct GameLibrariesType
 	GameLibrary* Engine;
 };
 
-typedef ke::HashMap< long, Function*, ke::IntegerPolicy<long> > FunctionsDataMap;
+extern GameLibrariesType GameLibraries;
+extern StringHashMap<Command*> Commands;
 
-extern GameLibrariesType       G_GameLibraries;
-extern StringHashMap<Command*> G_Commands;
-extern Memory                  G_Memory;
-extern OffsetHandler*          G_OffsetHandler;
-extern HL_TypeConversion       G_HL_TypeConversion;
+extern Memory G_Memory;
+
+extern OffsetHandler* G_OffsetHandler;
+
+extern HL_TypeConversion G_HL_TypeConversion;
+
 extern FakemetaConstToAddress* G_FakemetaConstToAddress;
-extern FunctionsDataMap        G_Functions;
-extern Allocator               G_Allocator;
-extern TypeHandler*            G_ArgsTypeHandler[9];
+
+typedef ke::HashMap< long, Function*, ke::IntegerPolicy<long> > FunctionsDataMap;
+extern FunctionsDataMap G_Functions;
+
+extern Allocator G_Allocator;
 
 enum ArgsType
 {
@@ -54,6 +58,8 @@ enum ArgsType
 	ArgVecPtr
 };
 
+extern TypeHandler* G_ArgsTypeHandler[9];
+
 void list_commands();
 
-#endif // GLOBALS_H
+#endif // __GLOBALS_H__

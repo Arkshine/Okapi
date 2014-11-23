@@ -10,13 +10,13 @@
 // Okapi Module
 //
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef __UTIL__H__
+#define __UTIL__H__
 
 namespace Util
 {
-	void con_printf(const char *format, ...);
-	void debug_fprintf(const char *format, ...);
+	void con_printf(char *format, ...);
+	void debug_fprintf(char * format, ...);
 };
 
-#endif // UTILS_H
+#endif // __UTIL__H__

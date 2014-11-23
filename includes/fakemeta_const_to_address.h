@@ -10,8 +10,8 @@
 // Okapi Module
 //
 
-#ifndef FAKEMETA_CONST_TO_ADDRESS_H
-#define FAKEMETA_CONST_TO_ADDRESS_H
+#ifndef __FAKEMETA_CONST_TO_ADDRESS_H__
+#define __FAKEMETA_CONST_TO_ADDRESS_H__
 
 #include "amxxmodule.h"
 #include <fakemeta_const.h>
@@ -144,5 +144,5 @@ struct FakemetaConstToAddress
 	}
 };
 
-#endif // FAKEMETA_CONST_TO_ADDRESS_H
+#endif // __FAKEMETA_CONST_TO_ADDRESS_H__
 

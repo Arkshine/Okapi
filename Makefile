@@ -14,7 +14,7 @@ MM_ROOT = ../metamod-am/metamod
 
 PROJECT = okapi
 
-OBJECTS = public/sdk/amxxmodule.cpp okapi.cpp utils.cpp libray_utils.cpp assembly_create.cpp game_library.cpp commands/command_help.cpp commands/command_version.cpp globals.cpp command.cpp offset_handler.cpp hl_type_conversion.cpp function.cpp functions/function_cdecl.cpp functions/function_method.cpp functions/function_virtual.cpp type_handlers/cbase_handler.cpp type_handlers/edict_handler.cpp type_handlers/entvars_handler.cpp type_handlers/float_handler.cpp type_handlers/int_handler.cpp type_handlers/string_handler.cpp type_handlers/vector_handler.cpp type_handlers/vectorptr_handler.cpp type_handlers/void_handler.cpp',public/memtools/MemoryUtils.cpp
+OBJECTS = public/sdk/amxxmodule.cpp okapi.cpp work.cpp my_util.cpp s_library.cpp commands/command_help.cpp s_steps_address.cpp globals.cpp command.cpp offset_handler.cpp hl_type_conversion.cpp function.cpp public/memtools/MemoryUtils.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
@@ -120,7 +120,6 @@ $(BIN_DIR)/%.o: %.cpp
 all:
 	mkdir -p $(BIN_DIR)
 	mkdir -p $(BIN_DIR)/commands
-	mkdir -p $(BIN_DIR)/type_handlers
 	mkdir -p $(BIN_DIR)/public/memtools
 	mkdir -p $(BIN_DIR)/public/sdk
 	$(MAKE) -f $(MAKEFILE_NAME) $(PROJECT)
@@ -136,7 +135,6 @@ default: all
 clean:
 	rm -rf $(BIN_DIR)/*.o
 	rm -rf $(BIN_DIR)/commands/*.o
-	rm -rf $(BIN_DIR)/type_handlers/*.o
 	rm -rf $(BIN_DIR)/public/memtools/*.o
 	rm -rf $(BIN_DIR)/public/sdk/*.o
 	rm -f $(BIN_DIR)/$(BINARY)
