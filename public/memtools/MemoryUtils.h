@@ -35,6 +35,7 @@
 	#include <am-vector.h>
 	#include <sm_symtable.h>
 	#include <dlfcn.h>
+	#include <link.h>
 #endif
 
 #if defined(__APPLE__)
@@ -62,6 +63,8 @@
 	#pragma comment(lib, "Kernel32.lib")
 
 	#include <windows.h>
+	#include <Psapi.h>
+	
 #endif
 
 #if defined _MSC_VER && _MSC_VER >= 1400

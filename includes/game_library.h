@@ -15,6 +15,7 @@
 
 #include <s_library.h>
 #include <am-vector.h>
+#include <am-string.h>
 
 class GameLibrary : public s_library
 {
@@ -86,6 +87,27 @@ class GameLibraryMod : public GameLibrary
 		{
 			return "mod";
 		}
+};
+
+class GameLibraryAny : public GameLibrary
+{
+	public:
+
+		GameLibraryAny(s_library s) : GameLibrary(s)
+		{
+			this->init();
+		}
+
+		const char* get_name()
+		{
+			return name.chars();
+		}
+
+	private:
+
+		ke::AString name;
+
+
 };
 
 #endif // GAME_LIBRARY_H

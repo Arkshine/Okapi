@@ -13,6 +13,8 @@
 #ifndef S_LIBRARY_H
 #define S_LIBRARY_H
 
+#include <MemoryUtils.h>
+
 struct s_library
 {
 	void* handle;
@@ -23,6 +25,7 @@ struct s_library
 s_library* create_library(void* address);
 const char* get_address_symbol(void* address);
 void* find_function(s_library* library, const char* functionName);
+void create_addons_libraries();
 
 #endif // S_LIBRARY_H
 

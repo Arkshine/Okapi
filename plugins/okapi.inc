@@ -16,20 +16,35 @@
 #include <okapi_const>
 
 /**
- *   Gets the base address of where the engine library is allocated in memory
+ * Gets the base address of where the provided library is allocated in memory
  *  
  * @return					the base address
  *
  */
-native okapi_engine_get_base_ptr()
+native okapi_get_base_ptr(const lib_name[])
 
-/**
- *   Gets the base address of where the mod library is allocated in memory
- *  
- * @return					the base address
- *
- */
-native okapi_mod_get_base_ptr()
+	/**
+	 * Gets the base address of where the engine library is allocated in memory
+	 *  
+	 * @return					the base address
+	 *
+	 */
+	stock okapi_engine_get_base_ptr()
+	{
+		return okapi_get_base_ptr("engine");
+	}
+
+	/**
+	 * Gets the base address of where the mod library is allocated in memory
+	 *  
+	 * @return					the base address
+	 *
+	 */
+	stock okapi_mod_get_base_ptr()
+	{
+		return okapi_get_base_ptr("mod");
+	}
+
 
 /**
  *   Searches for a signature in the mod library, starting at 'ptr' address

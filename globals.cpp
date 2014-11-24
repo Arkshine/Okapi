@@ -12,7 +12,7 @@
 
 #include "globals.h"
 
-GameLibrariesType       G_GameLibraries ={ NULL, NULL };
+GameLibrariesType       G_GameLibraries = { NULL, NULL };
 StringHashMap<Command*> G_Commands;
 Memory                  G_Memory;
 OffsetHandler*          G_OffsetHandler = NULL;
@@ -20,7 +20,7 @@ HL_TypeConversion       G_HL_TypeConversion;
 FakemetaConstToAddress* G_FakemetaConstToAddress;
 FunctionsDataMap        G_Functions;
 Allocator               G_Allocator;
-TypeHandler*            G_ArgsTypeHandler[9] ={ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+TypeHandler*            G_ArgsTypeHandler[ArgsCount] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 void list_commands()
 {

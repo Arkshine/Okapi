@@ -97,6 +97,8 @@ void OnPluginsLoaded()
 	}
 
 	G_Functions.init();
+
+	create_addons_libraries();
 }
 
 void OnPluginsUnloaded()
@@ -105,6 +107,7 @@ void OnPluginsUnloaded()
 
 	G_Functions.clear();
 	G_Allocator.clear();
+	G_GameLibraries.Others.clear();
 }
 
 extern "C" void __cxa_pure_virtual() { while (1); }

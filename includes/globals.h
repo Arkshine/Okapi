@@ -29,6 +29,7 @@ struct GameLibrariesType
 {
 	GameLibrary* Mod;
 	GameLibrary* Engine;
+	StringHashMap<GameLibraryAny*> Others;
 };
 
 typedef ke::HashMap< long, Function*, ke::IntegerPolicy<long> > FunctionsDataMap;

@@ -851,14 +851,28 @@ static cell AMX_NATIVE_CALL okapi_mod_get_size(AMX *amx, cell *params)
 	return (cell)G_GameLibraries.Mod->length;
 }
 
-static cell AMX_NATIVE_CALL okapi_mod_get_base_ptr(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL okapi_get_base_ptr(AMX *amx, cell *params)
 {
-	return (cell)G_GameLibraries.Mod->address;
-}
+	int length;
+	const char *libName = MF_GetAmxString(amx, params[1], 0, &length);
 
-static cell AMX_NATIVE_CALL okapi_engine_get_base_ptr(AMX *amx, cell *params)
-{
-	return (cell)G_GameLibraries.Engine->address;
+	if (!strcmp(libName, "mod"))
+	{
+		return (cell)G_GameLibraries.Mod->address;
+	}
+	else if (!strcmp(libName, "engine"))
+	{
+		return (cell)G_GameLibraries.Engine->address;
+	}
+
+	GameLibraryAny *lib;
+
+	if (G_GameLibraries.Others.retrieve(libName, &lib))
+	{
+		return (cell)lib->address;
+	}
+
+	return 0;
 }
 
 static cell AMX_NATIVE_CALL okapi_engine_replace_float(AMX *amx, cell *params)
@@ -1393,8 +1407,7 @@ AMX_NATIVE_INFO OkapiNatives[] =
 	{ "okapi_engine_get_size"          , okapi_engine_get_size },
 	{ "okapi_mod_get_size"             , okapi_mod_get_size },
 
-	{ "okapi_engine_get_base_ptr"      , okapi_engine_get_base_ptr },
-	{ "okapi_mod_get_base_ptr"         , okapi_mod_get_base_ptr },
+	{ "okapi_get_base_ptr"             , okapi_get_base_ptr },
 
 	{ "okapi_mod_replace_float"        , okapi_mod_replace_float },
 	{ "okapi_engine_replace_float"     , okapi_engine_replace_float },
