@@ -698,26 +698,34 @@ static cell AMX_NATIVE_CALL okapi_class_get_vfunc_ptr(AMX *amx, cell *params)
 	}
 }
 
-static cell AMX_NATIVE_CALL okapi_mod_find_sig_at(AMX *amx, cell *params)
+GameLibrary* get_lib_from_address(void *address)
 {
-	long address = params[1];
-	cell* array_ = MF_GetAmxAddr(amx, params[2]);
-	int len = params[3];
+	StringHashMap<GameLibrary*>::iterator iter = G_GameLibraries.Others.iter();
 
-	len = fix_special(array_, len);
+	while (!iter.empty())
+	{
+		if (iter->value->address == address)
+		{
+			return iter->value;
+		}
 
-	return library_find_signature(G_GameLibraries.Mod, address, array_, len);
+		iter.next();
+	}
+		
+	return NULL;
 }
 
-static cell AMX_NATIVE_CALL okapi_engine_find_sig_at(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL okapi_find_sig_at(AMX *amx, cell *params)
 {
-	long address = params[1];
-	cell* array_ = MF_GetAmxAddr(amx, params[2]);
-	int len = params[3];
+	long lib_address   = params[1];
+	long start_address = params[2];
+
+	cell* array_ = MF_GetAmxAddr(amx, params[3]);
+	int len = params[4];
 
 	len = fix_special(array_, len);
 
-	return library_find_signature(G_GameLibraries.Engine, address, array_, len);
+	return library_find_signature(get_lib_from_address((void *)lib_address), start_address, array_, len);
 }
 
 static cell AMX_NATIVE_CALL okapi_engine_ptr_find_array_at(AMX *amx, cell *params)
@@ -856,16 +864,7 @@ static cell AMX_NATIVE_CALL okapi_get_base_ptr(AMX *amx, cell *params)
 	int length;
 	const char *libName = MF_GetAmxString(amx, params[1], 0, &length);
 
-	if (!strcmp(libName, "mod"))
-	{
-		return (cell)G_GameLibraries.Mod->address;
-	}
-	else if (!strcmp(libName, "engine"))
-	{
-		return (cell)G_GameLibraries.Engine->address;
-	}
-
-	GameLibraryAny *lib;
+	GameLibrary* lib;
 
 	if (G_GameLibraries.Others.retrieve(libName, &lib))
 	{
@@ -1386,8 +1385,7 @@ AMX_NATIVE_INFO OkapiNatives[] =
 
 	{ "okapi_get_ptr_symbol"           , okapi_get_ptr_symbol },
 
-	{ "okapi_mod_find_sig_at"          , okapi_mod_find_sig_at },
-	{ "okapi_engine_find_sig_at"       , okapi_engine_find_sig_at },
+	{ "okapi_find_sig_at"              , okapi_find_sig_at },
 
 	{ "okapi_mod_ptr_find_array_at"    , okapi_mod_ptr_find_array_at },
 	{ "okapi_engine_ptr_find_array_at" , okapi_engine_ptr_find_array_at },

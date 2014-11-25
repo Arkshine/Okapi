@@ -135,6 +135,9 @@ void* find_function(s_library* library, const char* functionName)
 
 void create_addons_libraries()
 {
+	G_GameLibraries.Others.insert("mod", G_GameLibraries.Mod);
+	G_GameLibraries.Others.insert("engine", G_GameLibraries.Engine);
+
 	#if defined(LINUX) || defined(OSX)
 		dl_iterate_phdr(retrieve_addons_libraries, NULL);
 	#else
