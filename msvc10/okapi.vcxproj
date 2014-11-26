@@ -199,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\plugins\okapi.inc" />
+    <None Include="..\plugins\okapi_bcompat.inc" />
     <None Include="..\plugins\okapi_const.inc" />
     <None Include="..\plugins\okapi_extra.inc" />
     <None Include="..\plugins\okapi_memory.inc" />

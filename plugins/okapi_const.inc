@@ -15,18 +15,31 @@ enum okapi_arg
 	arg_string,
 	arg_edict,
 	arg_vec_ptr
-}
+};
+
+enum okapi_mem_type
+{
+	mem_type_int,
+	mem_type_byte,
+	mem_type_foat,
+	mem_type_entvars,
+	mem_type_edict,
+	mem_type_cbase,
+	mem_type_array,
+	mem_type_string,
+	mem_type_vector,
+};
 
 enum MemProtect
 {
 	PAGE_READ=1,
 	PAGE_WRITE=2,
 	PAGE_EXEC=4
-}
+};
 
 enum okapi_ret
 {
 	okapi_ret_ignore,
 	okapi_ret_override,
 	okapi_ret_supercede
-}
+};

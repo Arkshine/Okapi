@@ -49,6 +49,21 @@ enum ArgsType
 	ArgsCount
 };
 
+enum MemType
+{
+	MemType_Int,
+	MemType_Byte,
+	MemType_Foat,
+	MemType_Entvars,
+	MemType_Edict,
+	MemType_Cbase,
+	MemType_Array,
+	MemType_String,
+	MemType_Vector,
+
+	MemType_Count
+};
+
 extern GameLibrariesType       G_GameLibraries;
 extern StringHashMap<Command*> G_Commands;
 extern Memory                  G_Memory;

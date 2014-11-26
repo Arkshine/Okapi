@@ -4,153 +4,46 @@
 #endif
 #define _okapi_memory_included
 
-/**
- * Sets the value of the location pointed by the address with the entvars relative to an entity represented by id
- *  
- * @param ptr			the address
- * @param id			the entity id
- *
- */
-native okapi_set_ptr_ent(ptr,id)
 
 /**
- * Retrieves the entvars located in an address as an entity id
- *  
- * @param ptr			the address
- * @return				the entity id
+ * Retrieves the value in an address.
  *
+ * @param address	The address where is located the value
+ * @param type		The value data type, See okapi_mem_* constants
+ * @param ...		If zero additional parameters are provided, the function
+ *                  will return an integer or float value directly. 
+ *                  If one additional parameter is provided, the function will
+ *                  store an integer as float, a float or vector.
+ *                  If two additional parameters are provided, the function
+ *                  will copy a string or an array to the buffer provided 
+ *                  in the second parameter, using the third as the maximum
+ *				    buffer size.
+ *					
+ * @return			If zero additional parameters are provided, the function
+ *                  will return an integer or float value.
+ *                  If two additional parameters are provided and data typ is
+ *                  a string, the function will return the number of cells 
+ *                  written to the buffer.
+ *
+ * @error           Invalid return type
+ *                  Incorrect parameters count
  */
-native okapi_get_ptr_ent(ptr)
+native any:okapi_mem_get(address, type, any:...);
 
 /**
- * Sets the value of the location pointed by the address with the edict relative to an entity represented by id
- *  
- * @param ptr			the address
- * @param id			the entity id
+ * Sets the value of the location pointed by the address.
  *
+ * @param address	The address where is located the value
+ * @param type		The value data type, See okapi_mem_* constants
+ * @param ...       The value to set. If parameter is an array, 
+ *                  its size is required as second parameter.
+ *
+ * @noreturn
+ *
+ * @error           Incorrect parameters count
  */
-native okapi_set_ptr_edict(ptr,id)
+native okapi_mem_set(address, type, any:...);
 
-/**
- * Retrieves the edict located in an address as an entity id
- *  
- * @param ptr			the address
- * @return				the entity id
- *
- */
-native okapi_get_ptr_edict(ptr)
-
-/**
- * Sets the value of the location pointed by the address with the cbase relative to an entity represented by id
- *  
- * @param ptr			the address
- * @param id			the entity id
- *
- */
-native okapi_set_ptr_cbase(ptr,id)
-
-/**
- * Retrieves the cbase located in an address as an entity id
- *  
- * @param ptr			the address
- * @return				the entity id
- *
- */
-native okapi_get_ptr_cbase(ptr)
-
-/**
- * Writes an integer value at the location pointed by the address
- *  
- * @param ptr			the address
- * @param value			the value
- *
- */
-native okapi_set_ptr_int(ptr,value)
-
-/**
- * Retrieves an integer value in the location pointed by the address
- *  
- * @param ptr			the address
- * @return				the value
- *
- */
-native okapi_get_ptr_int(ptr)
-
-/**
- * Writes a byte value at the location pointed by the address
- *  
- * @param ptr			the address
- * @param value			the value
- *
- */
-native okapi_set_ptr_byte(ptr,value)
-
-/**
- * Retrieves a byte value in the location pointed by the address
- *  
- * @param ptr			the address
- * @return				the value
- *
- */
-native okapi_get_ptr_byte(ptr)
-
-/**
- * Writes a float value at the location pointed by the address
- *  
- * @param ptr			the address
- * @param value			the value
- *
- */
-native okapi_set_ptr_float(ptr,Float:value)
-
-/**
- * Retrieves a float value in the location pointed to by the address
- *  
- * @param ptr			the address
- * @return				the value
- *
- */
-native Float:okapi_get_ptr_float(ptr)
-
-/**
- * Retrieves an array of bytes in the location pointed to by the address
- *  
- * @param ptr			the address
- * @param holder		the array where the bytes will be stored
- * @param count			the number of bytes to retrieve
- *
- */
-native okapi_get_ptr_array(ptr,holder[],count)
-
-/**
- * Writes an array of bytes to the location pointed to by the address
- *  
- * @param ptr			the address
- * @param holder		the array with the bytes to write
- * @param count			the number of bytes to write
- *
- */
-native okapi_set_ptr_array(ptr,holder[],count)
-
-/**
- * Retrieves an string from the location pointed to by the address
- *  
- * @param ptr			the address
- * @param str[]			the variable where the string will be stored
- * @param len			the limit of chars to retrieve 
- * @return				the number of chars retrieved
- *
- */
-native okapi_get_ptr_string(ptr,str[],len)
-
-/**
- * Writes a string to the location pointed to by the address
- *  
- * @param ptr			the address
- * @param str[]			the string to write
- *
- */
-native okapi_set_ptr_string(ptr,str[])
 
 /**
  *   Replaces every string that occurs in the engine library with another one
@@ -410,13 +303,3 @@ stock okapi_mod_find_array(const array_[],count)
  *
  */
 native okapi_alloc(n)
-
-/**
- *   Reads a vector from 
- *  
- * @param ptr				the ptr of the allocation
- * @param Float:vec[3]		the variable where the vector will be wrote to
- *
- *
- */
-native okapi_get_ptr_vec(ptr,Float:vec[3])

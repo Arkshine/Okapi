@@ -1041,107 +1041,315 @@ static cell AMX_NATIVE_CALL okapi_engine_replace_string(AMX *amx, cell *params)
 	return library_replace_string(G_GameLibraries.Engine, string1, string2);
 }
 
-static cell AMX_NATIVE_CALL okapi_get_ptr_string(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL okapi_mem_get(AMX *amx, cell *params)
 {
-	char* address = (char*)params[1];
+	int memory_type = params[2];
 
-	cell* string = MF_GetAmxAddr(amx, params[2]);
-
-	int maxlen = params[3];
-
-	int i=0;
-	for (; i < maxlen; i++)
+	if (memory_type < 0 || memory_type > MemType_Count)
 	{
-		if (address[i])
+		MF_LogError(amx, AMX_ERR_NATIVE, "Invalid memory type");
+		return 0;
+	}
+
+	size_t argumentsCount = *params / sizeof(cell) - 2;
+
+	if (argumentsCount > 2)
+	{
+		MF_LogError(amx, AMX_ERR_NATIVE, "Expected 2 parameters max, got %d", argumentsCount);
+		return 0;
+	}
+
+	enum
+	{
+		Ret_Int,
+		Ret_Float,
+		Ret_Vec,
+		Ret_String,
+		Ret_Array,
+	};
+
+	union
+	{
+		int      i;
+		float    f;
+		byte     b;
+
+	} returns;
+
+	int valueType;
+	Vector v;
+	unsigned char* a;
+	const cell* s;
+
+	cell address = params[1];
+	cell value   = params[3];
+
+	switch (memory_type)
+	{
+		case MemType_Int:
 		{
-			string[i] = address[i];
-		}
-		else
+			returns.i = *(int*)address;
+			valueType = Ret_Int;
 			break;
+		}
+		case MemType_Byte:
+		{
+			returns.b = *(unsigned char*)address;
+			valueType = Ret_Int;
+			break;
+		}
+		case MemType_Foat:
+		{
+			returns.f = *(float*)address;
+			valueType = Ret_Float;
+			break;
+		}
+		case MemType_Edict:
+		{
+			returns.i = ENTINDEX(*(edict_t **)address);
+			valueType = Ret_Int;
+			break;
+		}
+		case MemType_Entvars:
+		{
+			returns.i = G_HL_TypeConversion.entvar_to_id(*(entvars_s**)address);
+			valueType = Ret_Int;
+			break;
+		}
+		case MemType_Cbase:
+		{
+			returns.i = G_HL_TypeConversion.cbase_to_id(*(void**)address);
+			valueType = Ret_Int;
+			break;
+		}
+		case MemType_Vector:
+		{
+			v = *(Vector*)address;
+			valueType = Ret_Vec;
+			break;
+		}
+		case MemType_Array:
+		{
+			a = (unsigned char*)address;
+			valueType = Ret_Array;
+			break;
+		}
+		case MemType_String:
+		{
+			s = (cell*)address;
+			valueType = Ret_String;
+			break;
+		}
 	}
 
-	string[i] = 0;
-
-	return i;
-}
-
-static cell AMX_NATIVE_CALL okapi_set_ptr_string(AMX *amx, cell *params)
-{
-	char* address = (char*)params[1];
-
-	int len;
-	const char* string = MF_GetAmxString(amx, params[2], 0, &len);
-
-	int prot = G_Memory.get_memory_protection((long)address);
-
-	G_Memory.make_writable((long)address);
-
-	for (int i=0; i < len; i++)
+	switch (argumentsCount)
 	{
-		address[i] = string[i];
+		case 0: 
+		{
+			switch (valueType)
+			{
+				case Ret_Int:
+				{
+					return returns.i;
+				}
+				case Ret_Float:
+				{
+					return amx_ftoc(returns.f);
+				}
+				case Ret_Array:
+				{
+					return (cell)a[0];
+				}
+				default:
+				{
+					MF_LogError(amx, AMX_ERR_NATIVE, "Invalid return type");
+					return 0;
+				}
+			}
+		}
+		case 1:
+		{
+			cell *addr = MF_GetAmxAddr(amx, value);
+
+			switch (valueType)
+			{
+				case Ret_Int:
+				case Ret_Float:
+				{
+					*addr = amx_ftoc(returns.f);
+				}
+				case Ret_Vec:
+				{
+					addr[0] = amx_ftoc(v.x);
+					addr[1] = amx_ftoc(v.y);
+					addr[2] = amx_ftoc(v.z);
+				}
+				default:
+				{
+					MF_LogError(amx, AMX_ERR_NATIVE, "Invalid return type");
+					return 0;
+				}
+			}
+
+			return 1;
+		}
+		case 2:
+		{
+			cell size = *(MF_GetAmxAddr(amx, params[4]));
+
+			switch (valueType)
+			{
+				case Ret_String:
+				{
+					return MF_SetAmxStringUTF8Char(amx, value, (const char*)s, strlen((const char*)s), size);
+				}
+				case Ret_Int:
+				{
+					char buffer[32];
+					UTIL_Format(buffer, sizeof(buffer) - 1, "%d", returns.i);
+
+					return MF_SetAmxString(amx, value, buffer, size);
+				}
+				case Ret_Float:
+				{
+					char buffer[32];
+					UTIL_Format(buffer, sizeof(buffer) - 1, "%f", returns.f);
+
+					return MF_SetAmxString(amx, value, buffer, size);
+				}
+				case Ret_Vec:
+				{
+					char buffer[32];
+					UTIL_Format(buffer, sizeof(buffer) - 1, "%f %f %f", v.x, v.y, v.z);
+
+					return MF_SetAmxString(amx, value, buffer, size);
+				}
+				case Ret_Array:
+				{
+					cell* addr = MF_GetAmxAddr(amx, value);
+
+					for (int i = 0; i < size; ++i)
+					{
+						addr[i] = a[i];
+					}
+				}
+				default:
+				{
+					MF_LogError(amx, AMX_ERR_NATIVE, "Invalid return type");
+					return 0;
+				}
+			}
+
+			return 1;
+		}
 	}
-
-	address[len] = 0;
-
-	G_Memory.set_memory_protection((long)address, prot);
-
-	return 1;
-}
-
-static cell AMX_NATIVE_CALL okapi_set_ptr_array(AMX *amx, cell *params)
-{
-	unsigned char* address = (unsigned char*)params[1];
-	cell* array_ = MF_GetAmxAddr(amx, params[2]);
-	int count = params[3];
-
-	int prot = G_Memory.get_memory_protection((long)address);
-
-	G_Memory.make_writable((long)address);
-
-	for (int i=0; i < count; i++)
-	{
-		address[i] = array_[i];
-	}
-
-	G_Memory.set_memory_protection((long)address, prot);
-
-	return 1;
-}
-
-static cell AMX_NATIVE_CALL okapi_get_ptr_array(AMX *amx, cell *params)
-{
-	unsigned char* address = (unsigned char*)params[1];
-	cell* array_ = MF_GetAmxAddr(amx, params[2]);
-	int count = params[3];
-
-	for (int i=0; i < count; i++)
-	{
-		array_[i] = address[i];
-	}
-
-	return 1;
-}
-
-static cell AMX_NATIVE_CALL okapi_set_ptr_byte(AMX *amx, cell *params)
-{
-	unsigned char* address_ptr = (unsigned char*)params[1];
-
-	int prot = G_Memory.get_memory_protection((long)address_ptr);
-
-	G_Memory.make_writable((long)address_ptr);
-
-	*address_ptr = (unsigned char)params[2];
-
-	G_Memory.set_memory_protection((long)address_ptr, prot);
 
 	return 0;
 }
 
-static cell AMX_NATIVE_CALL okapi_get_ptr_byte(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL okapi_mem_set(AMX *amx, cell *params)
 {
-	unsigned char* address_ptr = (unsigned char*)params[1];
+	int memory_type = params[2];
 
-	return *address_ptr;
+	if (memory_type < 0 || memory_type > MemType_Count)
+	{
+		MF_LogError(amx, AMX_ERR_NATIVE, "Invalid memory type");
+		return 0;
+	}
+
+	size_t argumentsCount = *params / sizeof(cell) - 2;
+
+	if (!argumentsCount || argumentsCount > 2)
+	{
+		MF_LogError(amx, AMX_ERR_NATIVE, "Expected 1 or 2 parameters, got %d", argumentsCount);
+		return 0;
+	}
+	else if (memory_type == MemType_Array && argumentsCount == 1)
+	{
+		MF_LogError(amx, AMX_ERR_NATIVE, "Expected an array size parameter");
+		return 0;
+	}
+
+	cell address = params[1];
+	cell value   = params[3];
+
+	int prot = G_Memory.get_memory_protection((long)address);
+
+	G_Memory.make_writable((long)address);
+
+	switch (memory_type)
+	{
+		case MemType_Int:
+		{
+			*(int*)address = value;
+			break;
+		}
+		case MemType_Byte:
+		{
+			*(unsigned char*)address = (unsigned char)value;
+			break;
+		}
+		case MemType_Foat:
+		{
+			*(float*)address = amx_ctof(value);
+			break;
+		}
+		case MemType_Edict:
+		{
+			*(edict_s**)address = INDEXENT(value);
+			break;
+		}
+		case MemType_Entvars:
+		{
+			*(entvars_s**)address = G_HL_TypeConversion.id_to_entvar(value);
+			break;
+		}
+		case MemType_Cbase:
+		{
+			*(void**)address = G_HL_TypeConversion.id_to_cbase(value);
+			break;
+		}
+		case MemType_Vector:
+		{
+			Vector* address_ = (Vector*)address;
+			cell* vec = MF_GetAmxAddr(amx, value);
+
+			(*address_).x = amx_ctof(vec[0]);
+			(*address_).y = amx_ctof(vec[1]);
+			(*address_).z = amx_ctof(vec[2]);
+			break;
+		}
+		case MemType_Array:
+		{
+			unsigned char* address_ = (unsigned char*)address;
+			cell* array = MF_GetAmxAddr(amx, value);
+			int size = params[4];
+
+			for (int i = 0; i < size; ++i)
+			{
+				address_[i] = array[i];
+			}
+			break;
+		}
+		case MemType_String:
+		{
+			int length;
+			unsigned char* address_ = (unsigned char*)address;
+			const char* string = MF_GetAmxString(amx, value, 0, &length);
+
+			for (int i = 0; i < length; i++)
+			{
+				address_[i] = string[i];
+			}
+
+			address_[length] = '\0';
+			break;
+		}
+	}
+
+	G_Memory.set_memory_protection((long)address, prot);
+
+	return 1;
 }
 
 static cell AMX_NATIVE_CALL okapi_set_mem_protect(AMX *amx, cell *params)
@@ -1158,119 +1366,6 @@ static cell AMX_NATIVE_CALL okapi_get_mem_protect(AMX *amx, cell *params)
 	int protection = G_Memory.convert_from_sys(protection_sys);
 
 	return protection;
-}
-
-static cell AMX_NATIVE_CALL okapi_get_ptr_float(AMX *amx, cell *params)
-{
-	float* address_ptr = (float*)params[1];
-
-	return amx_ftoc(*address_ptr);
-}
-
-static cell AMX_NATIVE_CALL okapi_set_ptr_float(AMX *amx, cell *params)
-{
-	float* address_ptr = (float*)params[1];
-
-	int prot = G_Memory.get_memory_protection((long)address_ptr);
-
-	G_Memory.make_writable((long)address_ptr);
-
-	*address_ptr = amx_ctof(params[2]);
-
-	G_Memory.set_memory_protection((long)address_ptr, prot);
-
-	return 0;
-}
-
-static cell AMX_NATIVE_CALL okapi_set_ptr_int(AMX *amx, cell *params)
-{
-	int* address_ptr = (int*)params[1];
-
-	int prot = G_Memory.get_memory_protection((long)address_ptr);
-
-	G_Memory.make_writable((long)address_ptr);
-
-	*address_ptr = params[2];
-
-	G_Memory.set_memory_protection((long)address_ptr, prot);
-
-	return 0;
-}
-
-static cell AMX_NATIVE_CALL okapi_set_ptr_ent(AMX *amx, cell *params)
-{
-	entvars_s** address_ptr = (entvars_s**)params[1];
-	entvars_s* entvars = G_HL_TypeConversion.id_to_entvar(params[2]);
-
-	int prot = G_Memory.get_memory_protection((long)address_ptr);
-
-	G_Memory.make_writable((long)address_ptr);
-
-	(*address_ptr) = entvars;
-
-	G_Memory.set_memory_protection((long)address_ptr, prot);
-
-	return 1;
-}
-
-static cell AMX_NATIVE_CALL okapi_get_ptr_ent(AMX *amx, cell *params)
-{
-	entvars_s** address_ptr = (entvars_s**)params[1];
-
-	return G_HL_TypeConversion.entvar_to_id(*address_ptr);
-}
-
-static cell AMX_NATIVE_CALL okapi_set_ptr_cbase(AMX *amx, cell *params)
-{
-	void** address_ptr = (void**)params[1];
-	void* cbase = G_HL_TypeConversion.id_to_cbase(params[2]);
-
-	int prot = G_Memory.get_memory_protection((long)address_ptr);
-
-	G_Memory.make_writable((long)address_ptr);
-
-	(*address_ptr) = cbase;
-
-	G_Memory.set_memory_protection((long)address_ptr, prot);
-
-	return 1;
-}
-
-static cell AMX_NATIVE_CALL okapi_get_ptr_cbase(AMX *amx, cell *params)
-{
-	void** address_ptr = (void**)params[1];
-
-	return G_HL_TypeConversion.cbase_to_id(*address_ptr);
-}
-
-static cell AMX_NATIVE_CALL okapi_set_ptr_edict(AMX *amx, cell *params)
-{
-	edict_s** address_ptr = (edict_s**)params[1];
-	edict_s* edict = INDEXENT(params[2]);
-
-	int prot = G_Memory.get_memory_protection((long)address_ptr);
-
-	G_Memory.make_writable((long)address_ptr);
-
-	(*address_ptr) = edict;
-
-	G_Memory.set_memory_protection((long)address_ptr, prot);
-
-	return 1;
-}
-
-static cell AMX_NATIVE_CALL okapi_get_ptr_edict(AMX *amx, cell *params)
-{
-	edict_s** address_ptr = (edict_s**)params[1];
-
-	return ENTINDEX(*address_ptr);
-}
-
-static cell AMX_NATIVE_CALL okapi_get_ptr_int(AMX *amx, cell *params)
-{
-	int* address_ptr = (int*)params[1];
-
-	return *address_ptr;
 }
 
 static cell AMX_NATIVE_CALL okapi_mod_get_symbol_ptr(AMX *amx, cell *params)
@@ -1419,32 +1514,11 @@ AMX_NATIVE_INFO OkapiNatives[] =
 	{ "okapi_mod_replace_string"       , okapi_mod_replace_string },
 	{ "okapi_engine_replace_string"    , okapi_engine_replace_string },
 
-	{ "okapi_get_ptr_string"           , okapi_get_ptr_string },
-	{ "okapi_set_ptr_string"           , okapi_set_ptr_string },
-
-	{ "okapi_set_ptr_array"            , okapi_set_ptr_array },
-	{ "okapi_get_ptr_array"            , okapi_get_ptr_array },
-
-	{ "okapi_get_ptr_byte"             , okapi_get_ptr_byte },
-	{ "okapi_set_ptr_byte"             , okapi_set_ptr_byte },
+	{ "okapi_mem_get"                  , okapi_mem_get },
+	{ "okapi_mem_set"                  , okapi_mem_set },
 
 	{ "okapi_set_mem_protect"          , okapi_set_mem_protect },
 	{ "okapi_get_mem_protect"          , okapi_get_mem_protect },
-
-	{ "okapi_get_ptr_float"            , okapi_get_ptr_float },
-	{ "okapi_set_ptr_float"            , okapi_set_ptr_float },
-
-	{ "okapi_set_ptr_edict"            , okapi_set_ptr_edict },
-	{ "okapi_get_ptr_edict"            , okapi_get_ptr_edict },
-
-	{ "okapi_set_ptr_ent"              , okapi_set_ptr_ent },
-	{ "okapi_get_ptr_ent"              , okapi_get_ptr_ent },
-
-	{ "okapi_set_ptr_cbase"            , okapi_set_ptr_cbase },
-	{ "okapi_get_ptr_cbase"            , okapi_get_ptr_cbase },
-
-	{ "okapi_get_ptr_int"              , okapi_get_ptr_int },
-	{ "okapi_set_ptr_int"              , okapi_set_ptr_int },
 
 	{ "okapi_engine_get_ptr_offset"    , okapi_engine_get_ptr_offset },
 	{ "okapi_mod_get_ptr_offset"       , okapi_mod_get_ptr_offset },

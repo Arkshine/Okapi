@@ -175,5 +175,8 @@
     <None Include="..\plugins\okapi_memory.inc">
       <Filter>Pawn Includes</Filter>
     </None>
+    <None Include="..\plugins\okapi_bcompat.inc">
+      <Filter>Pawn Includes</Filter>
+    </None>
   </ItemGroup>
 </Project>
