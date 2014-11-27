@@ -14,39 +14,8 @@
 #endif
 
 #include <okapi_const>
-
-/**
- * Gets the base address of where the provided library is allocated in memory
- *  
- * @return					the base address
- *
- */
-native okapi_get_base_ptr(const lib_name[])
-
-	/**
-	 * Gets the base address of where the mod library is allocated in memory
-	 *  
-	 * @return					the base address
-	 *
-	 */
-	stock okapi_mod_get_base_ptr()
-	{
-		static address; address || (address = okapi_get_base_ptr("mod"));
-		return address;
-	}
-
-	/**
-	 * Gets the base address of where the engine library is allocated in memory
-	 *  
-	 * @return					the base address
-	 *
-	 */
-	stock okapi_engine_get_base_ptr()
-	{
-		static address; address || (address = okapi_get_base_ptr("engine"));
-		return address;
-	}
-
+#include <okapi_helpers>
+#include <okapi_extra>
 
 /**
  *  Searches for a signature in the mod library, starting at 'ptr' address
@@ -92,7 +61,7 @@ native okapi_find_sig_at(lib_address, start_address, const signature[], count = 
 	 */
 	stock okapi_mod_find_sig_at(start_address, const signature[], count = sizeof signature)
 	{
-		return okapi_find_sig_at(okapi_mod_get_base_ptr(), start_address, signature, count);
+		return okapi_find_sig_at(okapi_get_mod_address(), start_address, signature, count);
 	}
 
 	/**
@@ -106,7 +75,7 @@ native okapi_find_sig_at(lib_address, start_address, const signature[], count = 
 	 */
 	stock okapi_mod_find_sig(const signature[], count = sizeof signature)
 	{
-		return okapi_mod_find_sig_at(okapi_mod_get_base_ptr(), signature, count);
+		return okapi_mod_find_sig_at(okapi_get_mod_address(), signature, count);
 	}
 
 	/**
@@ -120,7 +89,7 @@ native okapi_find_sig_at(lib_address, start_address, const signature[], count = 
 	 */
 	stock okapi_engine_find_sig_at(start_address, const signature[], count = sizeof signature)
 	{
-		return okapi_find_sig_at(okapi_engine_get_base_ptr(), start_address, signature, count);
+		return okapi_find_sig_at(okapi_get_engine_address(), start_address, signature, count);
 	}
 
 	/**
@@ -134,7 +103,7 @@ native okapi_find_sig_at(lib_address, start_address, const signature[], count = 
 	 */
 	stock okapi_engine_find_sig(const signature[], count = sizeof signature)
 	{
-		return okapi_engine_find_sig_at(okapi_engine_get_base_ptr(), signature, count);
+		return okapi_engine_find_sig_at(okapi_get_engine_address(), signature, count);
 	}
 
 

@@ -36,13 +36,11 @@ long library_find(GameLibrary* library, long address, T value)
 }
 
 template <class T>
-int library_replace(GameLibrary* library, T val_search, T val_replace)
+int do_replace(long start, int length, T val_search, T val_replace)
 {
-	long start = (long)library->address;
-
 	int count = 0;
 
-	for (long i=0; i < library->length + 1 - (long)sizeof(T); i++)
+	for (long i = 0; i < length + 1 - (long)sizeof(T); i++)
 	{
 		T* address = (T*)(((char*)start) + i);
 
@@ -62,6 +60,19 @@ int library_replace(GameLibrary* library, T val_search, T val_replace)
 
 	return count;
 }
+
+template <class T>
+int library_replace(GameLibrary* library, T val_search, T val_replace)
+{
+	return do_replace<T>((long)library->address, library->length, val_search, val_replace);
+}
+
+template <class T>
+int library_replace(cell start_address, size_t length, T val_search, T val_replace)
+{
+	return do_replace<T>((long)start_address, length, val_search, val_replace);
+}
+
 
 extern AMX_NATIVE_INFO OkapiNatives[];
 

@@ -5,6 +5,24 @@
 #define _okapi_extra_included
 
 /**
+ * Gets the base address of where the provided library is allocated in memory
+ *
+ * @note  Available helpers: okapi_get_mod_address(), okapi_get_engine_address()
+ *  
+ * @return                  Base address on success, 0 otherwise.
+ */
+native okapi_get_library_address(const lib_name[])
+
+/**
+ * Gets the length of the library.
+ *  
+ * @note  Available helpers: okapi_get_mod_size(), okapi_get_engine_size()
+ *
+ * @return                  Base address on success, 0 otherwise.
+ */
+native okapi_get_library_size(const lib_name[])
+
+/**
  *  Converts a cbase (that is, the address of the c++ object of an entity) to an id
  *  
  * @param cbase				the cbase of the entity
@@ -23,22 +41,6 @@ native okapi_cbase_to_id(cbase)
  *
  */
 native okapi_id_to_cbase(id)
-
-/**
- *   Gets the length of the engine library
- *  
- * @return					the base address
- *
- */
-native okapi_engine_get_size()
-
-/**
- *   Gets the length of the mod library
- *  
- * @return					the base address
- *
- */
-native okapi_mod_get_size()
 
 /**
  *  Retrieves a virtual function address located in the virtual table of an entity
@@ -147,4 +149,8 @@ native okapi_get_engfunc_ptr_by_offset(offset)
  */
 native okapi_get_dllfunc_ptr_by_offset(offset)
 
+
+// To keep backward compatibility
+// -
+#define okapi_get_base_ptr  okapi_get_library_address
 

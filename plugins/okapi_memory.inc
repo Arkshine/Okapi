@@ -44,94 +44,36 @@ native any:okapi_mem_get(address, type, any:...);
  */
 native okapi_mem_set(address, type, any:...);
 
-
 /**
- *   Replaces every string that occurs in the engine library with another one
- *	the replacement string should be of equal or shorter size than the original
- *	if you know what you are doing and want to skip this check, make force=1
- *  
- * @param str_orig[]		the original string
- * @param str_replace[]		the replacement string
- * @param force				1 will skip the restrition of the string replacement size
- * @return					the number of replacements ocurred
+ * Replaces every value with another one that occurs between a given start address and a
+ * 
+ * @note Only string, array, integer and float can be replaced.
+ * @note The replacement string should be of equal or shorter size than the original.
+ *       If you know what you are doing and want to skip this check, make force to 1.
+ * @note Available helpers where you don't need to provide address, range length and type: 
+ *       okapi_mod_replace_string()    okapi_engine_replace_string()
+ *       okapi_mod_replace_array()     okapi_engine_replace_array()
+ *       okapi_mod_replace_int()       okapi_engine_replace_int()
+ *       okapi_mod_replace_float()     okapi_engine_replace_float()
  *
- */
-native okapi_engine_replace_string(str_orig[],str_replace[],force=0)
-
-/**
- *   Replaces every string that occurs in the mod library with another one
- *	the replacement string should be of equal or shorter size than the original
- *	if you know what you are doing and want to skip this check, make force=1
- *  
- * @param str_orig[]		the original string
- * @param str_replace[]		the replacement string
- * @param force				1 will skip the restrition of the string replacement size
- * @return					the number of replacements ocurred
+ * @param start_address Address where the search starts
+ * @param range_length  Length range of bytes where function is allowed to search in.
+ * @param type			Value data type, See okapi_mem_* constants
+ * @param ...			Variable parameters to provide.
+ *                      if type is integer or float: <old_value> <new_value>
+ *                      if type is array : <old array> <new_array> <num_bytes>
+ *                      if type is string: <old string> <new_string> [force = 0]
+ *                        If force parameter is set to 1, it will skip the 
+ *                        restrition of the string replacement size.
  *
- */
-native okapi_mod_replace_string(str_orig[],str_replace[],force=0)
-
-/**
- *   Replaces every ocurrence of the sequence of bytes given, in the engine library, with other sequence
- *  
- * @param arr_orig[]		the original string
- * @param arr_replace[]		the replacement string
- * @param count				number of bytes
- * @return					the number of replacements ocurred
+ * @return				Number of replacements ocurred
  *
+ * @error				Invalid data type
+ *						Incorrect parameters count
+ *                      Invalid replacement string length
+ *						Missing array size
  */
-native okapi_engine_replace_array(arr_orig[],arr_replace[],len)
-
-/**
- *   Replaces every ocurrence of the sequence of bytes given, in the mod library, with other sequence
- *  
- * @param arr_orig[]		the original string
- * @param arr_replace[]		the replacement string
- * @param count				number of bytes
- * @return					the number of replacements ocurred
- *
- */
-native okapi_mod_replace_array(arr_orig[],arr_replace[],len)
-
-/**
- *   Replaces every ocurrence of the integer given, in the engine library, with other integer
- *  
- * @param val_search		the original value
- * @param val_replace		the replacement value
- * @return					the number of replacements ocurred
- *
- */
-native okapi_engine_replace_int(val_search,val_replace)
-
-/**
- *   Replaces every ocurrence of the integer given, in the mod library, with other integer
- *  
- * @param val_search		the original value
- * @param val_replace		the replacement value
- * @return					the number of replacements ocurred
- *
- */
-native okapi_mod_replace_int(val_search,val_replace)
-
-/**
- *   Replaces every ocurrence of the float given, in the engine library, with other float
- *  
- * @param val_search		the original value
- * @param val_replace		the replacement value
- * @return					the number of replacements ocurred
- *
- */
-native okapi_engine_replace_float(Float:val_search,Float:val_replace)
-
-/**
- *   Replaces every ocurrence of the integer given, in the mod library, with other integer
- *  
- * @param val_search		the original value
- * @param val_replace		the replacement value
- * @return					the number of replacements ocurred
- *
- */
-native okapi_mod_replace_float(Float:val_search,Float:val_replace)
+native okapi_mem_replace(start_address, range_length, type, any:...);
 
 /**
  *   Searches for a string in the engine library, starting at 'ptr' address
