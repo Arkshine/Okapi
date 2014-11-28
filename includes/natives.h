@@ -16,24 +16,39 @@
 #include "globals.h"
 
 template <class T>
-long library_find(GameLibrary* library, long address, T value)
+long do_find(long start_address, long end_address, T value)
 {
-	long end = (long)library->address + (long)library->length + 1 - (sizeof(T));
-
-	while (address < end)
+	while (start_address < end_address)
 	{
-		T* i_address = (T*)address;
+		T* i_address = (T*)start_address;
 
 		if (*i_address == value)
 		{
-			return address;
+			return start_address;
 		}
 
-		address++;
+		start_address++;
 	}
 
 	return 0;
 }
+
+template <class T>
+long library_find(GameLibrary* library, long start_address, T value)
+{
+	long end_address = (long)library->address + (long)library->length + 1 - (sizeof(T));
+
+	return do_find<T>(start_address, end_address, value);
+}
+
+template <class T>
+long library_find(cell start_address, size_t length, T value)
+{
+	long end_address = (long)start_address + (long)length + 1 - (sizeof(T));
+
+	return do_find<T>((long)start_address, end_address, value);
+}
+
 
 template <class T>
 int do_replace(long start, int length, T val_search, T val_replace)
@@ -68,7 +83,7 @@ int library_replace(GameLibrary* library, T val_search, T val_replace)
 }
 
 template <class T>
-int library_replace(cell start_address, size_t length, T val_search, T val_replace)
+int library_replace(cell start_address, int length, T val_search, T val_replace)
 {
 	return do_replace<T>((long)start_address, length, val_search, val_replace);
 }

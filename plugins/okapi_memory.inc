@@ -45,11 +45,13 @@ native any:okapi_mem_get(address, type, any:...);
 native okapi_mem_set(address, type, any:...);
 
 /**
- * Replaces every value with another one that occurs between a given start address and a
+ * Replaces every value with another one that occurs in a range from a start address.
  * 
  * @note Only string, array, integer and float can be replaced.
+ *
  * @note The replacement string should be of equal or shorter size than the original.
  *       If you know what you are doing and want to skip this check, make force to 1.
+ *
  * @note Available helpers where you don't need to provide address, range length and type: 
  *       okapi_mod_replace_string()    okapi_engine_replace_string()
  *       okapi_mod_replace_array()     okapi_engine_replace_array()
@@ -76,166 +78,35 @@ native okapi_mem_set(address, type, any:...);
 native okapi_mem_replace(start_address, range_length, type, any:...);
 
 /**
- *   Searches for a string in the engine library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param str[]				the string to find
- * @return					the address where the first string was found
- *							0 if none was found
+ * Searches for a value in a library in a range from a start address.
+ * 
+ * @note Only string, array, integer and float can be searched.
+ * @note Available helpers:
+ *       okapi_mod_find_string_at      okapi_engine_find_string_at
+ *       okapi_mod_find_string         okapi_engine_find_string
+ *       okapi_mod_find_array_at       okapi_engine_find_array_at
+ *       okapi_mod_find_array          okapi_engine_find_array
+ *       okapi_mod_find_int_at         okapi_engine_find_int_at
+ *       okapi_mod_find_int            okapi_engine_find_int
+ *       okapi_mod_find_float_at       okapi_engine_find_float_at
+ *       okapi_mod_find_float          okapi_engine_find_float
+ *       okapi_mod_find_byte_at        okapi_engine_find_byte_at
+ *       okapi_mod_find_byte           okapi_engine_find_byte
  *
- */
-native okapi_engine_ptr_find_string_at(ptr,const str[])
-
-stock okapi_engine_find_string(const str[])
-{
-	return okapi_engine_ptr_find_string_at(okapi_engine_get_base_ptr(),str)
-}
-
-/**
- *   Searches for a string in the mod library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param str[]				the string to find
- * @return					the address where the first string was found
- *							0 if none was found
+ * @param start_address Address where the search starts
+ * @param range_length  Length range of bytes where function is allowed to search in.
+ * @param type			Value data type, See okapi_mem_* constants
+ * @param ...			Variable parameters to provide.
+ *                      if type is intege, float, string: <value>
+ *                      if type is array : <array> <size_array>ze.
  *
- */
-native okapi_mod_ptr_find_string_at(ptr,const str[])
-
-stock okapi_mod_find_string(const str[])
-{
-	return okapi_mod_ptr_find_string_at(okapi_mod_get_base_ptr(),str)
-}
-
-/**
- *   Searches for an int in the engine library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param val				the value to find
- * @return					the address where the first value was found
- *							0 if none was found
+ * @return				Address where the first string was found, 0 otherwise.
  *
+ * @error				Invalid data type
+ *						Incorrect parameters count
+ *						Missing array size parameter
  */
-native okapi_engine_ptr_find_int_at(ptr,value)
-
-stock okapi_engine_find_int(value)
-{
-	return okapi_engine_ptr_find_int_at(okapi_engine_get_base_ptr(),value)
-}
-
-/**
- *   Searches for an int in the mod library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param val				the string to find
- * @return					the address where the first value was found
- *							0 if none was found
- *
- */
-native okapi_mod_ptr_find_int_at(ptr,val)
-
-stock okapi_mod_find_int(val)
-{
-	return okapi_mod_ptr_find_int_at(okapi_mod_get_base_ptr(),val)
-}
-
-/**
- *   Searches for a float in the engine library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param Float:val			the value to find
- * @return					the address where the first value was found
- *							0 if none was found
- *
- */
-native okapi_engine_ptr_find_float_at(ptr,Float:value)
-
-stock okapi_engine_ptr_find_float(Float:value)
-{
-	return okapi_engine_ptr_find_float_at(okapi_engine_get_base_ptr(),value)
-}
-
-/**
- *   Searches for a float in the mod library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param Float:val			the string to find
- * @return					the address where the first value was found
- *							0 if none was found
- *
- */
-native okapi_mod_ptr_find_float_at(ptr,Float:val)
-
-stock okapi_mod_find_float(Float:val)
-{
-	return okapi_mod_ptr_find_float_at(okapi_mod_get_base_ptr(),val)
-}
-
-/**
- *   Searches for a byte in the engine library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param val				the value to find
- * @return					the address where the first value was found
- *							0 if none was found
- *
- */
-native okapi_engine_ptr_find_byte_at(ptr,value)
-
-stock okapi_engine_find_byte(value)
-{
-	return okapi_engine_ptr_find_byte_at(okapi_engine_get_base_ptr(),value)
-}
-
-/**
- *   Searches for a byte in the mod library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param val				the string to find
- * @return					the address where the first value was found
- *							0 if none was found
- *
- */
-native okapi_mod_ptr_find_byte_at(ptr,val)
-
-stock okapi_mod_find_byte(val)
-{
-	return okapi_mod_ptr_find_byte_at(okapi_mod_get_base_ptr(),val)
-}
-
-/**
- *   Searches for an array of bytes in the engine library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param array_[]			the array to find
- * @param count				the number of bytes
- * @return					the address where the first array was found
- *							0 if none was found
- *
- */
-native okapi_engine_ptr_find_array_at(ptr,const array_[],count)
-
-stock okapi_engine_find_array(const array_[],count)
-{
-	return okapi_engine_ptr_find_array_at(okapi_engine_get_base_ptr(),array_,count)
-}
-
-/**
- *   Searches for an array of bytes in the mod library, starting at 'ptr' address
- *  
- * @param ptr				the start address
- * @param array_[]			the array to find
- * @param count				the number of bytes
- * @return					the address where the first array was found
- *							0 if none was found
- *
- */
-native okapi_mod_ptr_find_array_at(ptr,const array_[],count)
-
-stock okapi_mod_find_array(const array_[],count)
-{
-	return okapi_mod_ptr_find_array_at(okapi_mod_get_base_ptr(),array_,count)
-}
+native okapi_mem_find(start_address, range_length, type, any:...);
 
 /**
  *   Allocates n blocks of 4 bytes

@@ -202,6 +202,7 @@
     <None Include="..\plugins\okapi_bcompat.inc" />
     <None Include="..\plugins\okapi_const.inc" />
     <None Include="..\plugins\okapi_extra.inc" />
+    <None Include="..\plugins\okapi_helpers.inc" />
     <None Include="..\plugins\okapi_memory.inc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

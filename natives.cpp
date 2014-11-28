@@ -21,21 +21,6 @@ static cell AMX_NATIVE_CALL wl(AMX *amx, cell *params)
 #endif
 }
 
-static cell AMX_NATIVE_CALL okapi_get_ptr_vec(AMX *amx, cell *params)
-{
-	long ptr = params[1];
-
-	cell* amx_vec = MF_GetAmxAddr(amx, params[2]);
-
-	Vector* vec = (Vector*)ptr;
-
-	amx_vec[0] = amx_ftoc(vec->x);
-	amx_vec[1] = amx_ftoc(vec->y);
-	amx_vec[2] = amx_ftoc(vec->z);
-
-	return 1;
-}
-
 static cell AMX_NATIVE_CALL okapi_alloc(AMX *amx, cell *params)
 {
 	int n = params[1];
@@ -554,22 +539,6 @@ static cell AMX_NATIVE_CALL okapi_get_ptr_symbol(AMX *amx, cell *params)
 	return 0;
 }
 
-long library_find_array(GameLibrary* library, long address, unsigned char* arr_or, int len)
-{
-	long end = (long)library->address + (long)library->length + 1 - len;
-
-	while (address < end)
-	{
-		if (!memcmp((void*)address, (void*)arr_or, len))
-		{
-			return (long)address;
-		}
-
-		address++;
-	}
-
-	return 0;
-}
 
 bool check_sig(long address, cell* sig, int len)
 {
@@ -728,127 +697,6 @@ static cell AMX_NATIVE_CALL okapi_find_sig_at(AMX *amx, cell *params)
 	return library_find_signature(get_lib_from_address((void *)lib_address), start_address, array_, len);
 }
 
-static cell AMX_NATIVE_CALL okapi_engine_ptr_find_array_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-	cell* array1 = MF_GetAmxAddr(amx, params[2]);
-
-	int len = params[3];
-
-	unsigned char* array1_char = new unsigned char[len];
-
-	for (int i=0; i < len; i++)
-	{
-		array1_char[i] = (unsigned char)array1[i];
-	}
-
-	long address_res = library_find_array(G_GameLibraries.Engine, address, array1_char, len);
-
-	delete[] array1_char;
-
-	return address_res;
-}
-
-static cell AMX_NATIVE_CALL okapi_mod_ptr_find_array_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-	cell* array1 = MF_GetAmxAddr(amx, params[2]);
-
-	int len = params[3];
-
-	unsigned char* array1_char = new unsigned char[len];
-
-	for (int i=0; i < len; i++)
-	{
-		array1_char[i] = (unsigned char)array1[i];
-	}
-
-	long address_res = library_find_array(G_GameLibraries.Mod, address, array1_char, len);
-
-	delete[] array1_char;
-
-	return address_res;
-}
-
-static cell AMX_NATIVE_CALL okapi_engine_ptr_find_byte_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-
-	return library_find<char>(G_GameLibraries.Engine, address, (char)(params[2]));
-}
-
-static cell AMX_NATIVE_CALL okapi_mod_ptr_find_byte_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-
-	return library_find<char>(G_GameLibraries.Mod, address, (char)(params[2]));
-}
-
-static cell AMX_NATIVE_CALL okapi_engine_ptr_find_float_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-
-	return library_find<float>(G_GameLibraries.Engine, address, amx_ctof(params[2]));
-}
-
-static cell AMX_NATIVE_CALL okapi_mod_ptr_find_float_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-
-	return library_find<float>(G_GameLibraries.Mod, address, amx_ctof(params[2]));
-}
-
-static cell AMX_NATIVE_CALL okapi_engine_ptr_find_int_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-
-	return library_find<int>(G_GameLibraries.Engine, address, params[2]);
-}
-
-static cell AMX_NATIVE_CALL okapi_mod_ptr_find_int_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-
-	return library_find<int>(G_GameLibraries.Mod, address, params[2]);
-}
-
-long library_find_string(GameLibrary* library, long address, const char* search, int len)
-{
-	long end = (long)library->address + (long)library->length + 1 - (len + 1);
-
-	while (address < end)
-	{
-		if (!strncmp((char*)address, search, len))
-		{
-			return address;
-		}
-
-		address++;
-	}
-
-	return 0;
-}
-
-static cell AMX_NATIVE_CALL okapi_mod_ptr_find_string_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-
-	int len;
-	const char* string = MF_GetAmxString(amx, params[2], 0, &len);
-
-	return library_find_string(G_GameLibraries.Mod, address, string, len);
-}
-
-static cell AMX_NATIVE_CALL okapi_engine_ptr_find_string_at(AMX *amx, cell *params)
-{
-	long address = params[1];
-
-	int len;
-	const char* string = MF_GetAmxString(amx, params[2], 0, &len);
-
-	return library_find_string(G_GameLibraries.Engine, address, string, len);
-}
-
 static cell AMX_NATIVE_CALL okapi_get_library_size(AMX *amx, cell *params)
 {
 	return (cell)G_GameLibraries.Mod->length;
@@ -881,11 +729,139 @@ static cell AMX_NATIVE_CALL okapi_get_library_address(AMX *amx, cell *params)
 	return 0;
 }
 
-int do_replace_array(long start, int length, unsigned char* arr_or, unsigned char* arr_repl, int arr_len)
+long do_find_array(long start_address, long end_address, unsigned char* arr_or, size_t arr_len)
+{
+	while (start_address < end_address)
+	{
+		if (!memcmp((void*)start_address, (void*)arr_or, arr_len))
+		{
+			return (long)start_address;
+		}
+
+		start_address++;
+	}
+
+	return 0;
+}
+
+long library_find_array(GameLibrary* library, long start_address, unsigned char* arr_or, size_t arr_len)
+{
+	long end_address = (long)library->address + (long)library->length + 1 - (long)arr_len;
+
+	return do_find_array(start_address, end_address, arr_or, arr_len);
+}
+
+long library_find_array(long start_address, size_t range_length, unsigned char* arr_or, size_t arr_len)
+{
+	long end_address = (long)start_address + (long)range_length + 1 - (long)arr_len;
+
+	return do_find_array(start_address, end_address, arr_or, arr_len);
+}
+
+long do_find_string(long start_address, long end_address, const char* search, size_t search_length)
+{
+	while (start_address < end_address)
+	{
+		if (!strncmp((char*)start_address, search, search_length))
+		{
+			return start_address;
+		}
+
+		start_address++;
+	}
+
+	return 0;
+}
+
+long library_find_string(GameLibrary* library, long start_address, const char* search, size_t search_length)
+{
+	long end_address = (long)library->address + (long)library->length + 1 - ((long)search_length + 1);
+
+	return do_find_string(start_address, end_address, search, search_length);
+}
+
+long library_find_string(long start_address, size_t range_length, const char* search, size_t search_length)
+{
+	long end_address = (long)start_address + (long)range_length + 1 - ((long)search_length + 1);
+
+	return do_find_string(start_address, end_address, search, search_length);
+}
+
+static cell AMX_NATIVE_CALL okapi_mem_find(AMX *amx, cell *params)
+{
+	int type = params[3];
+
+	if (type != MemType_String && type != MemType_Int && type != MemType_Foat && type != MemType_Array)
+	{
+		MF_LogError(amx, AMX_ERR_NATIVE, "Invalid data type");
+		return 0;
+	}
+
+	size_t argumentsCount = *params / sizeof(cell) - 3;
+
+	if (argumentsCount < 2 || argumentsCount > 3)
+	{
+		MF_LogError(amx, AMX_ERR_NATIVE, "Expected 2 or 3 parameters, got %d", argumentsCount);
+		return 0;
+	}
+	else if (type == MemType_Array && argumentsCount == 1)
+	{
+		MF_LogError(amx, AMX_ERR_NATIVE, "Expected an array size parameter");
+		return 0;
+	}
+
+	cell start_address   = params[1];
+	size_t range_length  = params[2];
+	cell value_to_search = params[4];
+
+	switch (type)
+	{
+		case MemType_Byte:
+		{
+			return library_find<char>(start_address, range_length, value_to_search);
+		}
+		case MemType_Int:
+		{
+			return library_find<int>(start_address, range_length, value_to_search);
+		}
+		case MemType_Foat:
+		{
+			return library_find<float>(start_address, range_length, amx_ctof(value_to_search));
+		}
+		case MemType_Array:
+		{
+			cell* array = MF_GetAmxAddr(amx, value_to_search);
+
+			size_t length = params[5];
+
+			unsigned char* array_char = new unsigned char[length];
+
+			for (size_t i = 0; i < length; i++)
+			{
+				array_char[i] = (unsigned char)array[i];
+			}
+
+			delete[] array_char;
+
+			return library_find_array(start_address, range_length, array_char, length);
+		}
+		case MemType_String:
+		{
+			int length;
+			const char* string = MF_GetAmxString(amx, value_to_search, 0, &length);
+
+			return library_find_string(start_address, range_length, string, (size_t)length);
+		}
+	}
+
+	return 0;
+}
+
+int do_replace_array(long start, int length, unsigned char* arr_or, unsigned char* arr_repl, size_t arr_len)
 {
 	int count = 0;
 
-	for (long i = 0; i < length + 1 - arr_len; i++)
+	for (long i = 0; i < length + 1 - (long)arr_len; i++)
 	{
 		char* address = ((char*)start) + i;
 
@@ -905,12 +881,12 @@ int do_replace_array(long start, int length, unsigned char* arr_or, unsigned cha
 	return count;
 }
 
-int library_replace_array(GameLibrary* library, unsigned char* arr_or, unsigned char* arr_repl, int arr_len)
+int library_replace_array(GameLibrary* library, unsigned char* arr_or, unsigned char* arr_repl, size_t arr_len)
 {
 	return do_replace_array((long)library->address, library->length, arr_or, arr_repl, arr_len);
 }
 
-int library_replace_array(cell start_address, int length, unsigned char* arr_or, unsigned char* arr_repl, int arr_len)
+int library_replace_array(cell start_address, int length, unsigned char* arr_or, unsigned char* arr_repl, size_t arr_len)
 {
 	return do_replace_array((long)start_address, length, arr_or, arr_repl, arr_len);
 }
@@ -918,9 +894,9 @@ int library_replace_array(cell start_address, int length, unsigned char* arr_or,
 int do_replace_string(long start, int length, const char* str_or, const char* str_repl)
 {
 	int count = 0;
-	int len_or = strlen(str_or);
+	size_t len_or = strlen(str_or);
 
-	for (long i = 0; i < length + 1 - len_or; i++)
+	for (long i = 0; i < length + 1 - (long)len_or; i++)
 	{
 		char* address = ((char*)start) + i;
 
@@ -998,12 +974,12 @@ static cell AMX_NATIVE_CALL okapi_mem_replace(AMX *amx, cell *params)
 			cell* old_array = MF_GetAmxAddr(amx, old_value);
 			cell* new_array = MF_GetAmxAddr(amx, new_value);
 
-			int length = params[6];
+			size_t length = params[6];
 
 			unsigned char* old_array_char = new unsigned char[length];
 			unsigned char* new_array_char = new unsigned char[length];
 
-			for (int i = 0; i < length; ++i)
+			for (size_t i = 0; i < length; ++i)
 			{
 				old_array_char[i] = (unsigned char)old_array[i];
 				new_array_char[i] = (unsigned char)new_array[i];
@@ -1445,8 +1421,6 @@ AMX_NATIVE_INFO OkapiNatives[] =
 {
 	{ "wl"                             , wl },
 
-	{ "okapi_get_ptr_vec"              , okapi_get_ptr_vec },
-
 	{ "okapi_alloc"                    , okapi_alloc },
 
 	{ "okapi_call_ex"                  , okapi_call_ex },
@@ -1481,24 +1455,10 @@ AMX_NATIVE_INFO OkapiNatives[] =
 
 	{ "okapi_find_sig_at"              , okapi_find_sig_at },
 
-	{ "okapi_mod_ptr_find_array_at"    , okapi_mod_ptr_find_array_at },
-	{ "okapi_engine_ptr_find_array_at" , okapi_engine_ptr_find_array_at },
-
-	{ "okapi_mod_ptr_find_byte_at"     , okapi_mod_ptr_find_byte_at },
-	{ "okapi_engine_ptr_find_byte_at"  , okapi_engine_ptr_find_byte_at },
-
-	{ "okapi_mod_ptr_find_float_at"    , okapi_mod_ptr_find_float_at },
-	{ "okapi_engine_ptr_find_float_at" , okapi_engine_ptr_find_float_at },
-
-	{ "okapi_mod_ptr_find_int_at"      , okapi_mod_ptr_find_int_at },
-	{ "okapi_engine_ptr_find_int_at"   , okapi_engine_ptr_find_int_at },
-
-	{ "okapi_mod_ptr_find_string_at"   , okapi_mod_ptr_find_string_at },
-	{ "okapi_engine_ptr_find_string_at", okapi_engine_ptr_find_string_at },
-
 	{ "okapi_get_library_size"         , okapi_get_library_size },
 	{ "okapi_get_library_address"      , okapi_get_library_address },
 
+	{ "okapi_mem_find"                 , okapi_mem_find },
 	{ "okapi_mem_replace"              , okapi_mem_replace },
 	{ "okapi_mem_get"                  , okapi_mem_get },
 	{ "okapi_mem_set"                  , okapi_mem_set },

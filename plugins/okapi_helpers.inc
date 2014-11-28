@@ -9,25 +9,32 @@
 
 
 // To get library address
-// ----------------------
-//      okapi_get_mod_address()
-//      okapi_get_engine_address()
+// ------------------------------------------------------------------
+//      okapi_get_mod_address         okapi_get_engine_address
 //
 // To get library length
-// ---------------------
-//      okapi_get_mod_size()
-//      okapi_get_engine_size()
+// ------------------------------------------------------------------
+//      okapi_get_mod_size            okapi_get_engine_size
 //
 // To replace value in memory
-// --------------------------
-//      okapi_mod_replace_string()
-//      okapi_mod_replace_array()
-//      okapi_mod_replace_int()
-//      okapi_mod_replace_float()
-//      okapi_engine_replace_string()
-//      okapi_engine_replace_array()
-//      okapi_engine_replace_int()
-//      okapi_engine_replace_float()
+// ------------------------------------------------------------------
+//      okapi_mod_replace_string      okapi_engine_replace_string
+//      okapi_mod_replace_array       okapi_engine_replace_array
+//      okapi_mod_replace_int         okapi_engine_replace_int
+//      okapi_mod_replace_float       okapi_engine_replace_float
+//
+// To find value in memory
+// ------------------------------------------------------------------
+//      okapi_mod_find_string_at      okapi_engine_find_string_at
+//      okapi_mod_find_string         okapi_engine_find_string
+//      okapi_mod_find_array_at       okapi_engine_find_array_at
+//      okapi_mod_find_array          okapi_engine_find_array
+//      okapi_mod_find_int_at         okapi_engine_find_int_at
+//      okapi_mod_find_int            okapi_engine_find_int
+//      okapi_mod_find_float_at       okapi_engine_find_float_at
+//      okapi_mod_find_float          okapi_engine_find_float
+//      okapi_mod_find_byte_at        okapi_engine_find_byte_at
+//      okapi_mod_find_byte           okapi_engine_find_byte
 
 
 // To get library address
@@ -227,11 +234,281 @@
 	}
 
 
+// To find value in memory
+// -----------------------
+
+	/**
+	 * Searches for a string in the mod library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param str[]             String to find
+	 *
+	 * @return                  Address where the first string was found, 0 otherwise.
+	 */
+	stock okapi_mod_find_string_at(ptr, const str[])
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_string, str);
+	}
+
+		/**
+		 * Searches for a string in the mod library.
+		 *
+		 * @param str[]             String to find
+		 *
+		 * @return                  Address where the first string was found, 0 otherwise.
+		 */
+		stock okapi_mod_find_string(const str[])
+		{
+			return okapi_mod_find_string_at(okapi_mod_get_base_ptr(), str);
+		}
+
+	/**
+	 * Searches for an array of bytes in the mod library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param array_            Array to find
+	 * @param count             Number of bytes
+	 *
+	 * @return                  Address where the first array was found, 0 otherwise.
+	 */
+	stock okapi_mod_find_array_at(ptr, any:array[], count)
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_array, array_, count);
+	}
+
+		/**
+		 * Searches for an array of bytes in the mod library.
+		 *
+		 * @param array_            Array to find
+		 * @param count             Number of bytes
+		 *
+		 * @return                  Address where the first array was found, 0 otherwise.
+		 */
+		stock okapi_mod_find_array(any:array[], count)
+		{
+			return okapi_mod_find_string_at(okapi_mod_get_base_ptr(), array_, count);
+		}
+
+	/**
+	 * Searches for an integer in the mod library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param val               Integer to find
+	 *
+	 * @return                  Address where the first integer was found, 0 otherwise.
+	 */
+	stock okapi_mod_find_int_at(ptr, any:val)
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_int, val);
+	}
+
+		/**
+		 * Searches for a integer in the mod library.
+		 *
+		 * @param val               Integer to find
+		 *
+		 * @return                  Address where the first integer was found, 0 otherwise.
+		 */
+		stock okapi_mod_find_int(any:val)
+		{
+			return okapi_mod_find_int_at(okapi_mod_get_base_ptr(), val);
+		}
+
+	/**
+	 * Searches for a float in the mod library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param val               Float to find
+	 *
+	 * @return                  Address where the first float was found, 0 otherwise.
+	 */
+	stock okapi_mod_find_float_at(ptr, Float:value)
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_float, value);
+	}
+
+		/**
+		 * Searches for a flaot in the mod library.
+		 *
+		 * @param val               Float to find
+		 *
+		 * @return                  Address where the first float was found, 0 otherwise.
+		 */
+		stock okapi_mod_find_float(Float:value)
+		{
+			return okapi_mod_find_float_at(okapi_mod_get_base_ptr(), value);
+		}
+
+	/**
+	 * Searches for a byte in the mod library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param val               Byte to find
+	 *
+	 * @return                  Address where the first byte was found, 0 otherwise.
+	 */
+	stock okapi_mod_find_byte_at(ptr, any:value)
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_byte, value);
+	}
+
+		/**
+		 * Searches for a byte in the mod library.
+		 *
+		 * @param val               Byte to find
+		 *
+		 * @return                  Address where the first byte was found, 0 otherwise.
+		 */
+		stock okapi_mod_find_byte(any:value)
+		{
+			return okapi_mod_find_byte_at(okapi_mod_get_base_ptr(), value);
+		}
+
+	/**
+	 * Searches for a string in the engine library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param str[]             String to find
+	 *
+	 * @return                  Address where the first string was found, 0 otherwise.
+	 */
+	stock okapi_engine_find_string_at(ptr, const str[])
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_string, str);
+	}
+
+		/**
+		 * Searches for a string in the engine library.
+		 *
+		 * @param str[]             String to find
+		 *
+		 * @return                  Address where the first string was found, 0 otherwise.
+		 */
+		stock okapi_engine_find_string(const str[])
+		{
+			return okapi_engine_find_string_at(okapi_engine_get_base_ptr(), str);
+		}
+
+	/**
+	 * Searches for an array of bytes in the engine library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param array_            Array to find
+	 * @param count             Number of bytes
+	 *
+	 * @return                  Address where the first array was found, 0 otherwise.
+	 */
+	stock okapi_engine_find_array_at(ptr, any:array[], count)
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_array, array_, count);
+	}
+
+		/**
+		 * Searches for an array of bytes in the engine library.
+		 *
+		 * @param array_            Array to find
+		 * @param count             Number of bytes
+		 *
+		 * @return                  Address where the first array was found, 0 otherwise.
+		 */
+		stock okapi_engine_find_array(any:array[], count)
+		{
+			return okapi_engine_find_string_at(okapi_engine_get_base_ptr(), array_, count);
+		}
+
+	/**
+	 * Searches for an integer in the engine library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param val               Integer to find
+	 *
+	 * @return                  Address where the first integer was found, 0 otherwise.
+	 */
+	stock okapi_engine_find_int_at(ptr, any:val)
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_int, val);
+	}
+
+		/**
+		 * Searches for a integer in the engine library.
+		 *
+		 * @param val               Integer to find
+		 *
+		 * @return                  Address where the first integer was found, 0 otherwise.
+		 */
+		stock okapi_engine_find_int(any:val)
+		{
+			return okapi_engine_find_int_at(okapi_engine_get_base_ptr(), val);
+		}
+
+	/**
+	 * Searches for a float in the engine library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param val               Float to find
+	 *
+	 * @return                  Address where the first float was found, 0 otherwise.
+	 */
+	stock okapi_engine_find_float_at(ptr, Float:value)
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_float, value);
+	}
+
+		/**
+		 * Searches for a flaot in the engine library.
+		 *
+		 * @param val               Float to find
+		 *
+		 * @return                  Address where the first float was found, 0 otherwise.
+		 */
+		stock okapi_engine_find_float(Float:value)
+		{
+			return okapi_mod_find_float_at(okapi_engine_get_base_ptr(), value);
+		}
+
+	/**
+	 * Searches for a byte in the engine library, starting from a given address.
+	 *
+	 * @param ptr               Start address
+	 * @param val               Byte to find
+	 *
+	 * @return                  Address where the first byte was found, 0 otherwise.
+	 */
+	stock okapi_engine_find_byte_at(ptr, any:value)
+	{
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_byte, value);
+	}
+
+		/**
+		 * Searches for a byte in the engine library.
+		 *
+		 * @param val               Byte to find
+		 *
+		 * @return                  Address where the first byte was found, 0 otherwise.
+		 */
+		stock okapi_engine_find_byte(any:value)
+		{
+			return okapi_engine_find_byte_at(okapi_engine_get_base_ptr(), value);
+		}
+
+
 // To keep backward compatibility
 // ------------------------------
 
-	#define okapi_mod_get_size         okapi_get_mod_size
-	#define okapi_engine_get_size      okapi_get_engine_size
+	#define okapi_mod_get_size               okapi_get_mod_size
+	#define okapi_engine_get_size            okapi_get_engine_size
 
-	#define okapi_mod_get_base_ptr     okapi_get_mod_address
-	#define okapi_engine_get_base_ptr  okapi_get_engine_address
+	#define okapi_mod_get_base_ptr           okapi_get_mod_address
+	#define okapi_engine_get_base_ptr        okapi_get_engine_address
+
+	#define okapi_mod_ptr_find_string_at     okapi_mod_find_string_at
+	#define okapi_mod_ptr_find_array_at      okapi_mod_find_array_at
+	#define okapi_mod_ptr_find_int_at        okapi_mod_find_int_at
+	#define okapi_mod_ptr_find_float_at      okapi_mod_find_float_at
+	#define okapi_mod_ptr_find_byte_at       okapi_mod_find_byte_at
+
+	#define okapi_engine_ptr_find_string_at  okapi_engine_find_string_at
+	#define okapi_engine_ptr_find_array_at   okapi_engine_find_array_at
+	#define okapi_engine_ptr_find_int_at     okapi_engine_find_int_at
+	#define okapi_engine_ptr_find_float_at   okapi_engine_find_float_at
+	#define okapi_engine_ptr_find_byte_at    okapi_engine_find_byte_at
