@@ -5,9 +5,16 @@
 #define _okapi_extra_included
 
 /**
- * Gets the base address of where the provided library is allocated in memory
+ * Gets the base address of where the provided library is allocated in memory.
  *
- * @note  Available helpers: okapi_get_mod_address(), okapi_get_engine_address()
+ * @note  By default Okapi registers the game as "mod" and the engine as "engine" and
+ *        any library where its file path contains "addons". To get the library name, 
+ *        module keeps only the file name without extension and without "_i386" for linux.
+ *        Examples: "metamod", "amxmodx_mm", "okapi_amxx"
+ *
+ * @note  Available helpers: okapi_get_mod_address, okapi_get_engine_address
+ *
+ * @param lib_name          Library name
  *  
  * @return                  Base address on success, 0 otherwise.
  */
@@ -15,16 +22,23 @@ native okapi_get_library_address(const lib_name[])
 
 /**
  * Gets the length of the library.
- *  
- * @note  Available helpers: okapi_get_mod_size(), okapi_get_engine_size()
  *
+ * @note  By default Okapi registers the game as "mod" and the engine as "engine" and
+ *        any library where its file path contains "addons". To get the library name, 
+ *        module keeps only the file name without extension and without "_i386" for linux.
+ *        Examples: "metamod", "amxmodx_mm", "okapi_amxx"
+ *
+ * @note  Available helpers: okapi_get_mod_size, okapi_get_engine_size
+ *
+ * @param lib_name          Library name
+ *  
  * @return                  Base address on success, 0 otherwise.
  */
 native okapi_get_library_size(const lib_name[])
 
 /**
  * Finds informations of a library from a given address.
- * This will checks among all libraries registered by module.
+ * This will look up among all libraries registered by module.
  *
  * @param ptr               Address to search
  * @param lib_ptr           Variable to store the library base address in

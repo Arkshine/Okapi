@@ -16,6 +16,12 @@
 // ------------------------------------------------------------------
 //      okapi_get_mod_size            okapi_get_engine_size
 //
+// To find signature and symbol
+// ------------------------------------------------------------------
+//      okapi_mod_find_sig_at         okapi_engine_find_sig_at
+//      okapi_mod_find_sig            okapi_engine_find_sig
+//      okapi_mod_find_symbol         okapi_engine_find_symbol
+//
 // To replace value in memory
 // ------------------------------------------------------------------
 //      okapi_mod_replace_string      okapi_engine_replace_string
@@ -116,6 +122,88 @@
 		}
 
 		return size;
+	}
+
+
+// To find signature and symbol
+// ----------------------------
+
+	/**
+	 * Searches for a signature in the mod library from a given address.
+	 *
+	 * @param start_address     Start address
+	 * @param signature[]       Signature to find
+	 * @param count             Size of the signature
+	 *
+	 * @return                  Address where the sig was first found, 0 otherwise
+	 */
+	stock okapi_mod_find_sig_at(start_address, const signature[], count = sizeof signature)
+	{
+		return okapi_find_sig(start_address, start_address + (okapi_get_mod_size() - (start_address - okapi_get_mod_address())), signature, count);
+	}
+
+	/**
+	 * Searches for a signature in the mod library.
+	 *
+	 * @param signature[]       Signature to find
+	 * @param count             Size of the signature
+	 *
+	 * @return                  Address where the sig was first found, 0 otherwise
+	 */
+	stock okapi_mod_find_sig(const signature[], count = sizeof signature)
+	{
+		return okapi_find_sig(okapi_get_mod_address(), okapi_get_mod_size(), signature, count);
+	}
+
+	/**
+	 * Searches for a signature in the engine library from a given address.
+	 *
+	 * @param start_address     Start address
+	 * @param signature[]       Signature to find
+	 * @param count             Size of the signature
+	 *
+	 * @return                  Address where the sig was first found, 0 otherwise
+	 */
+	stock okapi_engine_find_sig_at(start_address, const signature[], count = sizeof signature)
+	{
+		return okapi_find_sig(okapi_get_engine_address(), start_address + (okapi_engine_mod_size() - (start_address - okapi_engine_mod_address())), signature, count);
+	}
+
+	/**
+	 * Searches for a signature in the engine library.
+	 *
+	 * @param signature[]       Signature to find
+	 * @param count             Size of the signature
+	 *
+	 * @return                  Address where the sig was first found, 0 otherwise
+	 */
+	stock okapi_engine_find_sig(const signature[], count = sizeof signature)
+	{
+		return okapi_engine_find_sig_at(okapi_get_engine_address(), okapi_get_engine_size(), signature, count);
+	}
+
+	/**
+	 * Gets the address of a function located in mod library, given it's symbolic name.
+	 *
+	 * @param symbol        Symbolic name of a function
+	 *
+	 * @return              Address of the function on success, 0 otherwise
+	 */
+	stock okapi_mod_find_symbol(const symbol[])
+	{
+		return okapi_find_symbol(okapi_get_mod_address(), symbol);
+	}
+
+	/**
+	 * Gets the address of a function located in engine library, given it's symbolic name.
+	 *
+	 * @param symbol        Symbolic name of a function
+	 *
+	 * @return              Address of the function on success, 0 otherwise
+	 */
+	stock okapi_engine_find_symbol(const symbol[])
+	{
+		return okapi_find_symbol(okapi_get_engine_address(), symbol);
 	}
 
 
@@ -597,3 +685,6 @@
 	#define okapi_engine_ptr_find_int_at     okapi_engine_find_int_at
 	#define okapi_engine_ptr_find_float_at   okapi_engine_find_float_at
 	#define okapi_engine_ptr_find_byte_at    okapi_engine_find_byte_at
+
+	#define okapi_mod_get_symbol_ptr         okapi_mod_find_symbol
+	#define okapi_engine_get_symbol_ptr      okapi_engine_find_symbol

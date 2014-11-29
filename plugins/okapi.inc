@@ -18,96 +18,6 @@
 #include <okapi_extra>
 
 /**
- *  Searches for a signature in the mod library, starting at 'ptr' address
- *	For bytes to ignore, use "𐌻" or any number above 0xFF like:
- *
- *	{0x51,0x56,"𐌻","𐌻",0x8B,0x86}
- *	{0x51,0x56,0xDEF,0xDEF,0x8B,0x86}
- *
- *	I chose the character 𐌻 because it looks like a lambda but it is made of 4 chars
- *	so, it only "forbids" using the sequence {0xF0,0x90,0x8C,0xBB,0x00} in signatures
- *  
- * @param base_address      the library address
- * @param start_address		the start address
- * @param signature[]		the signature to find
- * @param size				the size of the signature
- * @return					the address where the sig was first found
- *							0 if none was found
- */
-native okapi_find_sig_at(lib_address, start_address, const signature[], count = sizeof signature);
-
-	/**
-	 * Searches for a signature in the mod library from 'start_address'.
-	 *
-	 * @param lib_address		the library address
-	 * @param signature[]		the signature to find
-	 * @param count				the size of the signature
-	 * @return					the address where the sig was first found
-	 *							0 if none was found
-	 */
-	stock okapi_find_sig(lib_address, const signature[], count = sizeof signature)
-	{
-		return okapi_find_sig_at(lib_address, lib_address, signature, count);
-	}
-
-	/**
-	 * Searches for a signature in the mod library from 'start_address'.
-	 *
-	 * @param start_address		the start address
-	 * @param signature[]		the signature to find
-	 * @param count				the size of the signature
-	 * @return					the address where the sig was first found
-	 *							0 if none was found
-	 */
-	stock okapi_mod_find_sig_at(start_address, const signature[], count = sizeof signature)
-	{
-		return okapi_find_sig_at(okapi_get_mod_address(), start_address, signature, count);
-	}
-
-	/**
-	 * Searches for a signature in the mod library.
-	 *
-	 * @param start_address		the start address
-	 * @param signature[]		the signature to find
-	 * @param count				the size of the signature
-	 * @return					the address where the sig was first found
-	 *							0 if none was found
-	 */
-	stock okapi_mod_find_sig(const signature[], count = sizeof signature)
-	{
-		return okapi_mod_find_sig_at(okapi_get_mod_address(), signature, count);
-	}
-
-	/**
-	 * Searches for a signature in the engine library from 'start_address'.
-	 *
-	 * @param start_address		the start address
-	 * @param signature[]		the signature to find
-	 * @param count				the size of the signature
-	 * @return					the address where the sig was first found
-	 *							0 if none was found
-	 */
-	stock okapi_engine_find_sig_at(start_address, const signature[], count = sizeof signature)
-	{
-		return okapi_find_sig_at(okapi_get_engine_address(), start_address, signature, count);
-	}
-
-	/**
-	 * Searches for a signature in the engine library.
-	 *
-	 * @param start_address		the start address
-	 * @param signature[]		the signature to find
-	 * @param count				the size of the signature
-	 * @return					the address where the sig was first found
-	 *							0 if none was found
-	 */
-	stock okapi_engine_find_sig(const signature[], count = sizeof signature)
-	{
-		return okapi_engine_find_sig_at(okapi_get_engine_address(), signature, count);
-	}
-
-
-/**
  *  Attaches okapi to a method (class member function) so you can hook it and call it
  *  
  * @param ptr				the address of the method
@@ -255,25 +165,6 @@ native okapi_call_ex(okapi_func:func,any:...)
  *
  */
 native okapi_hook:okapi_current_hook()
-
-/**
- * Gets the address of a function, given it's symbolic name
- * 
- * @param symbol		the symbolic name of a function
- * @return				the address of the function
- *						0 if it doesn't exist
- */
-native okapi_engine_get_symbol_ptr(const symbol[])
-
-/**
- * Gets the address of a function, given it's symbolic name
- * 
- * @param symbol		the symbolic name of a function
- * @return				the address of the function
- *						0 if it doesn't exist
- */
-native okapi_mod_get_symbol_ptr(const symbol[])
-
 
 /**
  *   Return a if server is windows, returns b if server is linux

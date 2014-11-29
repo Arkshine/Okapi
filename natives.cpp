@@ -540,12 +540,14 @@ static cell AMX_NATIVE_CALL okapi_get_ptr_symbol(AMX *amx, cell *params)
 }
 
 
-bool check_sig(long address, cell* sig, int len)
+bool check_sig(long address, cell* sig, size_t sig_len)
 {
-	for (int i=0; i < len; i++)
+	for (size_t i = 0; i < sig_len; i++)
 	{
-		if (sig[i] > 0xFF)
+		if (sig[i] > 0xFF || sig[i] == 0x2A)
+		{
 			continue;
+		}
 
 		if ((unsigned char)sig[i] != (*(((unsigned char*)address) + i)))
 		{
@@ -556,47 +558,59 @@ bool check_sig(long address, cell* sig, int len)
 	return true;
 }
 
-long library_find_signature(GameLibrary* library, long address, cell* sig, int len)
+long do_find_signature(long start_address, long end_address, cell* sig, size_t sig_len)
 {
-	long end = (long)library->address + (long)library->length + 1 - len;
-
-	while (address < end)
+	while (start_address < end_address)
 	{
-		if (check_sig(address, sig, len))
+		if (check_sig(start_address, sig, sig_len))
 		{
-			return (long)address;
+			return (long)start_address;
 		}
 
-		address++;
+		start_address++;
 	}
 
 	return 0;
 }
 
-bool has_special(cell* array_, int pos, int len)
+long library_find_signature(GameLibrary* library, long start_address, cell* sig, size_t sig_len)
+{
+	long end_address = (long)library->address + (long)library->length + 1 - (long)sig_len;
+
+	return do_find_signature(start_address, end_address, sig, sig_len);
+}
+
+long library_find_signature(long start_address, size_t range_length, cell* sig, int sig_len)
+{
+	long end_address = start_address + (long)range_length + 1 - (long)sig_len;
+
+	return do_find_signature(start_address, end_address, sig, sig_len);
+}
+
+bool has_special(cell* array, int pos, int len)
 {
 	if (pos + 5 > len)
 	{
 		return false;
 	}
 
-	return (array_[pos] == 0xF0) && (array_[pos + 1] == 0x90) && (array_[pos + 2] == 0x8C) && (array_[pos + 3] == 0xBB) && (array_[pos + 4] == 0x00);
+	return (array[pos] == 0xF0) && (array[pos + 1] == 0x90) && (array[pos + 2] == 0x8C) && (array[pos + 3] == 0xBB) && (array[pos + 4] == 0x00);
 }
 
-int fix_special(cell* array_, int len)
+size_t fix_special(cell* array, size_t array_len)
 {
-	int place = 0;
+	size_t place = 0;
 
-	for (int i=0; i < len;)
+	for (size_t i = 0; i < array_len;)
 	{
-		if (has_special(array_, i, len))
+		if (has_special(array, i, array_len))
 		{
-			array_[place++] = 0xFFFF;
+			array[place++] = 0xFFFF;
 			i += 5;
 		}
 		else
 		{
-			array_[place++] = array_[i++];
+			array[place++] = array[i++];
 		}
 	}
 
@@ -684,17 +698,17 @@ GameLibrary* get_lib_from_address(void *address)
 	return NULL;
 }
 
-static cell AMX_NATIVE_CALL okapi_find_sig_at(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL okapi_find_sig(AMX *amx, cell *params)
 {
-	long lib_address   = params[1];
-	long start_address = params[2];
+	long start_address  = params[1];
+	size_t range_length = params[2];
 
-	cell* array_ = MF_GetAmxAddr(amx, params[3]);
-	int len = params[4];
+	cell* array = MF_GetAmxAddr(amx, params[3]);
+	size_t array_len = params[4];
 
-	len = fix_special(array_, len);
+	array_len = fix_special(array, array_len);
 
-	return library_find_signature(get_lib_from_address((void *)lib_address), start_address, array_, len);
+	return library_find_signature(start_address, range_length, array, array_len);
 }
 
 static cell AMX_NATIVE_CALL okapi_get_library_size(AMX *amx, cell *params)
@@ -1343,78 +1357,25 @@ static cell AMX_NATIVE_CALL okapi_get_mem_protect(AMX *amx, cell *params)
 	return protection;
 }
 
-static cell AMX_NATIVE_CALL okapi_mod_get_symbol_ptr(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL okapi_find_symbol(AMX *amx, cell *params)
 {
-	int len;
-	const char* symbol = MF_GetAmxString(amx, params[1], 0, &len);
+	int length;
+	void*  lib_address = (void*)params[1];
+	const char* symbol = MF_GetAmxString(amx, params[2], 0, &length);
 
-	GameLibrary* library = G_GameLibraries.Mod;
+	GameLibrary* library = get_lib_from_address(lib_address);
 
-	int offset = library->find_func(symbol);
-
-	if (!offset)
-		return 0;
-
-	return  offset + (int)library->address;
-}
-
-static cell AMX_NATIVE_CALL okapi_engine_get_symbol_ptr(AMX *amx, cell *params)
-{
-	int len;
-	const char* symbol = MF_GetAmxString(amx, params[1], 0, &len);
-
-	GameLibrary* library = G_GameLibraries.Engine;
-
-	int offset = library->find_func(symbol);
-
-	if (!offset)
-		return 0;
-
-	return  offset + (int)library->address;
-}
-
-static cell AMX_NATIVE_CALL okapi_mod_get_offset_ptr(AMX *amx, cell *params)
-{
-	int offset = params[1];
-
-	if ((offset >= 0) && (offset < G_GameLibraries.Mod->length))
+	if (library)
 	{
-		return offset + (int)G_GameLibraries.Mod->address;
+		int offset = library->find_func(symbol);
+
+		if (offset != 0)
+		{
+			return  (int)library->address + offset;
+		}
 	}
 
 	return 0;
-}
-
-static cell AMX_NATIVE_CALL okapi_engine_get_offset_ptr(AMX *amx, cell *params)
-{
-	int offset = params[1];
-
-	if ((offset >= 0) && (offset < G_GameLibraries.Engine->length))
-	{
-		return offset + (int)G_GameLibraries.Engine->address;
-	}
-
-	return 0;
-}
-
-static cell AMX_NATIVE_CALL okapi_mod_get_ptr_offset(AMX *amx, cell *params)
-{
-	int offset = params[1] - (int)G_GameLibraries.Mod->address;
-
-	if ((offset < 0) || (offset >= G_GameLibraries.Mod->length))
-		offset = 0;
-
-	return offset;
-}
-
-static cell AMX_NATIVE_CALL okapi_engine_get_ptr_offset(AMX *amx, cell *params)
-{
-	int offset = params[1] - (int)G_GameLibraries.Engine->address;
-
-	if ((offset < 0) || (offset > G_GameLibraries.Engine->length))
-		offset = 0;
-
-	return offset;
 }
 
 static cell AMX_NATIVE_CALL okapi_find_library_by_ptr(AMX *amx, cell *params)
@@ -1451,16 +1412,13 @@ AMX_NATIVE_INFO OkapiNatives[] =
 	{ "okapi_alloc"                    , okapi_alloc },
 
 	{ "okapi_call_ex"                  , okapi_call_ex },
-
 	{ "okapi_call"                     , okapi_call },
 
 	{ "okapi_get_orig_return"          , okapi_get_orig_return },
 	{ "okapi_set_return"               , okapi_set_return },
-
 	{ "okapi_set_param"                , okapi_set_param },
 
 	{ "okapi_current_hook"             , okapi_current_hook },
-
 	{ "okapi_del_hook"                 , okapi_del_hook },
 	{ "okapi_del_current_hook"         , okapi_del_current_hook },
 	{ "okapi_add_hook"                 , okapi_add_hook },
@@ -1478,12 +1436,12 @@ AMX_NATIVE_INFO OkapiNatives[] =
 	{ "okapi_class_get_vfunc_ptr"      , okapi_class_get_vfunc_ptr },
 	{ "okapi_cbase_get_vfunc_ptr"      , okapi_cbase_get_vfunc_ptr },
 
-	{ "okapi_get_ptr_symbol"           , okapi_get_ptr_symbol },
-
-	{ "okapi_find_sig_at"              , okapi_find_sig_at },
+	{ "okapi_find_symbol"              , okapi_find_symbol },
+	{ "okapi_find_sig"                 , okapi_find_sig },
 
 	{ "okapi_get_library_size"         , okapi_get_library_size },
 	{ "okapi_get_library_address"      , okapi_get_library_address },
+	{ "okapi_find_library_by_ptr"      , okapi_find_library_by_ptr },
 
 	{ "okapi_mem_find"                 , okapi_mem_find },
 	{ "okapi_mem_replace"              , okapi_mem_replace },
@@ -1493,16 +1451,11 @@ AMX_NATIVE_INFO OkapiNatives[] =
 	{ "okapi_set_mem_protect"          , okapi_set_mem_protect },
 	{ "okapi_get_mem_protect"          , okapi_get_mem_protect },
 
-	{ "okapi_engine_get_symbol_ptr"    , okapi_engine_get_symbol_ptr },
-	{ "okapi_mod_get_symbol_ptr"       , okapi_mod_get_symbol_ptr },
-
 	{ "okapi_get_engfunc_ptr"          , okapi_get_engfunc_ptr },
 	{ "okapi_get_dllfunc_ptr"          , okapi_get_dllfunc_ptr },
 
 	{ "okapi_get_engfunc_ptr_by_offset", okapi_get_engfunc_ptr_by_offset },
 	{ "okapi_get_dllfunc_ptr_by_offset", okapi_get_dllfunc_ptr_by_offset },
-
-	{ "okapi_find_library_by_ptr"      , okapi_find_library_by_ptr },
 
 	{ NULL, NULL }
 };
