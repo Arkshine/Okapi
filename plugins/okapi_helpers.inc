@@ -597,11 +597,9 @@
 	 */
 	stock okapi_mod_get_offset_ptr(offset)
 	{
-		new address = okapi_get_mod_address() + offset;
-
-		if (address >= 0 && address < okapi_get_mod_size())
+		if (offset >= 0 && offset < okapi_get_mod_size())
 		{
-			return address;
+			return okapi_get_mod_address() + offset;
 		}
 
 		return 0;
@@ -616,11 +614,9 @@
 	 */
 	stock okapi_engine_get_offset_ptr(offset)
 	{
-		new address = okapi_get_engine_address() + offset;
-
-		if (address >= 0 && address < okapi_get_engine_size())
+		if (offset >= 0 && offset < okapi_get_engine_size())
 		{
-			return address;
+			return okapi_get_engine_address() + offset;
 		}
 
 		return 0;
