@@ -99,7 +99,7 @@ static cell AMX_NATIVE_CALL okapi_set_param(AMX *amx, cell *params)
 
 	function->set_arg(param_id, amx, params[2]);
 
-	return 0;
+	return 1;
 }
 
 static cell AMX_NATIVE_CALL okapi_get_orig_return(AMX *amx, cell *params)
@@ -242,7 +242,6 @@ static cell AMX_NATIVE_CALL okapi_add_hook(AMX *amx, cell *params)
 static cell AMX_NATIVE_CALL okapi_build_method(AMX *amx, cell *params)
 {
 	int params_n = params[0] / sizeof(cell);
-
 	long address = params[1];
 
 	if (address == 0)
@@ -265,11 +264,11 @@ static cell AMX_NATIVE_CALL okapi_build_method(AMX *amx, cell *params)
 	}
 
 	TypeHandler* return_handler = G_ArgsTypeHandler[params[2]];
-	ke::Vector<TypeHandler*>* arguments_handlers = new ke::Vector < TypeHandler* > ;
+	ke::Vector<TypeHandler*>* arguments_handlers = new ke::Vector < TypeHandler* >;
 
 	arguments_handlers->append(G_ArgsTypeHandler[params[3]]);
 
-	for (int i=4; i <= params_n; i++)
+	for (int i = 4; i <= params_n; ++i)
 	{
 		int id = *MF_GetAmxAddr(amx, params[i]);
 		arguments_handlers->append(G_ArgsTypeHandler[id]);
@@ -286,7 +285,6 @@ static cell AMX_NATIVE_CALL okapi_build_method(AMX *amx, cell *params)
 static cell AMX_NATIVE_CALL okapi_build_vfunc_ptr(AMX *amx, cell *params)
 {
 	int params_n = params[0] / sizeof(cell);
-
 	void* address = (void*)params[1];
 
 	if (!address)
@@ -336,7 +334,6 @@ static cell AMX_NATIVE_CALL okapi_build_vfunc_ptr(AMX *amx, cell *params)
 static cell AMX_NATIVE_CALL okapi_build_vfunc_cbase(AMX *amx, cell *params)
 {
 	int params_n = params[0] / sizeof(cell);
-
 	int id = params[1];
 
 	if (ENTINDEX(INDEXENT(id)) != id)
@@ -643,7 +640,9 @@ static cell AMX_NATIVE_CALL okapi_cbase_get_vfunc_ptr(AMX *amx, cell *params)
 	void* cbase = G_HL_TypeConversion.id_to_cbase(params[1]);
 
 	if (!cbase)
+	{
 		return 0;
+	}
 
 	void **vtable = *((void***)(((char*)cbase) + G_OffsetHandler->EntityVirtualTable));
 

@@ -1,3 +1,14 @@
+//
+// AMX Mod X, based on AMX Mod by Aleksander Naszko ("OLO").
+// Copyright (C) The AMX Mod X Development Team.
+//
+// This software is licensed under the GNU General Public License, version 3 or higher.
+// Additional exceptions apply. For full license details, see LICENSE.txt or visit:
+//     https://alliedmods.net/amxmodx-license
+
+//
+// Okapi Memory Include
+//
 
 #if defined _okapi_memory_included
 	#endinput
@@ -11,7 +22,7 @@
  *          {0x51,0x56,"*","*",0x8B,0x86}.
  *          {0x51,0x56,0xDEF,0xDEF,0x8B,0x86}.
  *
- * @note Available helpers: 
+ * @note Available helpers:
  *          okapi_mod_find_sig_at  okapi_engine_find_sig_at
  *          okapi_mod_find_sig     okapi_engine_find_sig
  *
@@ -136,6 +147,25 @@ native okapi_mem_replace(start_address, range_length, type, any:...);
  *                          Missing array size parameter
  */
 native okapi_mem_find(start_address, range_length, type, any:...);
+
+/**
+ * Retrieves the memory protection of the location pointed to by the address.
+ *
+ * @param ptr           Address in memory
+ *
+ * @return              Protection value, see PAGE_* constants
+ */
+native okapi_get_mem_protect(ptr);
+
+/**
+ * Changes the memory protection of the location pointed to by the address
+ *
+ * @param ptr           Address in memory
+ * @param prot          Protection value, see see PAGE_* constants
+ *
+ * @return              true if the operation was successful, false otherwise
+ */
+native bool:okapi_set_mem_protect(ptr, prot);
 
 /**
  * Allocates n blocks of 4 bytes
