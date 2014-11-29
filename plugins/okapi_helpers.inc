@@ -53,6 +53,17 @@
 //      okapi_mod_find_byte_at        okapi_engine_find_byte_at
 //      okapi_mod_find_byte           okapi_engine_find_byte
 //
+// To get/set value in memory
+// --------------------------
+//      okapi_get_ptr_ent             okapi_set_ptr_ent
+//      okapi_get_ptr_edict           okapi_set_ptr_edict
+//      okapi_get_ptr_cbase           okapi_set_ptr_cbase
+//      okapi_get_ptr_int             okapi_set_ptr_int
+//      okapi_get_ptr_float           okapi_set_ptr_byte
+//      okapi_get_ptr_byte            okapi_set_ptr_float
+//      okapi_get_ptr_array           okapi_set_ptr_array
+//      okapi_get_ptr_strning         okapi_set_ptr_string
+//
 // To convert address <-> offset
 // ------------------------------------------------------------------
 //      okapi_mod_get_offset_ptr      okapi_engine_get_offset_ptr
@@ -594,6 +605,213 @@
 		{
 			return okapi_engine_find_byte_at(okapi_engine_get_base_ptr(), value);
 		}
+
+
+// To get/set value in memory
+// --------------------------
+
+	/**
+	 * Sets the value of the location pointed by the address with the entvars relative to an entity represented by id.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param id            Entity index
+	 */
+	stock okapi_set_ptr_ent(ptr, id)
+	{
+		return okapi_mem_set(ptr, mem_type_entvars, id);
+	}
+
+	/**
+	 * Retrieves the entvars located in an address as an entity index.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @return              Entity index
+	 */
+	stock okapi_get_ptr_ent(ptr)
+	{
+		return okapi_mem_get(ptr, mem_type_entvars);
+	}
+
+	/**
+	 * Sets the value of the location pointed by the address with the edict relative to an entity represented by id.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param id            Entity index to set
+	 */
+	stock okapi_set_ptr_edict(ptr, id)
+	{
+		return okapi_mem_set(ptr, mem_type_edict, id);
+	}
+
+	/**
+	 * Retrieves the edict located in an address as an entity id.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @return              Entity index
+	 */
+	stock okapi_get_ptr_edict(ptr)
+	{
+		return okapi_mem_get(ptr, mem_type_edict);
+	}
+
+	/**
+	 * Sets the value of the location pointed by the address with the cbase relative to an entity represented by id.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param id            Entity index to set
+	 */
+	stock okapi_set_ptr_cbase(ptr, id)
+	{
+		return okapi_mem_set(ptr, mem_type_cbase, id);
+	}
+
+	/**
+	 * Retrieves the cbase located in an address as an entity id.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @return              Entity index
+	 */
+	stock okapi_get_ptr_cbase(ptr)
+	{
+		return okapi_mem_get(ptr, mem_type_cbase);
+	}
+
+	/**
+	 * Writes an integer value at the location pointed by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param value         Value to set
+	 */
+	stock okapi_set_ptr_int(ptr, value)
+	{
+		return okapi_mem_set(ptr, mem_type_int, value);
+	}
+
+	/**
+	 * Retrieves an integer value in the location pointed by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @return              Integer value
+	 */
+	stock okapi_get_ptr_int(ptr)
+	{
+		return okapi_mem_get(ptr, mem_type_int);
+	}
+
+	/**
+	 * Writes a byte value at the location pointed by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param value         Value to set
+	 */
+	stock okapi_set_ptr_byte(ptr, value)
+	{
+		return okapi_mem_set(ptr, mem_type_byte, value);
+	}
+
+	/**
+	 * Retrieves a byte value in the location pointed by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @return              Byte value
+	 */
+	stock okapi_get_ptr_byte(ptr)
+	{
+		return okapi_mem_get(ptr, mem_type_byte);
+	}
+
+	/**
+	 * Writes a float value at the location pointed by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param value         Value to set
+	 */
+	stock okapi_set_ptr_float(ptr, Float:value)
+	{
+		return okapi_mem_set(ptr, mem_type_float, value);
+	}
+
+	/**
+	 * Retrieves a float value in the location pointed to by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @return              Float value
+	 */
+	stock Float:okapi_get_ptr_float(ptr)
+	{
+		return okapi_mem_get(ptr, mem_type_float);
+	}
+
+	/**
+	 * Writes an array of bytes to the location pointed to by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param holder        Array with the bytes to write
+	 * @param count         Number of bytes to write
+	 */
+	stock okapi_set_ptr_array(ptr, holder[], count)
+	{
+		return okapi_mem_set(ptr, mem_type_array, holder, count);
+	}
+
+	/**
+	 * Retrieves an array of bytes in the location pointed to by the address
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param holder        Array where the bytes will be stored
+	 * @param count         Number of bytes to retrieve
+	 */
+	stock okapi_get_ptr_array(ptr, holder[], count)
+	{
+		return okapi_mem_get(ptr, mem_type_array, holder, count);
+	}
+
+	/**
+	 * Writes a vector to the location pointed to by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param vec           Variable where the vector will be retrieved from
+	 */
+	stock okapi_set_ptr_vec(ptr, Float:vec[3])
+	{
+		return okapi_mem_set(ptr, mem_type_vector, vec);
+	}
+
+	/**
+	 * Retrieves an array of bytes in the location pointed to by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param vec           Variable where the vector will be wrote to
+	 */
+	stock okapi_get_ptr_vec(ptr, Float:vec[3])
+	{
+		return okapi_mem_get(ptr, mem_type_vector, vec);
+	}
+
+	/**
+	 * Writes a string to the location pointed to by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param str           String to write
+	 */
+	stock okapi_set_ptr_string(ptr, const str[])
+	{
+		return okapi_mem_set(ptr, mem_type_string, str);
+	}
+
+	/**
+	 * Retrieves an string from the location pointed to by the address.
+	 *
+	 * @param ptr           Address where is located the value
+	 * @param str[]         Variable where the string will be stored
+	 * @param len           Limit of chars to retrieve
+	 *
+	 * @return              Number of chars retrieved
+	 */
+	stock okapi_get_ptr_string(ptr, str[], len)
+	{
+		return okapi_mem_get(ptr, mem_type_string, str, len);
+	}
 
 
 // To convert address <-> offset

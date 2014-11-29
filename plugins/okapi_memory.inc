@@ -22,9 +22,8 @@
  *          {0x51,0x56,"*","*",0x8B,0x86}.
  *          {0x51,0x56,0xDEF,0xDEF,0x8B,0x86}.
  *
- * @note Available helpers:
- *          okapi_mod_find_sig_at  okapi_engine_find_sig_at
- *          okapi_mod_find_sig     okapi_engine_find_sig
+ * @note Available helpers: okapi_mod_find_sig_at  okapi_engine_find_sig_at
+ *                          okapi_mod_find_sig     okapi_engine_find_sig
  *
  * @param start_address     Address where the search starts
  * @param range_length      Range length of bytes where function is allowed to search in.
@@ -38,7 +37,8 @@ native okapi_find_sig(start_address, range_length, const signature[], count = si
 /**
  * Gets the address of a function located in a registered library, given it's symbolic name.
  *
- * @note Available helpers: okapi_mod_find_symbol, okapi_engine_find_symbol
+ * @note Available helpers: okapi_mod_find_symbol
+ *                          okapi_engine_find_symbol
  *
  * @param lib_ptr           Library base address to search function address in.
  * @param symbol            Symbolic name of a function
@@ -49,6 +49,15 @@ native okapi_find_symbol(lib_ptr, const symbol[]);
 
 /**
  * Retrieves the value in an address.
+ *
+ * @note Available helpers: okapi_get_ptr_ent
+ *                          okapi_get_ptr_edict
+ *                          okapi_get_ptr_cbase
+ *                          okapi_get_ptr_int
+ *                          okapi_get_ptr_float
+ *                          okapi_get_ptr_byte
+ *                          okapi_get_ptr_array
+ *                          okapi_get_ptr_strning
  *
  * @param address           The address where is located the value
  * @param type              The value data type, See okapi_mem_* constants
@@ -75,6 +84,15 @@ native any:okapi_mem_get(address, type, any:...);
 /**
  * Sets the value of the location pointed by the address.
  *
+ * @note Available helpers: okapi_set_ptr_ent
+ *                          okapi_set_ptr_edict
+ *                          okapi_set_ptr_cbase
+ *                          okapi_set_ptr_int
+ *                          okapi_set_ptr_byte
+ *                          okapi_set_ptr_float
+ *                          okapi_set_ptr_array
+ *                          okapi_set_ptr_string
+ *
  * @param address           The address where is located the value
  * @param type              The value data type, See okapi_mem_* constants
  * @param ...               The value to set. If parameter is an array,
@@ -92,11 +110,10 @@ native okapi_mem_set(address, type, any:...);
  * @note The replacement string should be of equal or shorter size than the original.
  *       If you know what you are doing and want to skip this check, make force to 1.
  *
- * @note Available helpers:
- *       okapi_mod_replace_string()    okapi_engine_replace_string()
- *       okapi_mod_replace_array()     okapi_engine_replace_array()
- *       okapi_mod_replace_int()       okapi_engine_replace_int()
- *       okapi_mod_replace_float()     okapi_engine_replace_float()
+ * @note Available helpers: okapi_mod_replace_string    okapi_engine_replace_string
+ *                          okapi_mod_replace_array     okapi_engine_replace_array
+ *                          okapi_mod_replace_int       okapi_engine_replace_int
+ *                          okapi_mod_replace_float     okapi_engine_replace_float
  *
  * @param start_address     Address where the search starts
  * @param range_length      Length range of bytes where function is allowed to search in.
@@ -121,17 +138,17 @@ native okapi_mem_replace(start_address, range_length, type, any:...);
  * Searches for a value in a library in a range from a start address.
  *
  * @note Only string, array, integer and float can be searched.
- * @note Available helpers:
- *       okapi_mod_find_string_at      okapi_engine_find_string_at
- *       okapi_mod_find_string         okapi_engine_find_string
- *       okapi_mod_find_array_at       okapi_engine_find_array_at
- *       okapi_mod_find_array          okapi_engine_find_array
- *       okapi_mod_find_int_at         okapi_engine_find_int_at
- *       okapi_mod_find_int            okapi_engine_find_int
- *       okapi_mod_find_float_at       okapi_engine_find_float_at
- *       okapi_mod_find_float          okapi_engine_find_float
- *       okapi_mod_find_byte_at        okapi_engine_find_byte_at
- *       okapi_mod_find_byte           okapi_engine_find_byte
+ *
+ * @note Available helpers: okapi_mod_find_string_at      okapi_engine_find_string_at
+ *                          okapi_mod_find_string         okapi_engine_find_string
+ *                          okapi_mod_find_array_at       okapi_engine_find_array_at
+ *                          okapi_mod_find_array          okapi_engine_find_array
+ *                          okapi_mod_find_int_at         okapi_engine_find_int_at
+ *                          okapi_mod_find_int            okapi_engine_find_int
+ *                          okapi_mod_find_float_at       okapi_engine_find_float_at
+ *                          okapi_mod_find_float          okapi_engine_find_float
+ *                          okapi_mod_find_byte_at        okapi_engine_find_byte_at
+ *                          okapi_mod_find_byte           okapi_engine_find_byte
  *
  * @param start_address     Address where the search starts
  * @param range_length      Length range of bytes where function is allowed to search in.
