@@ -35,6 +35,11 @@
 //      okapi_mod_find_float          okapi_engine_find_float
 //      okapi_mod_find_byte_at        okapi_engine_find_byte_at
 //      okapi_mod_find_byte           okapi_engine_find_byte
+//
+// To convert address <-> offset
+// ------------------------------------------------------------------
+//      okapi_mod_get_offset_ptr      okapi_engine_get_offset_ptr
+//      okapi_mod_get_ptr_offset      okapi_engine_get_ptr_offset
 
 
 // To get library address
@@ -490,6 +495,86 @@
 		{
 			return okapi_engine_find_byte_at(okapi_engine_get_base_ptr(), value);
 		}
+
+
+// To convert address <-> offset
+// -----------------------------
+
+	/**
+	 * Gets the address of an offset relative to mod library.
+	 *
+	 * @param ptr       Offset to convert
+	 *
+	 * @return          Address of the offset in the mod library on success, 0 otherwise.
+	 */
+	stock okapi_mod_get_offset_ptr(offset)
+	{
+		new address = okapi_get_mod_address() + offset;
+
+		if (address >= 0 && address < okapi_get_mod_size())
+		{
+			return address;
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Gets the address of an offset relative to engine library.
+	 *
+	 * @param ptr       Offset to convert
+	 *
+	 * @return          Address of the offset in the engine library on success, 0 otherwise.
+	 */
+	stock okapi_engine_get_offset_ptr(offset)
+	{
+		new address = okapi_get_engine_address() + offset;
+
+		if (address >= 0 && address < okapi_get_engine_size())
+		{
+			return address;
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Gets the offset of an address relative to mod library.
+	 *
+	 * @param ptr       Address to convert
+	 *
+	 * @return          Offset of the address in the engine library on success, 0 otherwise.
+	 */
+	stock okapi_mod_get_ptr_offset(ptr)
+	{
+		new offset = ptr - okapi_get_mod_address();
+
+		if (offset >= 0 && offset < okapi_get_mod_size())
+		{
+			return offset;
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Gets the offset of an address relative to engine library.
+	 *
+	 * @param ptr       Address to convert
+	 *
+	 * @return          Offset of the address in the engine library on success, 0 otherwise.
+	 */
+	stock okapi_engine_get_ptr_offset(ptr)
+	{
+		new offset = ptr - okapi_get_engine_address();
+
+		if (offset >= 0 && offset < okapi_get_engine_size())
+		{
+			return offset;
+		}
+
+		return 0;
+	}
 
 
 // To keep backward compatibility

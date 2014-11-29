@@ -257,43 +257,6 @@ native okapi_call_ex(okapi_func:func,any:...)
 native okapi_hook:okapi_current_hook()
 
 /**
- * Gets the offset of an address relative to the engine library
- * 
- * @param ptr			an address
- * @return				the offset of the address in the engine library
- *						0 if the address is not located in the engine library
- */
-native okapi_engine_get_ptr_offset(ptr)
-
-/**
- * Gets the offset of an address relative to the mod library
- * 
- * @param ptr			an address
- * @return				the offset of the address in the mod library
- *						0 if the address is not located in the mod library
- */
-native okapi_mod_get_ptr_offset(ptr)
-
-
-/**
- * Gets the address of an offset relative to the engine library
- * 
- * @param offset		an offset
- * @return				the address of the offset in the engine library
- *						0 if the offset is not located in the engine library
- */
-native okapi_engine_get_offset_ptr(offset)
-
-/**
- * Gets the address of an offset relative to the mod library
- * 
- * @param offset		an offset
- * @return				the address of the address in the mod library
- *						0 if the offset is not located in the mod library
- */
-native okapi_mod_get_offset_ptr(offset)
-
-/**
  * Gets the address of a function, given it's symbolic name
  * 
  * @param symbol		the symbolic name of a function

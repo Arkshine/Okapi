@@ -23,6 +23,20 @@ native okapi_get_library_address(const lib_name[])
 native okapi_get_library_size(const lib_name[])
 
 /**
+ * Finds informations of a library from a given address.
+ * This will checks among all libraries registered by module.
+ *
+ * @param ptr               Address to search
+ * @param lib_ptr           Variable to store the library base address in
+ * @param lib_size          Variable to store the library length in
+ * @param lib_name          Buffer to copy library name to
+ * @param lib_namelen       Maximum size of the buffer
+ *
+ * @return                  true on successful lookup, false otherwise.
+ */
+native bool:okapi_find_library_by_ptr(ptr, &lib_ptr, &lib_size = 0, lib_name[] = "", lib_namelen = 0);
+
+/**
  *  Converts a cbase (that is, the address of the c++ object of an entity) to an id
  *  
  * @param cbase				the cbase of the entity
