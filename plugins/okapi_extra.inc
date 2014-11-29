@@ -18,7 +18,7 @@
  *  
  * @return                  Base address on success, 0 otherwise.
  */
-native okapi_get_library_address(const lib_name[])
+native okapi_get_library_ptr(const lib_name[])
 
 /**
  * Gets the length of the library.
@@ -180,5 +180,5 @@ native okapi_get_dllfunc_ptr_by_offset(offset)
 
 // To keep backward compatibility
 // -
-#define okapi_get_base_ptr  okapi_get_library_address
+#define okapi_get_base_ptr  okapi_get_library_ptr
 

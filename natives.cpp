@@ -728,7 +728,7 @@ static cell AMX_NATIVE_CALL okapi_get_library_size(AMX *amx, cell *params)
 	return 0;
 }
 
-static cell AMX_NATIVE_CALL okapi_get_library_address(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL okapi_get_library_ptr(AMX *amx, cell *params)
 {
 	int length;
 	const char *libName = MF_GetAmxString(amx, params[1], 0, &length);
@@ -1440,7 +1440,7 @@ AMX_NATIVE_INFO OkapiNatives[] =
 	{ "okapi_find_sig"                 , okapi_find_sig },
 
 	{ "okapi_get_library_size"         , okapi_get_library_size },
-	{ "okapi_get_library_address"      , okapi_get_library_address },
+	{ "okapi_get_library_ptr"          , okapi_get_library_ptr },
 	{ "okapi_find_library_by_ptr"      , okapi_find_library_by_ptr },
 
 	{ "okapi_mem_find"                 , okapi_mem_find },

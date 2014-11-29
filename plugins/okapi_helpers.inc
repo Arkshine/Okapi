@@ -10,7 +10,7 @@
 
 // To get library address
 // ------------------------------------------------------------------
-//      okapi_get_mod_address         okapi_get_engine_address
+//      okapi_get_mod_ptr             okapi_get_engine_ptr
 //
 // To get library length
 // ------------------------------------------------------------------
@@ -57,13 +57,13 @@
 	 * @return          Base address on success, 0 otherwise.
 	 *
 	 */
-	stock okapi_get_mod_address()
+	stock okapi_get_mod_ptr()
 	{
 		static address;
 
 		if (!address)
 		{
-			address = okapi_get_library_address("mod");
+			address = okapi_get_library_ptr("mod");
 		}
 
 		return address;
@@ -74,13 +74,13 @@
 	 *
 	 * @return          Base address on success, 0 otherwise.
 	 */
-	stock okapi_get_engine_address()
+	stock okapi_get_engine_ptr()
 	{
 		static address;
 
 		if (!address)
 		{
-			address = okapi_get_library_address("engine");
+			address = okapi_get_library_ptr("engine");
 		}
 
 		return address;
@@ -139,7 +139,7 @@
 	 */
 	stock okapi_mod_find_sig_at(start_address, const signature[], count = sizeof signature)
 	{
-		return okapi_find_sig(start_address, start_address + (okapi_get_mod_size() - (start_address - okapi_get_mod_address())), signature, count);
+		return okapi_find_sig(start_address, start_address + (okapi_get_mod_size() - (start_address - okapi_get_mod_ptr())), signature, count);
 	}
 
 	/**
@@ -152,7 +152,7 @@
 	 */
 	stock okapi_mod_find_sig(const signature[], count = sizeof signature)
 	{
-		return okapi_find_sig(okapi_get_mod_address(), okapi_get_mod_size(), signature, count);
+		return okapi_find_sig(okapi_get_mod_ptr(), okapi_get_mod_size(), signature, count);
 	}
 
 	/**
@@ -166,7 +166,7 @@
 	 */
 	stock okapi_engine_find_sig_at(start_address, const signature[], count = sizeof signature)
 	{
-		return okapi_find_sig(okapi_get_engine_address(), start_address + (okapi_engine_mod_size() - (start_address - okapi_engine_mod_address())), signature, count);
+		return okapi_find_sig(okapi_get_engine_ptr(), start_address + (okapi_engine_mod_size() - (start_address - okapi_engine_mod_address())), signature, count);
 	}
 
 	/**
@@ -179,7 +179,7 @@
 	 */
 	stock okapi_engine_find_sig(const signature[], count = sizeof signature)
 	{
-		return okapi_engine_find_sig_at(okapi_get_engine_address(), okapi_get_engine_size(), signature, count);
+		return okapi_engine_find_sig_at(okapi_get_engine_ptr(), okapi_get_engine_size(), signature, count);
 	}
 
 	/**
@@ -191,7 +191,7 @@
 	 */
 	stock okapi_mod_find_symbol(const symbol[])
 	{
-		return okapi_find_symbol(okapi_get_mod_address(), symbol);
+		return okapi_find_symbol(okapi_get_mod_ptr(), symbol);
 	}
 
 	/**
@@ -203,7 +203,7 @@
 	 */
 	stock okapi_engine_find_symbol(const symbol[])
 	{
-		return okapi_find_symbol(okapi_get_engine_address(), symbol);
+		return okapi_find_symbol(okapi_get_engine_ptr(), symbol);
 	}
 
 
@@ -225,7 +225,7 @@
 	 */
 	stock okapi_mod_replace_string(const str_orig[], const str_replace[], force = 0)
 	{
-		return okapi_mem_replace(okapi_get_mod_address(), okapi_get_mod_size(), okapi_mem_string, str_orig, str_replace, force);
+		return okapi_mem_replace(okapi_get_mod_ptr(), okapi_get_mod_size(), okapi_mem_string, str_orig, str_replace, force);
 	}
 
 	/**
@@ -239,7 +239,7 @@
 	 */
 	stock okapi_mod_replace_array(any:arr_orig[], any:arr_replace[], arr_len)
 	{
-		return okapi_mem_replace(okapi_get_mod_address(), okapi_get_mod_size(), okapi_mem_array, arr_orig, arr_replace, arr_len);
+		return okapi_mem_replace(okapi_get_mod_ptr(), okapi_get_mod_size(), okapi_mem_array, arr_orig, arr_replace, arr_len);
 	}
 
 	/**
@@ -252,7 +252,7 @@
 	 */
 	stock okapi_mod_replace_int(any:val_search, any:val_replace)
 	{
-		return okapi_mem_replace(okapi_get_mod_address(), okapi_get_mod_size(), okapi_mem_int, val_search, val_replace);
+		return okapi_mem_replace(okapi_get_mod_ptr(), okapi_get_mod_size(), okapi_mem_int, val_search, val_replace);
 	}
 
 	/**
@@ -265,7 +265,7 @@
 	 */
 	stock okapi_mod_replace_float(Float:val_search,Float:val_replace)
 	{
-		return okapi_mem_replace(okapi_get_mod_address(), okapi_get_mod_size(), okapi_mem_float, val_search, val_replace);
+		return okapi_mem_replace(okapi_get_mod_ptr(), okapi_get_mod_size(), okapi_mem_float, val_search, val_replace);
 	}
 
 	/**
@@ -283,7 +283,7 @@
 	 */
 	stock okapi_engine_replace_string(const str_orig[], const str_replace[], force = 0)
 	{
-		return okapi_mem_replace(okapi_get_engine_address(), okapi_get_engine_size(), okapi_mem_string, str_orig, str_replace, force);
+		return okapi_mem_replace(okapi_get_engine_ptr(), okapi_get_engine_size(), okapi_mem_string, str_orig, str_replace, force);
 	}
 
 	/**
@@ -297,7 +297,7 @@
 	 */
 	stock okapi_engine_replace_array(any:arr_orig[], any:arr_replace[], arr_len)
 	{
-		return okapi_mem_replace(okapi_get_engine_address(), okapi_get_engine_size(), okapi_mem_array, str_orig, str_replace, arr_len);
+		return okapi_mem_replace(okapi_get_engine_ptr(), okapi_get_engine_size(), okapi_mem_array, str_orig, str_replace, arr_len);
 	}
 
 	/**
@@ -310,7 +310,7 @@
 	 */
 	stock okapi_engine_replace_int(any:val_search, any:val_replace)
 	{
-		return okapi_mem_replace(okapi_get_engine_address(), okapi_get_engine_size(), okapi_mem_int, val_search, val_replace);
+		return okapi_mem_replace(okapi_get_engine_ptr(), okapi_get_engine_size(), okapi_mem_int, val_search, val_replace);
 	}
 
 	/**
@@ -323,7 +323,7 @@
 	 */
 	stock okapi_engine_replace_float(Float:val_search,Float:val_replace)
 	{
-		return okapi_mem_replace(okapi_get_engine_address(), okapi_get_engine_size(), okapi_mem_float, val_search, val_replace);
+		return okapi_mem_replace(okapi_get_engine_ptr(), okapi_get_engine_size(), okapi_mem_float, val_search, val_replace);
 	}
 
 
@@ -340,7 +340,7 @@
 	 */
 	stock okapi_mod_find_string_at(ptr, const str[])
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_string, str);
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_ptr())), mem_type_string, str);
 	}
 
 		/**
@@ -366,7 +366,7 @@
 	 */
 	stock okapi_mod_find_array_at(ptr, any:array[], count)
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_array, array_, count);
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_ptr())), mem_type_array, array_, count);
 	}
 
 		/**
@@ -392,7 +392,7 @@
 	 */
 	stock okapi_mod_find_int_at(ptr, any:val)
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_int, val);
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_ptr())), mem_type_int, val);
 	}
 
 		/**
@@ -417,7 +417,7 @@
 	 */
 	stock okapi_mod_find_float_at(ptr, Float:value)
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_float, value);
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_ptr())), mem_type_float, value);
 	}
 
 		/**
@@ -442,7 +442,7 @@
 	 */
 	stock okapi_mod_find_byte_at(ptr, any:value)
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_address())), mem_type_byte, value);
+		return okapi_mem_find(ptr, ptr + (okapi_get_mod_size() - (ptr - okapi_get_mod_ptr())), mem_type_byte, value);
 	}
 
 		/**
@@ -467,7 +467,7 @@
 	 */
 	stock okapi_engine_find_string_at(ptr, const str[])
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_string, str);
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_ptr())), mem_type_string, str);
 	}
 
 		/**
@@ -493,7 +493,7 @@
 	 */
 	stock okapi_engine_find_array_at(ptr, any:array[], count)
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_array, array_, count);
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_ptr())), mem_type_array, array_, count);
 	}
 
 		/**
@@ -519,7 +519,7 @@
 	 */
 	stock okapi_engine_find_int_at(ptr, any:val)
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_int, val);
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_ptr())), mem_type_int, val);
 	}
 
 		/**
@@ -544,7 +544,7 @@
 	 */
 	stock okapi_engine_find_float_at(ptr, Float:value)
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_float, value);
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_ptr())), mem_type_float, value);
 	}
 
 		/**
@@ -569,7 +569,7 @@
 	 */
 	stock okapi_engine_find_byte_at(ptr, any:value)
 	{
-		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_address())), mem_type_byte, value);
+		return okapi_mem_find(ptr, ptr + (okapi_get_engine_size() - (ptr - okapi_get_engine_ptr())), mem_type_byte, value);
 	}
 
 		/**
@@ -599,7 +599,7 @@
 	{
 		if (offset >= 0 && offset < okapi_get_mod_size())
 		{
-			return okapi_get_mod_address() + offset;
+			return okapi_get_mod_ptr() + offset;
 		}
 
 		return 0;
@@ -616,7 +616,7 @@
 	{
 		if (offset >= 0 && offset < okapi_get_engine_size())
 		{
-			return okapi_get_engine_address() + offset;
+			return okapi_get_engine_ptr() + offset;
 		}
 
 		return 0;
@@ -631,7 +631,7 @@
 	 */
 	stock okapi_mod_get_ptr_offset(ptr)
 	{
-		new offset = ptr - okapi_get_mod_address();
+		new offset = ptr - okapi_get_mod_ptr();
 
 		if (offset >= 0 && offset < okapi_get_mod_size())
 		{
@@ -650,7 +650,7 @@
 	 */
 	stock okapi_engine_get_ptr_offset(ptr)
 	{
-		new offset = ptr - okapi_get_engine_address();
+		new offset = ptr - okapi_get_engine_ptr();
 
 		if (offset >= 0 && offset < okapi_get_engine_size())
 		{
@@ -667,8 +667,8 @@
 	#define okapi_mod_get_size               okapi_get_mod_size
 	#define okapi_engine_get_size            okapi_get_engine_size
 
-	#define okapi_mod_get_base_ptr           okapi_get_mod_address
-	#define okapi_engine_get_base_ptr        okapi_get_engine_address
+	#define okapi_mod_get_base_ptr           okapi_get_mod_ptr
+	#define okapi_engine_get_base_ptr        okapi_get_engine_ptr
 
 	#define okapi_mod_ptr_find_string_at     okapi_mod_find_string_at
 	#define okapi_mod_ptr_find_array_at      okapi_mod_find_array_at
